@@ -5,8 +5,195 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PaintWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="450" Width="1100"
+        Background="#eef4f9">
+
+
+    <Window.Resources>
+        <Style x:Key="RoundButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="outerEllipse"
+                             Stroke="{TemplateBinding BorderBrush}"
+                             StrokeThickness="0.0" />
+                            <Ellipse x:Name="innerEllipse" Margin="2"
+                             Fill="{TemplateBinding Background}"
+                             Stroke="{TemplateBinding BorderBrush}"
+                             StrokeThickness="0.5" />
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="innerEllipse" Property="Stroke" Value="Blue"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Height" Value="17"/>
+            <Setter Property="Width" Value="17"/>
+            <Setter Property="Background" Value="LightBlue"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="2"/>
+        </Style>
+
+    </Window.Resources>
+
+    <StackPanel>
+        <WrapPanel Height="25" Background="#f0f3f9">
+
+        </WrapPanel>
+
+        <Grid Background="#f8f9fc" Name ="MainPanel">
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width = "150"/>
+                <ColumnDefinition Width="75"/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="100" Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Column="4">
+
+                <Grid.ColumnDefinitions >
+                    <ColumnDefinition Width="45" />
+                    <ColumnDefinition Width="230" />
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="70" Height="70"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                    <Button Name = "FirstColor" 
+                            Style="{StaticResource RoundButtonStyle}" 
+                            Background="Black" Margin="5" 
+                            Height="25" Width="25" 
+                            Click="PaintColor_Click"/>
+                    <Button Name ="SecondColor"
+                            Style="{StaticResource RoundButtonStyle}"
+                            Background="White" Margin="10 6 10 0"
+                            Height="25" Width="25" 
+                            Click="PaintColor_Click"/>
+                </StackPanel>
+
+                <WrapPanel Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,100,0" Name="asd">
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#000000" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#7f7f7f" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#880015" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#ed1c24" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#ff7f27" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#fff200" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#22b14c" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#00a2e8" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#3f48cc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#a349a4" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#ffffff" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#c3c3c3" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#b97a57" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#ffaec9" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#ffc90e" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#efe4b0" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#b5e61d" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#99d9ea" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#7092be" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#c8bfe7" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                    <Button Style="{StaticResource RoundButtonStyle}" 
+                            Background="#f8f9fc" Margin="5 5 0 0" 
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                </WrapPanel>
+
+                <Button Grid.Column="2" Grid.Row="0" 
+                        Name ="ChooseColorPalette"
+                        Click="Pallete_Click">
+                    Palette
+                </Button>
+                
+                <Label Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Top" 
+                       HorizontalAlignment="Center" FontSize="14" Foreground="#5e5f60">
+                    Цвета 
+                </Label>
+
+            </Grid>
+        </Grid>
+    </StackPanel>
+
 </Window>
