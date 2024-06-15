@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using PaintWPF.Models;
+
 namespace PaintWPF
 {
     /// <summary>
@@ -20,6 +22,8 @@ namespace PaintWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainPaint _main = new MainPaint();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -101,8 +105,9 @@ namespace PaintWPF
         }
         private void Pallete_Click(object sender, EventArgs e)
         {
-            Pallete pallete = new Pallete();
+            Pallete pallete = new Pallete(_main.PalleteMod);
             pallete.ShowDialog();
         }
+
     }
 }
