@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using PaintWPF.Models;
+using PaintWPF.Models.Tools;
+
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
@@ -30,14 +32,22 @@ namespace PaintWPF
         private UIElement[,] UserColors;
         private (int, int) chosenCustomColor = (-1, -1);
 
+        private System.Windows.Media.Color _chosenColor;
         public Pallete(PalleteModel pallete)
         {
             _pallete = pallete;
-
             InitializeComponent();
 
+            InitBasicParamsAfterInitComps();
+        }
+
+        public void InitBasicParamsAfterInitComps()
+        {
             Canvas.SetTop(draggableButton, 20);
             Canvas.SetLeft(draggableButton, 20);
+
+            Canvas.SetTop(ValueBut, 1);
+            Canvas.SetLeft(ValueBut, 1);
 
             InitUserColorsInArray();
         }
@@ -45,7 +55,6 @@ namespace PaintWPF
         {
             UserColors = new UIElement[_pallete.UserColors.GetLength(0),
                 _pallete.UserColors.GetLength(1)];
-
             int tempChildrenIndex = 0;
             for (int i = 0; i < UserColors.GetLength(0); i++)
             {
@@ -54,7 +63,7 @@ namespace PaintWPF
                     UserColors[i, j] = UserColorPanel.Children[tempChildrenIndex];
                     if (UserColorPanel.Children[tempChildrenIndex] is Button)
                     {
-                        Button but = ((Button)UserColorPanel.Children[tempChildrenIndex]);
+                        Button but = (Button)UserColorPanel.Children[tempChildrenIndex];
                         but.Tag = new Tuple<int, int>(i, j);
                     }
                     tempChildrenIndex++;
@@ -110,7 +119,85 @@ namespace PaintWPF
         }
         private void MainColor_Click(object sender, EventArgs e)
         {
+            Button but = sender as Button;
 
+            //Get color in media_Color
+            System.Windows.Media.Color? color = null;
+            if (but.Background is SolidColorBrush brush)
+            {
+                color = brush.Color;
+            }
+            if (color is null) return;
+
+            //Get this in pallete [,] index 
+            (int y, int x) mainColorIndex =
+                _pallete.GetMainColorIndexByColor((System.Windows.Media.Color)color);
+            if (mainColorIndex.y == -1 && mainColorIndex.x == -1) return;
+
+            // get point int specImg
+/*            System.Windows.Media.Color col =
+                (System.Windows.Media.Color)color;*/
+
+
+            Color col = ShowColorOnSpecForMainColor(mainColorIndex);
+
+            
+
+            (int, int)? asd = GetColorCord(col.R, col.G, col.B);
+            if (asd is null) return;
+
+            // int boxes right boxes 
+            InitCordInSpec(asd.Value.Item1, asd.Value.Item2);
+
+            specDragEl = null;
+            SpecCanvas.ReleaseMouseCapture();
+        }
+        public Color ShowColorOnSpecForMainColor((int, int) mainColorInPalleteIndex)
+        {
+            (int h, int s, int v) hcvParam= 
+                _pallete.MainColors[mainColorInPalleteIndex.Item1, 
+                mainColorInPalleteIndex.Item2].HSVParam;
+
+            Color first = HSVConvertor.hsvToRgb(hcvParam.h, hcvParam.s, hcvParam.v);
+
+            Color color = HSVConvertor.HSVToRGB(hcvParam.h, hcvParam.s, hcvParam.v);
+
+            return new Color();
+        }
+        public string GetHexFromColor(int r, int g, int b)
+        {
+            Color myColor = Color.FromArgb(r, g, b);
+            string hex = "#" + myColor.R.ToString("X2") + myColor.G.ToString("X2") + myColor.B.ToString("X2");
+            return hex;
+        }
+        public void InitCordInSpec(int y, int x)
+        {
+            this.specDragEl = draggableButton as UIElement;
+
+            Canvas.SetTop(specDragEl, y);
+            Canvas.SetLeft(specDragEl, x);
+        }
+        public (int, int)? GetColorCord(int r, int g, int b)
+        {
+            Color targetColor = Color.FromArgb(r, g, b);
+
+            string imgPath = GetDirToPallete();
+
+            using (Bitmap bitmap = new Bitmap(imgPath))
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        Color pixelColor = bitmap.GetPixel(x, y);
+                        if (pixelColor.ToArgb() == targetColor.ToArgb())
+                        {
+                            return (y, x);
+                        }
+                    }
+                }
+            }
+            return null;
         }
         private void UserColor_Click(object sender, EventArgs e)
         {
@@ -133,7 +220,6 @@ namespace PaintWPF
                 {
                     chosenCustomColor = (tag.Item1, tag.Item2);
                 }
-
                 for (int i = 0; i < UserColors.GetLength(0); i++)
                 {
                     for (int j = 0; j < UserColors.GetLength(1); j++)
@@ -186,7 +272,6 @@ namespace PaintWPF
             {
                 return;
             }
-
             Ellipse greyCircle = new Ellipse();
             greyCircle.Width = button.Width + 1;
             greyCircle.Height = button.Height + 1;
@@ -199,33 +284,81 @@ namespace PaintWPF
 
             button.Content = greyCircle;
         }
-
-        private UIElement dragEl = null;
-        private Point offset;
-
-        private void draggableButton_PreViewMouseDown(object sender, MouseEventArgs e)
+        private UIElement valueDragElem = null;
+        private Point valueOffset;
+        private void ValueDrag_PreViewMouseDown(object sender, MouseEventArgs e)
         {
-            /*            Point relativePoint = coloeSpecter.TransformToAncestor(this)
-                                                     .Transform(new Point(0, 0));
+            Button button = sender as Button;
 
-                        Point pos = draggableButton.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point buttonPosition = button.TransformToAncestor(ValueCanvas)
+                                         .Transform(new Point(0, 0));
 
-                        // Рассчитываем центр кнопки
-                        double centerX = pos.X + (draggableButton.ActualWidth / 2);
-                        double centerY = pos.Y + (draggableButton.ActualHeight / 2);*/
+            double centerX = buttonPosition.X + (button.ActualWidth / 2);
+            double centerY = buttonPosition.Y + (button.ActualHeight / 2);
 
+            valueDragElem = sender as UIElement;
+            valueOffset = new Point(centerX, centerY); //e.GetPosition(ValueCanvas);
+            valueOffset.Y -= Canvas.GetTop(valueDragElem);
+            //valueOffset.X -= Canvas.GetLeft(valueDragElem);
+            ValueCanvas.CaptureMouse();
+        }
+        private void ValueCanvas_PreViewMouseMove(object sender, MouseEventArgs e)
+        {
+            Point buttonPosRelativeToAncestor = draggableButton.TransformToAncestor(this).Transform(new Point(0, 0));
 
-            /*            if (centerX > relativePoint.X &&
-                        centerX <= relativePoint.X + coloeSpecter.Width &&
-                        centerY > relativePoint.Y &&
-                        centerY <= relativePoint.Y + coloeSpecter.Height)
-                        {*/
-            this.dragEl = sender as UIElement;
-            offset = e.GetPosition(this.CanvasMain);
-            offset.Y -= Canvas.GetTop(dragEl);
-            offset.X -= Canvas.GetLeft(dragEl);
-            CanvasMain.CaptureMouse();
-            //}
+            Point imagePosRelativeToAncestor = coloeSpecter.TransformToAncestor(this).Transform(new Point(0, 0));
+
+            double relativeX = buttonPosRelativeToAncestor.X - imagePosRelativeToAncestor.X;
+            double relativeY = buttonPosRelativeToAncestor.Y - imagePosRelativeToAncestor.Y;
+
+            double centerX = relativeX + (draggableButton.ActualWidth / 2);
+            double centerY = relativeY + (draggableButton.ActualHeight / 2);
+
+            if (valueDragElem == null) return;
+            var position = e.GetPosition(sender as IInputElement);
+
+            if (position.Y < 8)
+            {
+                position.Y = 8;
+            }
+            if (position.Y > ValueBorder.Height - 8)
+            {
+                position.Y = ValueBorder.Height - 8;
+            }
+            Canvas.SetTop(valueDragElem, position.Y - valueOffset.Y);
+
+            ChangeProgressBarValue(position.Y - valueOffset.Y);
+        }
+        public void ChangeProgressBarValue(double pos)
+        {
+            double onePointHeight = ValueProgressBar.Height / ValueProgressBar.Maximum;
+            double temp = pos / onePointHeight;
+            ThirdInfoBox.Text = Math.Abs(((int)temp) - 100).ToString();
+        }
+        private void ValueCanvas_PreViewMouseUp(object sender, MouseEventArgs e)
+        {
+            valueDragElem = null;
+            ValueCanvas.ReleaseMouseCapture();
+        }
+
+        private UIElement specDragEl = null;
+        private Point specCircleOffset;
+
+        private void DraggableButton_PreViewMouseDown(object sender, MouseEventArgs e)
+        {
+            Button button = sender as Button;
+
+            Point buttonPosition = button.TransformToAncestor(SpecCanvas)
+                                         .Transform(new Point(0, 0));
+
+            double centerX = buttonPosition.X + (button.ActualWidth / 2);
+            double centerY = buttonPosition.Y + (button.ActualHeight / 2);
+
+            this.specDragEl = sender as UIElement;
+            specCircleOffset = new Point(centerX, centerY); //e.GetPosition(this.SpecCanvas);
+            specCircleOffset.Y -= Canvas.GetTop(specDragEl);
+            specCircleOffset.X -= Canvas.GetLeft(specDragEl);
+            SpecCanvas.CaptureMouse();
         }
         private void CanvasMain_PreViewMouseMove(object sender, MouseEventArgs e)
         {
@@ -239,18 +372,18 @@ namespace PaintWPF
             double centerX = relativeX + (draggableButton.ActualWidth / 2);
             double centerY = relativeY + (draggableButton.ActualHeight / 2);
 
-            if (dragEl == null) return;
+            if (specDragEl == null) return;
             var position = e.GetPosition(sender as IInputElement);
 
-            if (position.X < 0)
+            if (position.X < 5)
             {
                 position.X = 5;
             }
-            if (position.X > coloeSpecter.Width)
+            if (position.X > coloeSpecter.Width - 10)
             {
-                position.X = coloeSpecter.Width - 5;
+                position.X = coloeSpecter.Width - 10;
             }
-            if (position.Y < 0)
+            if (position.Y < 5)
             {
                 position.Y = 5;
             }
@@ -258,58 +391,91 @@ namespace PaintWPF
             {
                 position.Y = coloeSpecter.Height;
             }
+            Canvas.SetTop(specDragEl, position.Y - specCircleOffset.Y);
+            Canvas.SetLeft(specDragEl, position.X - specCircleOffset.X);
 
-            Canvas.SetTop(dragEl, position.Y - offset.Y);
-            Canvas.SetLeft(dragEl, position.X - offset.X);
-            //GetColorByCord(position);
+            Color color = GetColorByCord(position);
+
+            System.Windows.Media.Color mediaColor = System.Windows.Media.Color.FromArgb(
+                  color.A, color.R, color.G, color.B);
+
+            ChosenColorShow.Background = new SolidColorBrush(mediaColor);
+            HexTable.Text = GetHexFromColor(mediaColor.R, mediaColor.G, mediaColor.B);
+            UpdateValueBackGroud(mediaColor);
         }
         private void CanvasMain_PreViewMouseUp(object sender, MouseEventArgs e)
         {
-            dragEl = null;
-            CanvasMain.ReleaseMouseCapture();
+            specDragEl = null;
+            SpecCanvas.ReleaseMouseCapture();
         }
         private void asd_Click(object sender, EventArgs e)
         {
             Console.WriteLine();
         }
-
         public Color GetColorByCord(Point point)
         {
-            using (Bitmap bitmap = new Bitmap(GetDirToPallete()))
+            string path = GetDirToPallete();
+            using (Bitmap bitmap = new Bitmap(path))
             {
                 return bitmap.GetPixel((int)point.X, (int)point.Y);
             }
         }
         public string GetDirToPallete()
         {
-            /*        DirectoryInfo baseDirectoryInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-                    string imageDirectory = System.IO.Path.Combine(baseDirectoryInfo.Parent.Parent.FullName, "Images");
-                    string imagePath = System.IO.Path.Combine(imageDirectory, "ColorSpectre.png");
-                    return imagePath;*/
-            return "";
+            var scriptsDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            DirectoryInfo baseDirectoryInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            string imageDirectory = System.IO.Path.Combine(baseDirectoryInfo.Parent.Parent.FullName, "Images");
+            string palleteDirectory = System.IO.Path.Combine(imageDirectory, "Pallete");
+            string imagePath = System.IO.Path.Combine(palleteDirectory, "ColorSpectre.png");
+            return imagePath;
+            //return "";
 
         }
-
-        public (int, int)? GetColorCord(int r, int g, int b)
+        public void UpdateValueBackGroud(System.Windows.Media.Color color)
         {
-            Color targetColor = Color.FromArgb(r, g, b);
-
-            using (Bitmap bitmap = new Bitmap("Images/ColorSpectre.png"))
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        Color pixelColor = bitmap.GetPixel(x, y);
-                        if (pixelColor.ToArgb() == targetColor.ToArgb())
-                        {
-                            return (x, y);
-                        }
-                    }
-                }
-            }
-            return null;
+            LinearGradientBrush gradientBrush = (LinearGradientBrush)ValueBorder.Background;
+            gradientBrush.GradientStops[0].Color = color;
+            UpdateColorParams(color);
         }
+        public void UpdateColorParams(System.Windows.Media.Color color)
+        {
+            _chosenColor = color;
+            if (ChooseParamTypeBox.SelectedIndex == 0)
+            {
+                FirstInfoBox.Text = color.R.ToString();
+                SecondInfoBox.Text = color.G.ToString();
+                ThirdInfoBox.Text = color.B.ToString();
+                return;
+            }
+            (int H, int S, int V) HSVParams = HSVConvertor.RGBtoHSV(color);
+            FirstInfoBox.Text = HSVParams.H.ToString();
+            SecondInfoBox.Text = HSVParams.S.ToString();
+            ThirdInfoBox.Text = HSVParams.V.ToString();
+        }
+        private void ColorParamType_SelectionChanged(object sender, EventArgs e)
+        {
+            if (ChooseParamTypeBox.SelectedIndex == 0)
+            {
+                FirstLB.Content = "Красный";
+                SecondLB.Content = "Зеленый";
+                ThirdLB.Content = "Синий";
+
+                FirstInfoBox.Text = _chosenColor.R.ToString();
+                SecondInfoBox.Text = _chosenColor.G.ToString();
+                ThirdInfoBox.Text = _chosenColor.B.ToString();
+                return;
+            }
+            FirstLB.Content = "Оттенок";
+            SecondLB.Content = "Насыщенность";
+            ThirdLB.Content = "Значение";
+
+            FirstInfoBox.Text = _chosenColor.R.ToString();
+            SecondInfoBox.Text = _chosenColor.G.ToString();
+            ThirdInfoBox.Text = _chosenColor.B.ToString();
+        }
+
+
 
     }
 }

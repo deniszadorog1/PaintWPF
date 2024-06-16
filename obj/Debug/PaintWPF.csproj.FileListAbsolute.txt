@@ -16,3 +16,6 @@ B:\GitHub\PaintWPF\obj\Debug\PaintWPF.exe
 B:\GitHub\PaintWPF\obj\Debug\PaintWPF.pdb
 B:\GitHub\PaintWPF\obj\Debug\Pallete.g.cs
 B:\GitHub\PaintWPF\obj\Debug\Pallete.baml
+B:\GitHub\PaintWPF\bin\Debug\System.ValueTuple.dll
+B:\GitHub\PaintWPF\bin\Debug\System.ValueTuple.xml
+B:\GitHub\PaintWPF\obj\Debug\PaintWPF.csproj.CopyComplete
