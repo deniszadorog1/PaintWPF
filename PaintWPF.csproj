@@ -123,5 +123,19 @@
     <Resource Include="Images\Pallete\MainPanelIcons\Pen.png" />
     <Resource Include="Images\Pallete\MainPanelIcons\text.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Pallete\MainPanelCaligraphy\marker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Pallete\MainPanelBotomIcons\cursor.png" />
+    <Resource Include="Images\Pallete\MainPanelBotomIcons\dottedSquare.png" />
+    <Resource Include="Images\Pallete\MainPanelBotomIcons\rect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Pallete\MainPanelCaligraphy\showMarkers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Pallete\MainPanelCaligraphy\hiddenMarkers .png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

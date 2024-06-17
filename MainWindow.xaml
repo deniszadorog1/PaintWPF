@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PaintWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="1100"
+        Title="MainWindow" Height="650" Width="1100"
         Background="#eef4f9">
 
 
@@ -41,15 +41,111 @@
             <Setter Property="Padding" Value="2"/>
         </Style>
 
+        <Style x:Key="NoStyleButton" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
-    <StackPanel>
-        <WrapPanel Height="25" Background="#f0f3f9">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+
+        <WrapPanel Grid.Row="0" Background="#f0f3f9">
 
         </WrapPanel>
 
-        <Grid Background="#f8f9fc" Name ="MainPanel">
-            
+        <Line Grid.Row="2" Stroke="Black" StrokeThickness="1"
+                  X1="0" Y1="0" X2="1100" Y2="0" Opacity="0.3"/>
+        <Line Grid.Row="3" Stroke="Black" StrokeThickness="1"
+                  X1="0" Y1="0" X2="1100" Y2="0" Opacity="0.3"/>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <WrapPanel Grid.Column = "0" Margin="0 5 0 0">
+                <Image Source="Images/Pallete/MainPanelBotomIcons/cursor.png"
+                       Height="20" Width="20"></Image>
+                <Label Name="CursCords" Width="110" FontSize="11">123456789012345</Label>
+            </WrapPanel>
+
+            <Line Grid.Column="1" Stroke="Black" StrokeThickness="0.5"
+                  X1="0" Y1="5" X2="0" Y2="30" Opacity="0.3"></Line>
+
+            <WrapPanel Grid.Column="1" Margin="0 5 0 0">
+                <Image Source="Images/Pallete/MainPanelBotomIcons/dottedSquare.png"
+                       Height="20" Width="20"></Image>
+                <Label Name ="ObjSize"  Width="110" FontSize="11">123456789012345</Label>
+            </WrapPanel>
+
+            <Line Grid.Column="2" Stroke="Black" StrokeThickness="0.5"
+                  X1="0" Y1="5" X2="0" Y2="30" Opacity="0.3"></Line>
+
+            <WrapPanel Grid.Column="2" Margin="0 5 0 0">
+                <Image Source="Images/Pallete/MainPanelBotomIcons/rect.png"
+                       Height="20" Width="20"></Image>
+                <Label Name ="CanvasSize" Width="110" FontSize="11">123456789012345</Label>
+            </WrapPanel>
+
+            <Line Grid.Column="3" Stroke="Black" StrokeThickness="0.5"
+                  X1="0" Y1="5" X2="0" Y2="30" Opacity="0.3"></Line>
+        </Grid>
+
+
+        <Canvas Grid.Row = "2" 
+                Name = "DrawingCanvas" Background="White"
+                Height="400" Width="1000"
+                MouseDown="Field_MouseDown"
+                MouseMove="Field_MouseMove"
+                MouseUp="Paint_MouseUp" 
+                MouseLeave="PaintField_MouseLeave">
+
+        </Canvas>
+        <!---<Image  Grid.Row = "2" 
+                Name = "PaintField" 
+                   MouseDown="Field_MouseDown"
+                   MouseMove="Field_MouseMove"
+                   MouseUp="Paint_MouseUp" 
+                Height="400" Width="1000" ></Image>-->
+        <!--<Border x:Name="PaintFieldBg"
+                Grid.Row = "2" 
+                Background="White"  
+                Height="400" Width="1000" 
+                >
+
+
+        </Border> -->
+
+        <Line Grid.Row="1" Stroke="Black" StrokeThickness="1"
+                  X1="0" Y1="0" X2="1100" Y2="0" Opacity="0.3"/>
+
+        <Grid Grid.Row="1" Background="#f8f9fc" Name ="MainPanel">
+
             <Grid.ColumnDefinitions >
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width = "150"/>
@@ -60,7 +156,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="100" Height="*"/>
             </Grid.RowDefinitions>
-
 
             <Line Grid.Column="1"
                 X1="0" Y1="5" X2="0" Y2="95" 
@@ -79,39 +174,80 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                
-                
-                <Image Grid.Column="0" Grid.Row="0"
-                       Source="Images/Pallete/MainPanelIcons/Pen.png" 
-                       Height="25" Width="25" HorizontalAlignment="Center"
-                       VerticalAlignment="Center" >
-                </Image>
-                <Image Grid.Column="1" Grid.Row="0"
-                       Source="Images/Pallete/MainPanelIcons/bucket.png" 
-                       Height="25" Width="25" HorizontalAlignment="Center"
-                       VerticalAlignment="Center" >
-                </Image>
-                <Image Grid.Column="2" Grid.Row="0"
-                       Source="Images/Pallete/MainPanelIcons/text.png" 
-                       Height="25" Width="25" HorizontalAlignment="Center"
-                       VerticalAlignment="Center" >
-                </Image>
+                <Button Name ="Pen"
+                        Grid.Column="0" Grid.Row="0" 
+                        Style="{StaticResource NoStyleButton}"
+                        MouseLeave="Tools_MouseLeave"
+                        MouseEnter="Tools_MouseEnter"
+                        Click="Tool_MouseClick">
+                    <Image Source="Images/Pallete/MainPanelIcons/Pen.png" 
+                           Height="25" Width="25" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" >
+                    </Image>
+                </Button>
 
-                <Image Grid.Column="0" Grid.Row="1"
-                       Source="Images/Pallete/MainPanelIcons/erazer.png" 
-                       Height="25" Width="25" HorizontalAlignment="Center"
-                       VerticalAlignment="Center">
-                </Image>
-                <Image Grid.Column="1" Grid.Row="1"
-                       Source="Images/Pallete/MainPanelIcons/colorDrop.png" 
-                       Height="25" Width="25" HorizontalAlignment="Center"
-                       VerticalAlignment="Center">
-                </Image>
-                <Image Grid.Column="2" Grid.Row="1"
-                       Source="Images/Pallete/MainPanelIcons/glass.png" 
-                       Height="25" Width="25" HorizontalAlignment="Center"
-                       VerticalAlignment="Center">
-                </Image>
+                <Button Name ="Bucket"
+                        Grid.Column="1" Grid.Row="0" 
+                        Style="{StaticResource NoStyleButton}"
+                        MouseLeave="Tools_MouseLeave"
+                        MouseEnter="Tools_MouseEnter"
+                        Click="Tool_MouseClick">
+                    <Image Grid.Column="1" Grid.Row="0"
+                           Source="Images/Pallete/MainPanelIcons/bucket.png" 
+                           Height="25" Width="25" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" >
+                    </Image>
+                </Button>
+
+                <Button Name ="Text" 
+                        Grid.Column="2" Grid.Row="0"
+                        Style="{StaticResource NoStyleButton}"
+                        MouseLeave="Tools_MouseLeave"
+                        MouseEnter="Tools_MouseEnter"
+                        Click="Tool_MouseClick">
+                    <Image Source="Images/Pallete/MainPanelIcons/text.png" 
+                           Height="25" Width="25" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" >
+                    </Image>
+                </Button>
+
+                <Button Name = "Erazer" 
+                        Grid.Column="0" Grid.Row="1"
+                        Style="{StaticResource NoStyleButton}"
+                        MouseLeave="Tools_MouseLeave"
+                        MouseEnter="Tools_MouseEnter"
+                        Click="Tool_MouseClick">
+                    <Image Source="Images/Pallete/MainPanelIcons/erazer.png" 
+                           Height="25" Width="25" HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    </Image>
+                </Button>
+
+
+                <Button Name = "ColorDrop"
+                        Grid.Column="1" Grid.Row="1"
+                        Style="{StaticResource NoStyleButton}"
+                        MouseLeave="Tools_MouseLeave"
+                        MouseEnter="Tools_MouseEnter"
+                        Click="Tool_MouseClick">
+                    <Image Source="Images/Pallete/MainPanelIcons/colorDrop.png" 
+                           Height="25" Width="25" HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    </Image>
+                </Button>
+
+                <Button Name="Glass"
+                        Grid.Column="2" Grid.Row="1"
+                        Style="{StaticResource NoStyleButton}"
+                        MouseLeave="Tools_MouseLeave"
+                        MouseEnter="Tools_MouseEnter"
+                        Click="Tool_MouseClick">
+                    <Image Grid.Column="2" Grid.Row="1"
+                           Source="Images/Pallete/MainPanelIcons/glass.png" 
+                           Height="25" Width="25" HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    </Image>
+                </Button>
 
                 <Label Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Top" 
                        HorizontalAlignment="Center" FontSize="14" Foreground="#5e5f60">
@@ -122,6 +258,23 @@
             <Line Grid.Column="2"
                 X1="0" Y1="5" X2="0" Y2="95" 
                   Stroke="Black" StrokeThickness="0.5" Opacity="0.3" VerticalAlignment="Top" />
+
+            <Grid Grid.Column="2">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Button Grid.Row="0" 
+                        Background="Transparent">
+                    <Image Source="Images/Pallete/MainPanelCaligraphy/marker.png"></Image>
+                    
+                </Button>
+                
+                
+            </Grid>
+            
             <Line Grid.Column="3"
                 X1="0" Y1="5" X2="0" Y2="95" 
                   Stroke="Black" StrokeThickness="0.5" Opacity="0.3" VerticalAlignment="Top" />
@@ -254,14 +407,18 @@
                         Click="Pallete_Click">
                     Palette
                 </Button>
-                
+
                 <Label Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Top" 
                        HorizontalAlignment="Center" FontSize="14" Foreground="#5e5f60">
-                    Цвета 
+                    Цвета
                 </Label>
 
             </Grid>
         </Grid>
-    </StackPanel>
+
+
+
+
+    </Grid>
 
 </Window>
