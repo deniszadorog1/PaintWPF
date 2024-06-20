@@ -12,11 +12,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Ink;
+using System.Collections.ObjectModel;
 
 using PaintWPF.Models;
+using PaintWPF.Models.Enums;
+
+
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
+using System.IO;
 
 namespace PaintWPF
 {
@@ -28,6 +33,7 @@ namespace PaintWPF
         private MainPaint _main = new MainPaint();
 
         private List<Button> _tools = new List<Button>();
+        private List<MenuItem> _brushTypes = new List<MenuItem>();
         private Button _chosenTool = null;
 
         private bool isDrawing = false;
@@ -35,28 +41,54 @@ namespace PaintWPF
         private bool isFilling = false;
         private Point previousPoint;
         private int brushThickness = 2;
-        
+
         private bool IfShowBrushSize = false;
-        
+
         private UIElement valueDragElem = null;
         private Point valueOffset;
+
+
 
         private readonly DrawingAttributes paeAttributes = new DrawingAttributes()
         {
             Color = Colors.Black,
             Height = 2,
             Width = 2,
-            
+
         };
+
         public MainWindow()
         {
             InitializeComponent();
 
             InitToolButsInList();
-
+            InitBrushTypesInList();
 
             CanvasSize.Content = $"{DrawingCanvas.Width} x {DrawingCanvas.Height}";
         }
+        public void InitBrushTypesInList()
+        {
+            _brushTypes.Clear();
+            _brushTypes.Add(ZeroBrushType);
+            _brushTypes.Add(OneBrushType);
+            _brushTypes.Add(TwoBrushType);
+            _brushTypes.Add(ThreeBrushType);
+            _brushTypes.Add(FourBrushType);
+            _brushTypes.Add(FiveBrushType);
+            _brushTypes.Add(SixBrushType);
+            _brushTypes.Add(SevenBrushType);
+            _brushTypes.Add(EightBrushType);
+
+            InitTagsForBrushesTypes();
+        }
+        public void InitTagsForBrushesTypes()
+        {
+            for (int i = 0; i < _brushTypes.Count; i++)
+            {
+                _brushTypes[i].Tag = ((BrushType)i).ToString();
+            }
+        }
+
         public void InitToolButsInList()
         {
             _tools.Clear();
@@ -66,11 +98,6 @@ namespace PaintWPF
             _tools.Add(Erazer);
             _tools.Add(ColorDrop);
             _tools.Add(Glass);
-
-        }
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
         private void PaintColor_Click(object sender, EventArgs e)
         {
@@ -272,13 +299,16 @@ namespace PaintWPF
                     StrokeEndLineCap = PenLineCap.Round,
                     StrokeLineJoin = PenLineJoin.Round
                 };
+
                 DrawingCanvas.Children.Add(line);
+
                 prevPoint = currentPoint;
             }
         }
         private void Paint_MouseUp(object sender, MouseEventArgs e)
         {
             isDrawing = false;
+            SaveCanvasState();
         }
 
         private WriteableBitmap bitmap = new WriteableBitmap(1000, 400, 96, 96, PixelFormats.Bgra32, null);
@@ -413,7 +443,123 @@ namespace PaintWPF
             {
                 IfMadeThickBigger = false;
             }
+        }
+
+        private void BrushType_Click(object sender, EventArgs e)
+        {
+            if (sender is MenuItem item)
+            {
+                BrushType? type = GetBrushTypeByType(item.Tag.ToString());
+
+                if (!(type is null))
+                {
+                    _main.TempBrushType = (BrushType)type;
+                    string picPath = GetSourseForNewBrushType(_main.TempBrushType);
+                    string asd = GetPathToNewBrushTypePic();
+
+                    BrushTypePic.Source = BitmapFrame.Create(new Uri(asd));
+                }
+            }
+        }
+        public string GetPathToNewBrushTypePic()
+        {
+            DirectoryInfo baseDirectoryInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            string imageDirectory = baseDirectoryInfo.Parent.Parent.FullName;
+            string imagePath = System.IO.Path.Combine(imageDirectory, "Images");
+            string brushDir = System.IO.Path.Combine(imagePath, "BrushType");
+            return System.IO.Path.Combine(brushDir, $"{_main.TempBrushType.ToString()}.png");
+        }
+
+        public string GetSourseForNewBrushType(BrushType type)
+        {
+            return type == BrushType.UsualBrush ? "Images/BrushType/UsualBrush.png" :
+                   type == BrushType.CalligraphyBrush ? "Images/BrushType/CalligraphyBrush.png" :
+                   type == BrushType.FountainPen ? "Images/BrushType/FountainPen.png" :
+                   type == BrushType.Spray ? "Images/BrushType/Spray.png" :
+                   type == BrushType.OilPaintBrush ? "Images/BrushType/OilPaintBrush.png" :
+                   type == BrushType.ColorPencil ? "Images/BrushType/ColorPencil.png" :
+                   type == BrushType.Marker ? "Images/BrushType/Marker.png" :
+                   type == BrushType.TexturePencil ? "Images/BrushType/TexturePencil.png" :
+                    "Images/BrushType/WatercolorBrush.png";
+        }
+        public BrushType? GetBrushTypeByType(string brushName)
+        {
+            for (int i = 0; i <= (int)BrushType.WatercolorBrush; i++)
+            {
+                if (brushName == ((BrushType)i).ToString())
+                {
+                    return ((BrushType)i);
+                }
+            }
+            return null;
+        }
+        private void PreviousCanvas_Click(object sender, EventArgs e)
+        {
+            if (currentIndex > 0)
+            {
+                // Очищаем Canvas
+                DrawingCanvas.Children.Clear();
+
+                currentIndex--;
+
+                BitmapSource bitmap = canvasHistory[currentIndex];
+
+                Image image = new Image();
+                image.Source = bitmap;
+
+                Canvas.SetLeft(image, 0); 
+                Canvas.SetTop(image, 0); 
+                DrawingCanvas.Children.Add(image);
+            }
+            else if (currentIndex == 0)
+            {
+                currentIndex--;
+                DrawingCanvas.Children.Clear();
+
+            }
+        }
+        private void NextCanvas_Click(object sender, EventArgs e)
+        {
+            if (currentIndex < canvasHistory.Count - 1)
+            {
+                DrawingCanvas.Children.Clear();
+
+                currentIndex++;
+                BitmapSource bitmap = canvasHistory[currentIndex];
+                Image image = new Image();
+                image.Source = bitmap;
+                DrawingCanvas.Children.Add(image);
+            }
 
         }
+        private List<BitmapSource> canvasHistory = new List<BitmapSource>();
+        private int currentIndex = -1; // текущий индекс истории
+
+        public void SaveCanvasState()
+        {
+
+            Size size = new Size(DrawingCanvas.ActualWidth, DrawingCanvas.ActualHeight);
+
+            // Замеры и размещение канвы
+            DrawingCanvas.Measure(size);
+            DrawingCanvas.Arrange(new Rect(size));
+
+            // Создание RenderTargetBitmap из текущего состояния Canvas
+            RenderTargetBitmap rtb = new RenderTargetBitmap(
+                (int)size.Width,
+                (int)size.Height,
+                96d, 96d, PixelFormats.Pbgra32);
+            rtb.Render(DrawingCanvas);
+            BitmapSource bitmap = BitmapFrame.Create(rtb);
+
+            if (currentIndex < canvasHistory.Count - 1)
+            {
+                canvasHistory.RemoveRange(currentIndex + 1, canvasHistory.Count - currentIndex - 1);
+            }
+            canvasHistory.Add(bitmap);
+
+            currentIndex++;
+        }
     }
+
 }

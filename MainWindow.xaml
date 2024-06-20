@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PaintWPF"
-        xmlns:xctk ="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:xctk ="http://schemas.xceed.com/wpf/xaml/toolkit"  
         mc:Ignorable="d"
         Title="MainWindow" Height="650" Width="1100"
-        Background="#eef4f9">
+    Background="#eef4f9">
 
 
     <Window.Resources>
@@ -41,7 +41,6 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
-
         <Style x:Key="NoStyleButton" TargetType="Button">
             <Setter Property="Background" Value="#f8f9fc"/>
             <Setter Property="BorderBrush" Value="#f8f9fc"/>
@@ -89,11 +88,143 @@
             <Setter Property="Padding" Value="2"/>
         </Style>
 
+        <Style x:Key="DropDownMenu"
+               TargetType="MenuItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Border x:Name="border"
+                                Background="#f8f9fc"
+                                BorderThickness="0"
+                                Height="30"
+                                Width="145">
+                            <Grid>
+                                <!--// Icon //-->
+                                <ContentPresenter ContentSource="Icon"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  Height="25"
+                                                  Width="25"
+                                                  Margin="5,0,0,0" />
+                                <!--// Dropdown Icon //-->
+                                <Image Source="Assets/img_services_dropdown.png"
+                                       Stretch="None"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0" />
+
+                                <!--// Popup //-->
+                                <Popup x:Name="PART_Popup"
+                                       AllowsTransparency="True"
+                                       IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Placement="Bottom"
+                                       HorizontalOffset="-150"
+                                       PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+
+                                    <Border x:Name="SubMenuBorder"
+                                            Background="#f8f9fc"
+                                            BorderBrush="#f8f9fc">
+
+                                        <ScrollViewer x:Name="SubMenuScrollViewer"
+                                                      Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,TypeInTargetAssembly={x:Type FrameworkElement}}}">
+
+                                            <Grid RenderOptions.ClearTypeHint="Enabled">
+
+                                                <Canvas HorizontalAlignment="Left"
+                                                        VerticalAlignment="Top" />
+
+                                                <ItemsPresenter x:Name="ItemsPresenter" />
+
+                                            </Grid>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsSuspendingPopupAnimation"
+                                     Value="True">
+                                <Setter Property="PopupAnimation"
+                                        TargetName="PART_Popup"
+                                        Value="None" />
+                            </Trigger>
+                            <Trigger Property="IsHighlighted"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        TargetName="border"
+                                        Value="#f8f9fc" />
+                                <Setter Property="BorderBrush"
+                                        TargetName="border"
+                                        Value="#f8f9fc" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SubMenuItem"
+               TargetType="MenuItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Border x:Name="border"
+                                Background="#f9f9f9"
+                                BorderThickness="1">
+                            <Grid>
+                                <!--// Icon //-->
+                                <ContentPresenter ContentSource="Icon"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  Height="18"
+                                                  Width="18"
+                                                  Margin="8,0,0,0" />
+                                <!--// Text //-->
+                                <ContentPresenter ContentSource="Header"
+                                                  TextBlock.Foreground="Black"
+                                                  TextBlock.FontFamily="Times new Roman"
+                                                  TextBlock.FontSize="14"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  Margin="35,0,0,0" />
+
+                                <Grid x:Name="Highlighter"
+                                      Height="35"
+                                      Width="2"
+                                      Background="Blue"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      Visibility="Collapsed"/>
+
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        TargetName="border"
+                                        Value="#e1e1e1" />
+                                <Setter Property="BorderBrush"
+                                        TargetName="border"
+                                        Value="#3E3C3D" />
+                                <Setter Property="Visibility"
+                                        TargetName="Highlighter"
+                                        Value="Visible" />
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
     </Window.Resources>
 
-    <Grid>
 
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="100"/>
@@ -101,7 +232,7 @@
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="#f0f3f9">
+        <Grid Grid.Row="0" Background="#f0f3f9" Panel.ZIndex="1">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
@@ -134,12 +265,14 @@
                   Stroke="Black" StrokeThickness="1" Opacity="0.3"/>
 
             <Button Grid.Column="3" Style="{StaticResource NoStyleButton}" 
-                    Background="#eef4f9" BorderThickness="0">
+                    Background="#eef4f9" BorderThickness="0"
+                    Click="PreviousCanvas_Click">
                 <Image Source="Images/Pallete/MainPanelTopPart/turnLeft.png"/>
             </Button>
 
             <Button Grid.Column="4" Style="{StaticResource NoStyleButton}" 
-                    Background="#eef4f9" BorderThickness="0">
+                    Background="#eef4f9" BorderThickness="0"
+                    Click="NextCanvas_Click">
                 <Image Source="Images/Pallete/MainPanelTopPart/turnRight.png"/>
             </Button>
 
@@ -238,15 +371,32 @@
             </Grid>
         </Border>
 
-        <Canvas Grid.Row = "2" 
+        <Grid Grid.Row = "2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Name="PaintFieldColumn" Width="1000"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Name="PaintFieldRow" Height="400"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Column="1" Grid.Row="1" >
+                <Canvas 
                 Name = "DrawingCanvas" Background="White"
                 Height="400" Width="1000"
                 MouseDown="Field_MouseDown"
                 MouseMove="Field_MouseMove"
                 MouseUp="Paint_MouseUp" 
                 MouseLeave="PaintField_MouseLeave" VerticalAlignment="Center">
-            <Label x:Name="AAA" Content="Label" Canvas.Top="35"/>
-        </Canvas>
+                    <Label x:Name="AAA" Content="Label" Canvas.Top="35"/>
+                </Canvas>
+            </Grid>
+        </Grid>
 
         <Line Grid.Row="1" Stroke="Black" StrokeThickness="1"
                   X1="0" Y1="0" X2="1100" Y2="0" Opacity="0.3"/>
@@ -277,11 +427,87 @@
                 <Image Source="Images/Pallete/MainPanelBotomIcons/dottedSquare.png"
                        VerticalAlignment="Bottom"
                        Height="40" Width="40"/>
-                <Button Grid.Row="1" Width="40"
-                        Style="{StaticResource NoStyleButton}"
-                        Background="Transparent">
-                    <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"/>
-                </Button>
+
+                <Menu Grid.Row="1" Background="Transparent" HorizontalAlignment="Center">
+                    <MenuItem Width="40" Height="25"
+                        Style="{StaticResource DropDownMenu}">
+                        <MenuItem.Icon>
+                            <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
+                               Height="20" Width="20" Stretch="Uniform"/>
+                        </MenuItem.Icon>
+
+                        <MenuItem Name = "ZeroSelection"  
+                                  Header="Прямоугольник"
+                          Height="30"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"   
+                          Click="BrushType_Click">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Selection/Select.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "OneSelection"
+                            Header="Произвольная фоорма"
+                          Height="30"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}" 
+                          Click="BrushType_Click">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Selection/SelectForm.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "TwoSelection"
+                                  Header="Выбрать всё"
+                          Height="30"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Selection/ChooseAll.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "ThreeSelection"
+                                  Header="Обратить выдиление"
+                          Height="30"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Selection/RemoveSelection.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "FourSelection"
+                                  Header="Прозрачное выдиление"
+                          Height="30"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Selection/Tick.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "FiveSelection"
+                                  Header="Удаление"
+                          Height="30"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Selection/Remove.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                    </MenuItem>
+                </Menu>
+
+
+
+
 
                 <Label Grid.Row="2" 
                        VerticalAlignment="Center" 
@@ -397,14 +623,94 @@
                 <Button Grid.Row="0" 
                         Style="{StaticResource NoStyleButton}"
                         Background="Transparent" Height="40" Width="40">
-                    <Image Source="Images/Pallete/MainPanelCaligraphy/marker.png"/>
+                    <Image Name="BrushTypePic" Source="Images/BrushType/UsualBrush.png"/>
                 </Button>
 
-                <Button Grid.Row="1" 
-                        Style="{StaticResource NoStyleButton}"
-                        Background="Transparent" Width="40">
-                    <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"/>
-                </Button>
+                <Menu Grid.Row="1" Background="Transparent" HorizontalAlignment="Center">
+                    <MenuItem Width="40" Height="25"
+                        Style="{StaticResource DropDownMenu}">
+                        <MenuItem.Icon>
+                            <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
+                               Height="20" Width="20" Stretch="Uniform"/>
+                        </MenuItem.Icon>
+
+                        <Border BorderThickness="0.5" Opacity="0.5" BorderBrush="Black"/>
+
+                        <MenuItem Name = "ZeroBrushType"  
+                                  Header="Кисть"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"   
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "OneBrushType"
+                            Header="Калиграфическая кисть"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}" 
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "TwoBrushType"
+                                  Header="Перьевая ручка"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "ThreeBrushType"
+                                  Header="Распылитель"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "FourBrushType"
+                                  Header="Кисть для масляных красок"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "FiveBrushType"
+                                  Header="Цветной карандаш"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "SixBrushType"
+                                  Header="Маркер"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}" 
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "SevenBrushType"
+                                  Header="Текстурный карандаш"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                        </MenuItem>
+
+                        <MenuItem Name = "EightBrushType"
+                                  Header="Кить для акварели"
+                          Height="40"
+                          Width="400"
+                          Style="{StaticResource SubMenuItem}"  
+                          Click="BrushType_Click">
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+
+
 
                 <Label Grid.Row="2" 
                        HorizontalAlignment="Center"
@@ -586,10 +892,6 @@
                   Stroke="Black" StrokeThickness="0.5" Opacity="0.3" VerticalAlignment="Top" />
 
         </Grid>
-
-
-
-
     </Grid>
 
 </Window>

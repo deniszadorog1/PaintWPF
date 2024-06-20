@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+
+using PaintWPF.Models.Enums;
 
 namespace PaintWPF.Models
 {
@@ -13,6 +16,9 @@ namespace PaintWPF.Models
         public PalleteModel PalleteMod { get; set; }
         public ColorParams FirstColor { get; set; }
         public ColorParams SecondColor { get; set; }
+        public BrushType TempBrushType { get; set; }
+
+        public List<Canvas> CanvasStates = new List<Canvas>();
 
         public MainPaint()
         {
@@ -20,6 +26,9 @@ namespace PaintWPF.Models
             PalleteMod = new PalleteModel();
             FirstColor = new ColorParams(System.Windows.Media.Color.FromRgb(0,0,0), "#000000", (0, 0, 0));
             SecondColor = new ColorParams(System.Windows.Media.Color.FromRgb(255, 255, 255), "#FFFFFF", (0, 0, 100));
+            CanvasStates = new List<Canvas>();
+            TempBrushType = BrushType.UsualBrush; 
         }
+        
     }
 }

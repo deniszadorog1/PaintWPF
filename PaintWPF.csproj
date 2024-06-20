@@ -74,9 +74,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="UserControls\CustomDropDown.xaml.cs">
-      <DependentUpon>CustomDropDown.xaml</DependentUpon>
-    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -93,13 +90,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\CustomDropDown.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ColorParams.cs" />
+    <Compile Include="Models\Enums\BrushType.cs" />
     <Compile Include="Models\MainPaint.cs" />
     <Compile Include="Models\PalleteModel.cs" />
     <Compile Include="Models\Tools\HSVConvertor.cs" />
@@ -146,7 +140,7 @@
     <Resource Include="Images\Pallete\MainPanelIcons\text.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Pallete\MainPanelCaligraphy\marker.png" />
+    <Resource Include="Images\BrushType\UsualBrush.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Pallete\MainPanelBotomIcons\cursor.png" />
@@ -168,6 +162,24 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Pallete\Other\lines.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Selection\ChooseAll.png" />
+    <Resource Include="Images\Selection\Remove.png" />
+    <Resource Include="Images\Selection\RemoveSelection.png" />
+    <Resource Include="Images\Selection\Select.png" />
+    <Resource Include="Images\Selection\SelectForm.png" />
+    <Resource Include="Images\Selection\Tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BrushType\CalligraphyBrush.png" />
+    <Resource Include="Images\BrushType\ColorPencil.png" />
+    <Resource Include="Images\BrushType\FountainPen.png" />
+    <Resource Include="Images\BrushType\Marker.png" />
+    <Resource Include="Images\BrushType\OilPaintBrush.png" />
+    <Resource Include="Images\BrushType\Spray.png" />
+    <Resource Include="Images\BrushType\TexturePencil.png" />
+    <Resource Include="Images\BrushType\WatercolorBrush.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

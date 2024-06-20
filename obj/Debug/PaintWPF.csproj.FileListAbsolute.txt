@@ -37,5 +37,3 @@ B:\GitHub\PaintWPF\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
 B:\GitHub\PaintWPF\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
 B:\GitHub\PaintWPF\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
 B:\GitHub\PaintWPF\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
-B:\GitHub\PaintWPF\obj\Debug\UserControls\CustomDropDown.g.cs
-B:\GitHub\PaintWPF\obj\Debug\UserControls\CustomDropDown.baml
