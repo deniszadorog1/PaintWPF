@@ -94,7 +94,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type MenuItem}">
                         <Border x:Name="border"
-                                Background="#f8f9fc"
+                                Background="Transparent"
                                 BorderThickness="0"
                                 Height="30"
                                 Width="145">
@@ -106,6 +106,14 @@
                                                   Height="25"
                                                   Width="25"
                                                   Margin="5,0,0,0" />
+                                <!--// Text //-->
+                                <ContentPresenter ContentSource="Header"
+                                                  TextBlock.Foreground="Black"
+                                                  TextBlock.FontFamily="Rubik Medium"
+                                                  TextBlock.FontSize="13"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  Margin="27,0,0,5" />
                                 <!--// Dropdown Icon //-->
                                 <Image Source="Assets/img_services_dropdown.png"
                                        Stretch="None"
@@ -154,10 +162,10 @@
                                      Value="True">
                                 <Setter Property="Background"
                                         TargetName="border"
-                                        Value="#f8f9fc" />
+                                        Value="Transparent" />
                                 <Setter Property="BorderBrush"
                                         TargetName="border"
-                                        Value="#f8f9fc" />
+                                        Value="Transparent" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -244,21 +252,154 @@
 
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0"
-                    Style="{StaticResource NoStyleButton}" 
-                    Background="#eef4f9" BorderThickness="0">
-                Файлы</Button>
+            <Grid Grid.Row="0" 
+                  MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelTop_MouseEnter">
+                <Menu Background="Transparent" HorizontalAlignment="Center">
+
+                    <MenuItem  Header="Файлы" 
+                        Style="{StaticResource DropDownMenu}" >
+
+
+                        <MenuItem Name = "zeroFile" Header="Создать"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/Create.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "oneFile" Header="Открыть"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/Open.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "twoFile" Header="Импортировать на холст"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/Import.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "threeFile" Header="Последние"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/Last.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "fourFile" Header="Сохранить"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Pallete/MainPanelTopPart/save.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "fiveFile" Header="Сохранить как"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/SaveAs.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "sixFile" Header="Печать"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/Print.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "sevenFile" Header="Отправить"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/Send.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "eightFile" Header="Сделать фоном рабочего стола"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/MakeBgOfWorkingTable.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "nineFile" Header="Свойства изображения"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/ImageSettings.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "tenFile" Header="Выйти"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/File/Exit.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                    </MenuItem>
+                </Menu>
+            </Grid>
+
             <Line Grid.Column="1" X1 ="0" X2="0" Y1="2" Y2="16" 
                   Stroke="Black" StrokeThickness="1" Opacity="0.3"/>
 
-            <Button Grid.Column="1"
-                    Style="{StaticResource NoStyleButton}" 
-                    Background="#eef4f9" BorderThickness="0">Изменить</Button>
-            <Line Grid.Column="2" X1 ="0" X2="0" Y1="2" Y2="16" 
+            <Grid Grid.Column="1" 
+                  MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelTop_MouseEnter">
+                <Menu Background="Transparent" HorizontalAlignment="Center">
+
+                    <MenuItem  Header="Изменить" 
+                        Style="{StaticResource DropDownMenu}" Margin="0 0 0 0">
+
+                        <MenuItem Name = "zeroChange" Header="Вырезать"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Change/Scissors.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "oneChange" Header="Копировать"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Change/Copy.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Name = "twoChange" Header="Вставить"
+                          Height="30" Width="400"
+                          Style="{StaticResource SubMenuItem}">
+                            <MenuItem.Icon>
+                                <Image Source="Images/Change/Paste.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+            </Grid>
+
+            <Line Grid.Column="2" X1 ="0" X2="0" Y1="2" Y2="16"                  
                   Stroke="Black" StrokeThickness="1" Opacity="0.3"/>
 
             <Button Grid.Column="2" Style="{StaticResource NoStyleButton}" 
-                    Background="#eef4f9" BorderThickness="0">
+                    Background="#eef4f9" BorderThickness="0"
+                      MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelTop_MouseEnter"
+                    Click="PreviousCanvas_Click"
+                    Name="Save">
                 <Image Source="Images/Pallete/MainPanelTopPart/save.png"/>
             </Button>
             <Line Grid.Column="3" X1 ="0" X2="0" Y1="2" Y2="16" 
@@ -266,13 +407,19 @@
 
             <Button Grid.Column="3" Style="{StaticResource NoStyleButton}" 
                     Background="#eef4f9" BorderThickness="0"
-                    Click="PreviousCanvas_Click">
+                    MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelTop_MouseEnter"
+                    Click="PreviousCanvas_Click"
+                    Name="TurnLeft">
                 <Image Source="Images/Pallete/MainPanelTopPart/turnLeft.png"/>
             </Button>
 
             <Button Grid.Column="4" Style="{StaticResource NoStyleButton}" 
                     Background="#eef4f9" BorderThickness="0"
-                    Click="NextCanvas_Click">
+                    MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelTop_MouseEnter"
+                    Click="NextCanvas_Click"
+                    Name = "TurnRight" Height="20" VerticalAlignment="Top">
                 <Image Source="Images/Pallete/MainPanelTopPart/turnRight.png"/>
             </Button>
 
@@ -424,90 +571,95 @@
                 </Grid.RowDefinitions>
 
 
-                <Image Source="Images/Pallete/MainPanelBotomIcons/dottedSquare.png"
-                       VerticalAlignment="Bottom"
-                       Height="40" Width="40"/>
+                <Button Grid.Row="0" 
+                        Style="{StaticResource NoStyleButton}"
+                        Background="Transparent" Height="40" Width="40"
+                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseEnter="MainPanelBoxes_MouseEnter"
+                        VerticalAlignment="Bottom" Margin="0 0 5 0">
+                    <Image Source="Images/Pallete/MainPanelBotomIcons/dottedSquare.png"/>
+                </Button>
 
-                <Menu Grid.Row="1" Background="Transparent" HorizontalAlignment="Center">
-                    <MenuItem Width="40" Height="25"
+                <Grid Grid.Row="1" 
+                  MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelBoxes_MouseEnter">
+                    <Menu Background="Transparent" HorizontalAlignment="Center">
+                        <MenuItem Width="40" Height="25"
                         Style="{StaticResource DropDownMenu}">
-                        <MenuItem.Icon>
-                            <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
+                            <MenuItem.Icon>
+                                <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
                                Height="20" Width="20" Stretch="Uniform"/>
-                        </MenuItem.Icon>
+                            </MenuItem.Icon>
 
-                        <MenuItem Name = "ZeroSelection"  
+                            <MenuItem Name = "ZeroSelection"  
                                   Header="Прямоугольник"
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"   
                           Click="BrushType_Click">
-                            <MenuItem.Icon>
-                                <Image Source="Images/Selection/Select.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                                <MenuItem.Icon>
+                                    <Image Source="Images/Selection/Select.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
 
-                        <MenuItem Name = "OneSelection"
+                            <MenuItem Name = "OneSelection"
                             Header="Произвольная фоорма"
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}" 
                           Click="BrushType_Click">
-                            <MenuItem.Icon>
-                                <Image Source="Images/Selection/SelectForm.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                                <MenuItem.Icon>
+                                    <Image Source="Images/Selection/SelectForm.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
 
-                        <MenuItem Name = "TwoSelection"
+                            <MenuItem Name = "TwoSelection"
                                   Header="Выбрать всё"
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                            <MenuItem.Icon>
-                                <Image Source="Images/Selection/ChooseAll.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                                <MenuItem.Icon>
+                                    <Image Source="Images/Selection/ChooseAll.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
 
-                        <MenuItem Name = "ThreeSelection"
+                            <MenuItem Name = "ThreeSelection"
                                   Header="Обратить выдиление"
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                            <MenuItem.Icon>
-                                <Image Source="Images/Selection/RemoveSelection.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                                <MenuItem.Icon>
+                                    <Image Source="Images/Selection/RemoveSelection.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
 
-                        <MenuItem Name = "FourSelection"
+                            <MenuItem Name = "FourSelection"
                                   Header="Прозрачное выдиление"
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                            <MenuItem.Icon>
-                                <Image Source="Images/Selection/Tick.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                                <MenuItem.Icon>
+                                    <Image Source="Images/Selection/Tick.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
 
-                        <MenuItem Name = "FiveSelection"
+                            <MenuItem Name = "FiveSelection"
                                   Header="Удаление"
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                            <MenuItem.Icon>
-                                <Image Source="Images/Selection/Remove.png"/>
-                            </MenuItem.Icon>
+                                <MenuItem.Icon>
+                                    <Image Source="Images/Selection/Remove.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+
                         </MenuItem>
-
-                    </MenuItem>
-                </Menu>
-
-
-
-
+                    </Menu>
+                </Grid>
 
                 <Label Grid.Row="2" 
                        VerticalAlignment="Center" 
@@ -622,94 +774,99 @@
 
                 <Button Grid.Row="0" 
                         Style="{StaticResource NoStyleButton}"
-                        Background="Transparent" Height="40" Width="40">
+                        Background="Transparent" Height="40" Width="40"
+                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseEnter="MainPanelBoxes_MouseEnter">
                     <Image Name="BrushTypePic" Source="Images/BrushType/UsualBrush.png"/>
                 </Button>
 
-                <Menu Grid.Row="1" Background="Transparent" HorizontalAlignment="Center">
-                    <MenuItem Width="40" Height="25"
+                <Grid Grid.Row="1" 
+                  MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelBoxes_MouseEnter">
+                    <Menu  Background="Transparent" HorizontalAlignment="Center">
+                        <MenuItem Width="40" Height="25"
                         Style="{StaticResource DropDownMenu}">
-                        <MenuItem.Icon>
-                            <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
+                            <MenuItem.Icon>
+                                <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
                                Height="20" Width="20" Stretch="Uniform"/>
-                        </MenuItem.Icon>
+                            </MenuItem.Icon>
 
-                        <Border BorderThickness="0.5" Opacity="0.5" BorderBrush="Black"/>
+                            <Border BorderThickness="0.5" Opacity="0.5" BorderBrush="Black"/>
 
-                        <MenuItem Name = "ZeroBrushType"  
+                            <MenuItem Name = "ZeroBrushType"  
                                   Header="Кисть"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"   
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "OneBrushType"
+                            <MenuItem Name = "OneBrushType"
                             Header="Калиграфическая кисть"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}" 
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "TwoBrushType"
+                            <MenuItem Name = "TwoBrushType"
                                   Header="Перьевая ручка"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "ThreeBrushType"
+                            <MenuItem Name = "ThreeBrushType"
                                   Header="Распылитель"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "FourBrushType"
+                            <MenuItem Name = "FourBrushType"
                                   Header="Кисть для масляных красок"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "FiveBrushType"
+                            <MenuItem Name = "FiveBrushType"
                                   Header="Цветной карандаш"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "SixBrushType"
+                            <MenuItem Name = "SixBrushType"
                                   Header="Маркер"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}" 
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "SevenBrushType"
+                            <MenuItem Name = "SevenBrushType"
                                   Header="Текстурный карандаш"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
-                        </MenuItem>
+                            </MenuItem>
 
-                        <MenuItem Name = "EightBrushType"
+                            <MenuItem Name = "EightBrushType"
                                   Header="Кить для акварели"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
+                            </MenuItem>
                         </MenuItem>
-                    </MenuItem>
-                </Menu>
-
+                    </Menu>
+                </Grid>
 
 
                 <Label Grid.Row="2" 

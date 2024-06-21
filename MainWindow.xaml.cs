@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Ink;
 using System.Collections.ObjectModel;
-
+using System.Linq;
 using PaintWPF.Models;
 using PaintWPF.Models.Enums;
 
@@ -22,6 +22,7 @@ using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
 using System.IO;
+using System.Windows.Threading;
 
 namespace PaintWPF
 {
@@ -47,7 +48,13 @@ namespace PaintWPF
         private UIElement valueDragElem = null;
         private Point valueOffset;
 
+        private int sprayDensity = 30;
+        private Random random = new Random();
+        private DispatcherTimer sprayTimer;
+        private Point currentPoint;
 
+        private List<Polyline> polylines = new List<Polyline>();
+        private List<Polygon> polygons = new List<Polygon>();
 
         private readonly DrawingAttributes paeAttributes = new DrawingAttributes()
         {
@@ -64,6 +71,7 @@ namespace PaintWPF
             InitToolButsInList();
             InitBrushTypesInList();
 
+            InitializeSprayTimer();
             CanvasSize.Content = $"{DrawingCanvas.Width} x {DrawingCanvas.Height}";
         }
         public void InitBrushTypesInList()
@@ -182,33 +190,56 @@ namespace PaintWPF
             if (sender is Button but)
             {
                 if (!(_chosenTool is null) && but.Name == _chosenTool.Name) return;
-                but.Background = brush;
 
+                but.Background = brush;
                 but.BorderBrush = borderBrush;
                 return;
             }
             if (sender is Border bord)
             {
                 bord.Background = brush;
-
                 bord.BorderBrush = borderBrush;
+                return;
             }
-
+            if(sender is Grid grid)
+            {
+                grid.Background = brush;
+            }
+        }
+        private void MainPanelTop_MouseEnter(object sender, EventArgs e)
+        {
+            SolidColorBrush brush = new SolidColorBrush(Color.FromRgb(230, 235, 240));
+            if (sender is Button but)
+            {    
+                but.Background = brush;
+                return;
+            }
+            if (sender is Grid grid)
+            {
+                grid.Background = brush;
+                return;
+            }
         }
         private void MainPabelBoxes_MouseLeave(object sender, MouseEventArgs e)
         {
-            SolidColorBrush whiteBrush = new SolidColorBrush(Color.FromRgb(248, 249, 252));
+            SolidColorBrush transparentBrush = new SolidColorBrush(Color.FromArgb(0, 248, 249, 252));
             if (sender is Button but)
             {
                 if (!(_chosenTool is null) && but.Name == _chosenTool.Name) return;
-                but.Background = whiteBrush;
-                but.BorderBrush = whiteBrush;
+                but.Background = transparentBrush;
+                but.BorderBrush = transparentBrush;
+                return;
             }
             if (sender is Border bord)
             {
-                bord.Background = whiteBrush;
-
-                bord.BorderBrush = whiteBrush;
+                bord.Background = transparentBrush;
+                bord.BorderBrush = transparentBrush;
+                return;
+            }
+            if(sender is Grid grid)
+            {
+                grid.Background = transparentBrush;
+                return;
             }
         }
         private void Tool_MouseClick(object sender, EventArgs e)
@@ -259,7 +290,7 @@ namespace PaintWPF
         }
         private void Field_MouseDown(object sender, MouseEventArgs e)
         {
-            prevPoint = e.GetPosition(DrawingCanvas);
+            previousPoint = e.GetPosition(DrawingCanvas);
 
             if (isFilling)
             {
@@ -272,9 +303,12 @@ namespace PaintWPF
             {
                 isDrawing = true;
                 previousPoint = e.GetPosition(DrawingCanvas);
+                SetPaintingMarker(e);
             }
         }
-        private Point prevPoint;
+
+        private const double CalligraphyBrushAngle = 135 * Math.PI / 180;
+        private const double FountainBrushAngle = 45 * Math.PI / 180;
 
         private void Field_MouseMove(object sender, MouseEventArgs e)
         {
@@ -285,29 +319,290 @@ namespace PaintWPF
 
             if (isDrawing)
             {
-                Point currentPoint = e.GetPosition(DrawingCanvas);
-                Line line = new Line
+                currentPoint = e.GetPosition(DrawingCanvas);
+                if (_main.TempBrushType == BrushType.UsualBrush)
                 {
-                    X1 = prevPoint.X,
-                    Y1 = prevPoint.Y,
-                    X2 = currentPoint.X,
-                    Y2 = currentPoint.Y,
-
-                    Stroke = isEraser ? Brushes.White : Brushes.Black,
-                    StrokeThickness = brushThickness,
-                    StrokeStartLineCap = PenLineCap.Round,
-                    StrokeEndLineCap = PenLineCap.Round,
-                    StrokeLineJoin = PenLineJoin.Round
-                };
-
-                DrawingCanvas.Children.Add(line);
-
-                prevPoint = currentPoint;
+                    GetLineToPaint(currentPoint);
+                }
+                else if (_main.TempBrushType == BrushType.CalligraphyBrush)
+                {
+                    CalligraphyBrushPaint(CalligraphyBrushAngle);
+                }
+                else if (_main.TempBrushType == BrushType.FountainPen)
+                {
+                    CalligraphyBrushPaint(FountainBrushAngle);
+                }
+                else if (_main.TempBrushType == BrushType.Spray)
+                {
+                    sprayTimer.Start();
+                    SprayPaint(currentPoint);
+                }
+                else if (_main.TempBrushType == BrushType.OilPaintBrush)
+                {
+                    OilBrushPaint();
+                }
+                else if (_main.TempBrushType == BrushType.ColorPencil)
+                {
+                    ColorPencilBrushPaint(); // not working
+                }
+                else if (_main.TempBrushType == BrushType.Marker)
+                {
+                    MarkerBrushPaint(e);
+                }
+                else if (_main.TempBrushType == BrushType.TexturePencil)
+                {
+                    TextureBrushPaint(e);
+                }
+                else if (_main.TempBrushType == BrushType.WatercolorBrush)
+                {
+                    //not working 
+                }
+                previousPoint = currentPoint;
             }
         }
+        private void TextureBrushPaint(MouseEventArgs e)
+        {
+            var point = e.GetPosition(DrawingCanvas);
+            Random random = new Random();
+            int pointsCount = 10;
+
+            for (int i = 0; i < pointsCount; i++)
+            {
+                double angle = random.NextDouble() * Math.PI * 2;
+                double radius = random.NextDouble() * (brushThickness / 2);
+                double offsetX = Math.Cos(angle) * radius;
+                double offsetY = Math.Sin(angle) * radius;
+
+                Ellipse ellipse = new Ellipse
+                {
+                    Opacity = 0.4,
+                    Width = random.NextDouble() * (brushThickness),
+                    Height = random.NextDouble() * (brushThickness),
+                    Fill = new SolidColorBrush(Color.FromArgb((byte)(random.Next(50, 255)),
+                                _main.FirstColor.TColor.R, _main.FirstColor.TColor.G, _main.FirstColor.TColor.B))
+                };
+
+                double x = point.X + offsetX;
+                double y = point.Y + offsetY;
+                Canvas.SetLeft(ellipse, x);
+                Canvas.SetTop(ellipse, y);
+
+                DrawingCanvas.Children.Add(ellipse);
+                //drawnElements.Add(ellipse); // Сохранение элемента для возможности отмены
+            }
+            if (polylines.Last().Points.Last() ==
+                            e.GetPosition(DrawingCanvas))
+                return;
+
+
+            if (polylines.Last().Points.Count > 0 &&
+                polylines.Last().Points.Contains(point))
+            {
+                var polygon = new Polygon();
+                polygon.Points = polylines.Last().Points;
+                polygon.Fill = Brushes.Transparent;
+
+                polygons.Add(polygon);
+                DrawingCanvas.Children.Add(polygon);
+
+                SetPaintingMarker(e);
+            }
+            polylines.Last().Points.Add(point);
+        }
+        private void MarkerBrushPaint(MouseEventArgs e)
+        {
+            if (polylines.Last().Points.Last() ==
+                e.GetPosition(DrawingCanvas))
+                return;
+
+            var point = e.GetPosition(DrawingCanvas);
+
+            if (polylines.Last().Points.Count > 0 &&
+                polylines.Last().Points.Contains(point))
+            {
+                var polygon = new Polygon();
+                polygon.Points = polylines.Last().Points;
+                polygon.Fill = Brushes.Transparent;
+
+                polygons.Add(polygon);
+                DrawingCanvas.Children.Add(polygon);
+
+                SetPaintingMarker(e);
+            }
+            polylines.Last().Points.Add(point);
+        }
+        public void SetPaintingMarker(MouseEventArgs e)
+        {
+            var polyline = new Polyline();
+            polyline.StrokeThickness = 1;
+            polyline.Stroke = ConvertColorIntoBrushes();
+            polylines.Add(polyline);
+            polyline.Points.Add(e.GetPosition(DrawingCanvas));
+            DrawingCanvas.Children.Add(polyline);
+
+            polyline.StrokeThickness = brushThickness;
+            polyline.Stroke = ConvertColorIntoBrushes();
+
+
+            polyline.Opacity = 0.5;
+
+        }
+
+        private void ColorPencilBrushPaint()
+        {
+            Random random = new Random();
+
+            int pointsCount = (int)(brushThickness * 2);
+
+            List<Ellipse> ellipses = new List<Ellipse>();
+
+            for (double t = 0; t <= 1; t += 1.0 / pointsCount)
+            {
+                double x = previousPoint.X + (currentPoint.X - previousPoint.X) * t;
+                double y = previousPoint.Y + (currentPoint.Y - previousPoint.Y) * t;
+
+                double angle = random.NextDouble() * Math.PI * 2;
+                double radius = random.NextDouble() * (brushThickness / 2);
+
+                double offsetX = Math.Cos(angle) * radius;
+                double offsetY = Math.Sin(angle) * radius;
+
+                Ellipse ellipse = new Ellipse
+                {
+                    Width = 3,
+                    Height = 3,
+                    Fill = new SolidColorBrush(Color.FromArgb(128, 255, 255, 255))
+                };
+
+                Canvas.SetLeft(ellipse, x + offsetX);
+                Canvas.SetTop(ellipse, y + offsetY);
+                ellipses.Add(ellipse);
+            }
+            Line line = new Line
+            {
+                X1 = previousPoint.X,
+                Y1 = currentPoint.Y,
+                X2 = currentPoint.X,
+                Y2 = currentPoint.Y,
+                Stroke = new SolidColorBrush(_main.FirstColor.TColor),
+                StrokeThickness = brushThickness,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
+                StrokeLineJoin = PenLineJoin.Round
+            };
+            foreach (Ellipse ellipse in ellipses)
+            {
+                DrawingCanvas.Children.Add(ellipse);
+            }
+            DrawingCanvas.Children.Add(line);
+
+            previousPoint = currentPoint;
+        }
+        private void OilBrushPaint()
+        {
+            Random random = new Random();
+            SolidColorBrush brush = new SolidColorBrush(_main.FirstColor.TColor);
+
+            int pointsCount = (int)(brushThickness * 2);
+            for (int i = 0; i < pointsCount; i++)
+            {
+                double offsetX = random.NextDouble() * brushThickness - brushThickness / 2;
+                double offsetY = random.NextDouble() * brushThickness - brushThickness / 2;
+
+                Ellipse ellipse = new Ellipse
+                {
+                    Width = random.NextDouble() * (brushThickness / 2),
+                    Height = random.NextDouble() * (brushThickness / 2),
+                    Fill = new SolidColorBrush(Color.FromArgb((byte)(random.Next(50, 150)),
+                            _main.FirstColor.TColor.R, _main.FirstColor.TColor.G, _main.FirstColor.TColor.B))
+                };
+                Canvas.SetLeft(ellipse, currentPoint.X + offsetX);
+                Canvas.SetTop(ellipse, currentPoint.Y + offsetY);
+
+                DrawingCanvas.Children.Add(ellipse);
+            }
+        }
+        private void CalligraphyBrushPaint(double angle)
+        {
+            Vector offset = new Vector(Math.Cos(angle) * brushThickness / 2,
+                                Math.Sin(angle) * brushThickness / 2);
+
+            Point[] points = new Point[4];
+            points[0] = new Point(previousPoint.X + offset.X, previousPoint.Y + offset.Y);
+            points[1] = new Point(previousPoint.X - offset.X, previousPoint.Y - offset.Y);
+            points[2] = new Point(currentPoint.X - offset.X, currentPoint.Y - offset.Y);
+            points[3] = new Point(currentPoint.X + offset.X, currentPoint.Y + offset.Y);
+
+            Polygon polygon = new Polygon
+            {
+                Points = new PointCollection(points),
+                Fill = ConvertColorIntoBrushes(),
+                Stroke = ConvertColorIntoBrushes(),
+                StrokeThickness = 0.5
+
+            };
+
+            DrawingCanvas.Children.Add(polygon);
+        }
+        private void InitializeSprayTimer()
+        {
+            sprayTimer = new DispatcherTimer();
+            sprayTimer.Interval = TimeSpan.FromMilliseconds(50);
+            sprayTimer.Tick += SprayTimer_Tick;
+        }
+        private void SprayTimer_Tick(object sender, EventArgs e)
+        {
+            SprayPaint(currentPoint);
+        }
+        private void SprayPaint(Point point)
+        {
+            for (int i = 0; i < sprayDensity; i++)
+            {
+                double angle = random.NextDouble() * 2 * Math.PI;
+                double radius = Math.Sqrt(random.NextDouble()) * brushThickness / 2;
+
+                double offsetX = radius * Math.Cos(angle);
+                double offsetY = radius * Math.Sin(angle);
+
+                Ellipse ellipse = new Ellipse
+                {
+                    Width = 1,
+                    Height = 1,
+                    Fill = ConvertColorIntoBrushes()
+                };
+                Canvas.SetLeft(ellipse, point.X + offsetX);
+                Canvas.SetTop(ellipse, point.Y + offsetY);
+
+                DrawingCanvas.Children.Add(ellipse);
+            }
+        }
+        public void GetLineToPaint(Point currentPoint)
+        {
+            Line line = new Line
+            {
+                X1 = previousPoint.X,
+                Y1 = previousPoint.Y,
+                X2 = currentPoint.X,
+                Y2 = currentPoint.Y,
+
+                Stroke = isEraser ? Brushes.White : Brushes.Black,
+                StrokeThickness = brushThickness,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
+                StrokeLineJoin = PenLineJoin.Round,
+            };
+            DrawingCanvas.Children.Add(line);
+        }
+        public Brush ConvertColorIntoBrushes()
+        {
+            return new SolidColorBrush(_main.FirstColor.TColor);
+        }
+
         private void Paint_MouseUp(object sender, MouseEventArgs e)
         {
             isDrawing = false;
+            sprayTimer.Stop();
+
             SaveCanvasState();
         }
 
@@ -507,8 +802,8 @@ namespace PaintWPF
                 Image image = new Image();
                 image.Source = bitmap;
 
-                Canvas.SetLeft(image, 0); 
-                Canvas.SetTop(image, 0); 
+                Canvas.SetLeft(image, 0);
+                Canvas.SetTop(image, 0);
                 DrawingCanvas.Children.Add(image);
             }
             else if (currentIndex == 0)

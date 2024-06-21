@@ -181,5 +181,22 @@
     <Resource Include="Images\BrushType\TexturePencil.png" />
     <Resource Include="Images\BrushType\WatercolorBrush.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\File\Create.png" />
+    <Resource Include="Images\File\Exit.png" />
+    <Resource Include="Images\File\ImageSettings.png" />
+    <Resource Include="Images\File\Import.png" />
+    <Resource Include="Images\File\Last.png" />
+    <Resource Include="Images\File\MakeBgOfWorkingTable.png" />
+    <Resource Include="Images\File\Open.png" />
+    <Resource Include="Images\File\Print.png" />
+    <Resource Include="Images\File\SaveAs.png" />
+    <Resource Include="Images\File\Send.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Change\Copy.png" />
+    <Resource Include="Images\Change\Paste.png" />
+    <Resource Include="Images\Change\Scissors.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
