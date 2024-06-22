@@ -4,10 +4,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+
+using Color = System.Drawing.Color;
 
 namespace PaintWPF.Models.Tools
 {
-    public static class HSVConvertor
+    public static class ColorConvertor
     {
         public static (int, int, int) RGBtoHSV(System.Windows.Media.Color color)
         {
@@ -117,6 +120,34 @@ namespace PaintWPF.Models.Tools
 
             return Color.FromArgb(rgb[0], rgb[1], rgb[2]);
         }
+
+        public static System.Windows.Media.Color HexToRGB(string hex)
+        {
+            // Удаляем символ '#' если он есть
+            hex = hex.Replace("#", "");
+
+            byte a = 255; // по умолчанию полностью непрозрачный
+            byte r = 0;
+            byte g = 0;
+            byte b = 0;
+
+            if (hex.Length == 8) // ARGB
+            {
+                a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                r = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+            }
+            else if (hex.Length == 6) // RGB
+            {
+                r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            }
+
+            return System.Windows.Media.Color.FromArgb(a, r, g, b);
+        }
+
 
     }
 }

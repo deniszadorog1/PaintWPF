@@ -16,13 +16,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using PaintWPF.Models;
 using PaintWPF.Models.Enums;
+using System.IO;
+using System.Windows.Threading;
+using Microsoft.Win32;
+
+using PaintWPF.Models.Tools;
 
 
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
-using System.IO;
-using System.Windows.Threading;
+
 
 namespace PaintWPF
 {
@@ -37,9 +41,16 @@ namespace PaintWPF
         private List<MenuItem> _brushTypes = new List<MenuItem>();
         private Button _chosenTool = null;
 
-        private bool isDrawing = false;
-        private bool isEraser = false;
-        private bool isFilling = false;
+        private ActionType _type = ActionType.Nothing;
+        private bool IfDrawing = false;
+        private bool IfFilling = false;
+        private bool IfErazing = false;
+        private bool IfFiguring = false;
+
+
+        private FigureTypes? _figType = null;
+        private Shape _figToPaint;
+
         private Point previousPoint;
         private int brushThickness = 2;
 
@@ -55,6 +66,10 @@ namespace PaintWPF
 
         private List<Polyline> polylines = new List<Polyline>();
         private List<Polygon> polygons = new List<Polygon>();
+
+
+        private const double CalligraphyBrushAngle = 135 * Math.PI / 180;
+        private const double FountainBrushAngle = 45 * Math.PI / 180;
 
         private readonly DrawingAttributes paeAttributes = new DrawingAttributes()
         {
@@ -201,7 +216,7 @@ namespace PaintWPF
                 bord.BorderBrush = borderBrush;
                 return;
             }
-            if(sender is Grid grid)
+            if (sender is Grid grid)
             {
                 grid.Background = brush;
             }
@@ -210,7 +225,7 @@ namespace PaintWPF
         {
             SolidColorBrush brush = new SolidColorBrush(Color.FromRgb(230, 235, 240));
             if (sender is Button but)
-            {    
+            {
                 but.Background = brush;
                 return;
             }
@@ -236,7 +251,7 @@ namespace PaintWPF
                 bord.BorderBrush = transparentBrush;
                 return;
             }
-            if(sender is Grid grid)
+            if (sender is Grid grid)
             {
                 grid.Background = transparentBrush;
                 return;
@@ -248,7 +263,7 @@ namespace PaintWPF
             {
                 if (!(_chosenTool is null) &&
                     but.Name == _chosenTool.Name) return;
-                ClearBGForTools();
+                ClearBGs();
                 _chosenTool = but;
 
                 SolidColorBrush border = new SolidColorBrush(Color.FromRgb(0, 103, 192));
@@ -259,29 +274,45 @@ namespace PaintWPF
 
                 if (but.Name == "Pen")
                 {
-                    isEraser = false;
-                    isFilling = false;
+                    _type = ActionType.Drawing;
                 }
                 else if (but.Name == "Erazer")
                 {
-                    isEraser = true;
-                    isFilling = false;
+                    _type = ActionType.Erazing;
                 }
                 else if (but.Name == "Bucket")
                 {
-                    isFilling = true;
-                    isEraser = false;
+                    _type = ActionType.Filling;
                 }
             }
         }
+        public void ClearBGs()
+        {
+            ClearBGForTools();
+            _chosenTool = null;
+            CleaBgsForFigures();
+        }
+
         public void ClearBGForTools()
         {
-            SolidColorBrush whiteColor = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            SolidColorBrush trancparenBrush = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255));
 
             for (int i = 0; i < _tools.Count; i++)
             {
-                _tools[i].Background = whiteColor;
-                _tools[i].BorderBrush = whiteColor;
+                _tools[i].Background = trancparenBrush;
+                _tools[i].BorderBrush = trancparenBrush;
+            }
+        }
+        public void CleaBgsForFigures()
+        {
+            SolidColorBrush trancparenBrush = new SolidColorBrush(
+                Color.FromArgb(0, 255, 255, 255));
+            for (int i = 0; i < FigurePanel.Children.Count; i++)
+            {
+                if (FigurePanel.Children[i] is Button but)
+                {
+                    but.Background = trancparenBrush;
+                }
             }
         }
         public void PaintField_MouseLeave(object sender, MouseEventArgs e)
@@ -291,24 +322,147 @@ namespace PaintWPF
         private void Field_MouseDown(object sender, MouseEventArgs e)
         {
             previousPoint = e.GetPosition(DrawingCanvas);
-
-            if (isFilling)
+            InitDeed();
+            if (IfFilling)
             {
                 Color color = (Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF000000");
 
                 Point point = e.GetPosition(DrawingCanvas);
                 FloodFill((int)point.X, (int)point.Y, Color.FromRgb(255, 0, 0), color);
             }
+            else if (IfFiguring)
+            {
+                InitShapesToPaint(e);
+            }
             else
             {
-                isDrawing = true;
                 previousPoint = e.GetPosition(DrawingCanvas);
                 SetPaintingMarker(e);
             }
         }
+        private void InitDeed()
+        {
+            if (_type == ActionType.Drawing)
+            {
+                IfDrawing = true;
+                IfErazing = false;
+                IfFiguring = false;
+                IfFilling = false;
+            }
+            else if (_type == ActionType.Figuring)
+            {
+                IfDrawing = false;
+                IfErazing = false;
+                IfFiguring = true;
+                IfFilling = false;
+            }
+            else if (_type == ActionType.Erazing)
+            {
+                IfDrawing = false;
+                IfErazing = true;
+                IfFiguring = false;
+                IfFilling = false;
+            }
+            else if (_type == ActionType.Filling)
+            {
+                IfDrawing = false;
+                IfErazing = false;
+                IfFiguring = false;
+                IfFilling = true;
+            }
+            else
+            {
+                IfDrawing = true;
+                IfErazing = false;
+                IfFiguring = false;
+                IfFilling = false;
+            }
+        }
+        private void InitShapesToPaint(MouseEventArgs e)
+        {
+            switch (_figType)
+            {
+                case FigureTypes.Line:
+                    {
+                        _figToPaint = new Polyline();
+                        break;
+                    }
+                case FigureTypes.Curve:
+                    break;
+                case FigureTypes.Oval:
+                    {
+                        _figToPaint = new Ellipse();
+                        break;
+                    }
+                case FigureTypes.Rectangle:
+                    {
+                        _figToPaint = new Rectangle();
+                        break;
+                    }
+                case FigureTypes.RoundedRectangle:
+                    {
 
-        private const double CalligraphyBrushAngle = 135 * Math.PI / 180;
-        private const double FountainBrushAngle = 45 * Math.PI / 180;
+                        _figToPaint = new System.Windows.Shapes.Path()
+                        {
+                            Stroke = Brushes.Black,
+                            StrokeThickness = 3,
+                            RenderTransform = new ScaleTransform(1, 1)
+                        };
+
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 10 10 L 170 10 L 170 150 L 10 10");
+                        break;
+                    }
+                case FigureTypes.Polygon:
+                    break;
+                case FigureTypes.Triangle:
+                    break;
+                case FigureTypes.RightTriangle:
+                    break;
+                case FigureTypes.Rhombus:
+                    break;
+                case FigureTypes.Pentagon:
+                    break;
+                case FigureTypes.Hexagon:
+                    break;
+                case FigureTypes.RightArrow:
+                    break;
+                case FigureTypes.LeftArrow:
+                    break;
+                case FigureTypes.UpArrow:
+                    break;
+                case FigureTypes.DownArrow:
+                    break;
+                case FigureTypes.FourPointedStar:
+                    break;
+                case FigureTypes.FivePointedStar:
+                    break;
+                case FigureTypes.SixPointedStar:
+                    break;
+                case FigureTypes.RoundedRectangularLeader:
+                    break;
+                case FigureTypes.OvalCallout:
+                    break;
+                case FigureTypes.CalloutCloud:
+                    break;
+                case FigureTypes.Heart:
+                    break;
+                case FigureTypes.Lightning:
+                    break;
+                default:
+                    {
+                        MessageBox.Show("How did you get here?");
+                        break;
+                    }
+            }
+            _figToPaint.Stroke = ConvertColorIntoBrushes();
+            _figToPaint.StrokeThickness = 3;
+            _figToPaint.Fill = Brushes.Transparent;
+
+            Canvas.SetTop(_figToPaint, e.GetPosition(DrawingCanvas).Y);
+            Canvas.SetLeft(_figToPaint, e.GetPosition(DrawingCanvas).X);
+            DrawingCanvas.Children.Add(_figToPaint);
+        }
 
         private void Field_MouseMove(object sender, MouseEventArgs e)
         {
@@ -317,48 +471,157 @@ namespace PaintWPF
 
             CursCords.Content = cursPosInPaintField;
 
-            if (isDrawing)
+            if (IfDrawing || IfErazing)
             {
-                currentPoint = e.GetPosition(DrawingCanvas);
-                if (_main.TempBrushType == BrushType.UsualBrush)
-                {
-                    GetLineToPaint(currentPoint);
-                }
-                else if (_main.TempBrushType == BrushType.CalligraphyBrush)
-                {
-                    CalligraphyBrushPaint(CalligraphyBrushAngle);
-                }
-                else if (_main.TempBrushType == BrushType.FountainPen)
-                {
-                    CalligraphyBrushPaint(FountainBrushAngle);
-                }
-                else if (_main.TempBrushType == BrushType.Spray)
-                {
-                    sprayTimer.Start();
-                    SprayPaint(currentPoint);
-                }
-                else if (_main.TempBrushType == BrushType.OilPaintBrush)
-                {
-                    OilBrushPaint();
-                }
-                else if (_main.TempBrushType == BrushType.ColorPencil)
-                {
-                    ColorPencilBrushPaint(); // not working
-                }
-                else if (_main.TempBrushType == BrushType.Marker)
-                {
-                    MarkerBrushPaint(e);
-                }
-                else if (_main.TempBrushType == BrushType.TexturePencil)
-                {
-                    TextureBrushPaint(e);
-                }
-                else if (_main.TempBrushType == BrushType.WatercolorBrush)
-                {
-                    //not working 
-                }
-                previousPoint = currentPoint;
+                BrushPaint(e);
             }
+            else if (IfFiguring && !(_figToPaint is null))
+            {
+                PaintFigures(e);
+            }
+        }
+        private void PaintFigures(MouseEventArgs e)
+        {
+            switch (_figType)
+            {
+                case FigureTypes.Line:
+                    {
+                        (_figToPaint as Polyline).Points = new PointCollection()
+                        {
+                            new Point(0, 0),
+                            new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
+                            e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint))
+                        };
+                        return;
+                    }
+                case FigureTypes.Curve:
+                    break;
+                case FigureTypes.Oval:
+                    {
+                        double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
+                        double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
+                        double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
+                        double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
+
+                        _figToPaint.Width = width;
+                        _figToPaint.Height = height;
+
+                        Canvas.SetLeft(_figToPaint, x);
+                        Canvas.SetTop(_figToPaint, y);
+
+                        break;
+                    }
+                case FigureTypes.Rectangle:
+                    {
+                        double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
+                        double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
+                        double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
+                        double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
+
+                        _figToPaint.Width = width;
+                        _figToPaint.Height = height;
+
+                        Canvas.SetLeft(_figToPaint, x);
+                        Canvas.SetTop(_figToPaint, y);
+                        return;
+                    }
+                case FigureTypes.RoundedRectangle:
+                    {
+                        double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
+                        double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
+                        double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
+                        double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
+
+                        _figToPaint.Width = width;
+                        _figToPaint.Height = height;
+
+                        Canvas.SetLeft(_figToPaint, x);
+                        Canvas.SetTop(_figToPaint, y);
+
+
+                        return;
+                    }
+                case FigureTypes.Polygon:
+                    break;
+                case FigureTypes.Triangle:
+                    break;
+                case FigureTypes.RightTriangle:
+                    break;
+                case FigureTypes.Rhombus:
+                    break;
+                case FigureTypes.Pentagon:
+                    break;
+                case FigureTypes.Hexagon:
+                    break;
+                case FigureTypes.RightArrow:
+                    break;
+                case FigureTypes.LeftArrow:
+                    break;
+                case FigureTypes.UpArrow:
+                    break;
+                case FigureTypes.DownArrow:
+                    break;
+                case FigureTypes.FourPointedStar:
+                    break;
+                case FigureTypes.FivePointedStar:
+                    break;
+                case FigureTypes.SixPointedStar:
+                    break;
+                case FigureTypes.RoundedRectangularLeader:
+                    break;
+                case FigureTypes.OvalCallout:
+                    break;
+                case FigureTypes.CalloutCloud:
+                    break;
+                case FigureTypes.Heart:
+                    break;
+                case FigureTypes.Lightning:
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void BrushPaint(MouseEventArgs e)
+        {
+            currentPoint = e.GetPosition(DrawingCanvas);
+            if (_main.TempBrushType == BrushType.UsualBrush || IfErazing)
+            {
+                GetLineToPaint(currentPoint);
+            }
+            else if (_main.TempBrushType == BrushType.CalligraphyBrush)
+            {
+                CalligraphyBrushPaint(CalligraphyBrushAngle);
+            }
+            else if (_main.TempBrushType == BrushType.FountainPen)
+            {
+                CalligraphyBrushPaint(FountainBrushAngle);
+            }
+            else if (_main.TempBrushType == BrushType.Spray)
+            {
+                sprayTimer.Start();
+                SprayPaint(currentPoint);
+            }
+            else if (_main.TempBrushType == BrushType.OilPaintBrush)
+            {
+                OilBrushPaint();
+            }
+            else if (_main.TempBrushType == BrushType.ColorPencil)
+            {
+                ColorPencilBrushPaint(); // not working
+            }
+            else if (_main.TempBrushType == BrushType.Marker)
+            {
+                MarkerBrushPaint(e);
+            }
+            else if (_main.TempBrushType == BrushType.TexturePencil)
+            {
+                TextureBrushPaint(e);
+            }
+            else if (_main.TempBrushType == BrushType.WatercolorBrush)
+            {
+                //not working 
+            }
+            previousPoint = currentPoint;
         }
         private void TextureBrushPaint(MouseEventArgs e)
         {
@@ -585,7 +848,7 @@ namespace PaintWPF
                 X2 = currentPoint.X,
                 Y2 = currentPoint.Y,
 
-                Stroke = isEraser ? Brushes.White : Brushes.Black,
+                Stroke = IfErazing ? Brushes.White : new SolidColorBrush(_main.FirstColor.TColor),
                 StrokeThickness = brushThickness,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
@@ -597,10 +860,15 @@ namespace PaintWPF
         {
             return new SolidColorBrush(_main.FirstColor.TColor);
         }
-
         private void Paint_MouseUp(object sender, MouseEventArgs e)
         {
-            isDrawing = false;
+            IfDrawing = false;
+            IfErazing = false;
+            IfFiguring = false;
+            IfFilling = false;
+
+            _figToPaint = null;
+
             sprayTimer.Stop();
 
             SaveCanvasState();
@@ -755,6 +1023,7 @@ namespace PaintWPF
                     BrushTypePic.Source = BitmapFrame.Create(new Uri(asd));
                 }
             }
+            _type = ActionType.Drawing;
         }
         public string GetPathToNewBrushTypePic()
         {
@@ -832,14 +1101,11 @@ namespace PaintWPF
 
         public void SaveCanvasState()
         {
-
             Size size = new Size(DrawingCanvas.ActualWidth, DrawingCanvas.ActualHeight);
 
-            // Замеры и размещение канвы
             DrawingCanvas.Measure(size);
             DrawingCanvas.Arrange(new Rect(size));
 
-            // Создание RenderTargetBitmap из текущего состояния Canvas
             RenderTargetBitmap rtb = new RenderTargetBitmap(
                 (int)size.Width,
                 (int)size.Height,
@@ -855,6 +1121,98 @@ namespace PaintWPF
 
             currentIndex++;
         }
-    }
+        private void Figure_Click(object sender, EventArgs e)
+        {
+            ClearBGs();
+            if (sender is Button but)
+            {
+                FigureTypes? figType = ConvertSrtingIntoEnum(but.Name);
+                if (figType is null)
+                {
+                    MessageBox.Show("Cant find such fig type", "Mistake", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                _figType = figType;
+            }
+            _type = ActionType.Figuring;
+        }
+        public FigureTypes? ConvertSrtingIntoEnum(string figType)
+        {
+            for (int i = 0; i <= (int)FigureTypes.Lightning; i++)
+            {
+                if (figType == ((FigureTypes)i).ToString())
+                {
+                    return ((FigureTypes)i);
+                }
+            }
+            return null;
+        }
+        private void SaveField_Click(object sender, EventArgs e)
+        {
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)DrawingCanvas.ActualWidth,
+                (int)DrawingCanvas.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(DrawingCanvas);
 
+            PngBitmapEncoder pngImage = new PngBitmapEncoder();
+            pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "PNG Image|*.png";
+            saveFileDialog.FileName = "IHateThisTask.png";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using (FileStream fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                {
+                    pngImage.Save(fileStream);
+                }
+            }
+        }
+        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image Files|*.bmp;*.jpg;*.jpeg;*.png";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filePath = openFileDialog.FileName;
+                BitmapImage bitmap = new BitmapImage(new Uri(filePath));
+                Image image = new Image
+                {
+                    Source = bitmap,
+                    Width = bitmap.PixelWidth,
+                    Height = bitmap.PixelHeight
+                };
+                if (image.Width > DrawingCanvas.Width)
+                {
+                    image.Width = DrawingCanvas.Width;
+                }
+                if (image.Height > DrawingCanvas.Height)
+                {
+                    image.Height = DrawingCanvas.Height;
+                }
+                DrawingCanvas.Children.Clear();
+                DrawingCanvas.Children.Add(image);
+
+                Canvas.SetLeft(image, 0);
+                Canvas.SetTop(image, 0);
+            }
+        }
+        private void CreateNew_Click(object sender, EventArgs e)
+        {
+            DrawingCanvas.Children.Clear();
+        }
+        private void Color_Click(object sender, EventArgs e)
+        {
+            if (sender is Button but)
+            {
+                FirstColor.Background = but.Background;
+                string asd = FirstColor.Background.ToString();
+
+                _main.FirstColor = new ColorParams(ColorConvertor.HexToRGB(asd));
+            }
+        }
+        private void CloseApp_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+    }
 }

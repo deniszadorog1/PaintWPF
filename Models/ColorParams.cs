@@ -19,6 +19,13 @@ namespace PaintWPF.Models
             HSVParam = (-1, -1, -1);
             CordOnSpec = (-1, -1);
         }
+        public ColorParams(System.Windows.Media.Color color)
+        {
+            TColor = color;
+            Hex = "";
+            HSVParam = (-1, -1, -1);
+            CordOnSpec = (-1, -1);
+        }
         public ColorParams(System.Windows.Media.Color color, string hex,
             (int, int, int) HSVParam, (int, int) cordOnSpec)
         {

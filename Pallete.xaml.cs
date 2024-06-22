@@ -158,9 +158,9 @@ namespace PaintWPF
                 _pallete.MainColors[mainColorInPalleteIndex.Item1, 
                 mainColorInPalleteIndex.Item2].HSVParam;
 
-            Color first = HSVConvertor.hsvToRgb(hcvParam.h, hcvParam.s, hcvParam.v);
+            Color first = ColorConvertor.hsvToRgb(hcvParam.h, hcvParam.s, hcvParam.v);
 
-            Color color = HSVConvertor.HSVToRGB(hcvParam.h, hcvParam.s, hcvParam.v);
+            Color color = ColorConvertor.HSVToRGB(hcvParam.h, hcvParam.s, hcvParam.v);
 
             return new Color();
         }
@@ -448,7 +448,7 @@ namespace PaintWPF
                 ThirdInfoBox.Text = color.B.ToString();
                 return;
             }
-            (int H, int S, int V) HSVParams = HSVConvertor.RGBtoHSV(color);
+            (int H, int S, int V) HSVParams = ColorConvertor.RGBtoHSV(color);
             FirstInfoBox.Text = HSVParams.H.ToString();
             SecondInfoBox.Text = HSVParams.S.ToString();
             ThirdInfoBox.Text = HSVParams.V.ToString();

@@ -258,12 +258,11 @@
                 <Menu Background="Transparent" HorizontalAlignment="Center">
 
                     <MenuItem  Header="Файлы" 
-                        Style="{StaticResource DropDownMenu}" >
-
-
+                        Style="{StaticResource DropDownMenu}">
                         <MenuItem Name = "zeroFile" Header="Создать"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}" 
+                                  Click = "CreateNew_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Create.png"/>
                             </MenuItem.Icon>
@@ -271,7 +270,8 @@
 
                         <MenuItem Name = "oneFile" Header="Открыть"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}"
+                          Click="OpenFileButton_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Open.png"/>
                             </MenuItem.Icon>
@@ -295,15 +295,17 @@
 
                         <MenuItem Name = "fourFile" Header="Сохранить"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}"
+                          Click="SaveField_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/Pallete/MainPanelTopPart/save.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
 
                         <MenuItem Name = "fiveFile" Header="Сохранить как"
-                          Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                            Height="30" Width="400"
+                            Style="{StaticResource SubMenuItem}"
+                            Click="SaveField_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/SaveAs.png"/>
                             </MenuItem.Icon>
@@ -343,7 +345,8 @@
 
                         <MenuItem Name = "tenFile" Header="Выйти"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}" 
+                                  Click="CloseApp_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Exit.png"/>
                             </MenuItem.Icon>
@@ -398,8 +401,9 @@
                     Background="#eef4f9" BorderThickness="0"
                       MouseLeave="MainPabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter"
-                    Click="PreviousCanvas_Click"
+                    Click="SaveField_Click"
                     Name="Save">
+
                 <Image Source="Images/Pallete/MainPanelTopPart/save.png"/>
             </Button>
             <Line Grid.Column="3" X1 ="0" X2="0" Y1="2" Y2="16" 
@@ -541,7 +545,11 @@
                 MouseUp="Paint_MouseUp" 
                 MouseLeave="PaintField_MouseLeave" VerticalAlignment="Center">
                     <Label x:Name="AAA" Content="Label" Canvas.Top="35"/>
+
+                    <Path Data="M 10 10 L 170 10 L 170 150 L 10 10" Height="200" Width="200" Margin="100"/>
                 </Canvas>
+
+
             </Grid>
         </Grid>
 
@@ -887,8 +895,195 @@
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0" BorderThickness="1" BorderBrush="#e8ebed" Margin="10 10 10 0">
-                    <WrapPanel 
-                            Background="#f7fafc"/>
+                    <WrapPanel  Name= "FigurePanel"
+                            Background="#f7fafc">
+                        <Button Name ="Line" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Figures/Line.png"/>
+                        </Button>
+
+                        <Button Name ="Curve" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="Oval" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Figures/Circle.png"/>
+                        </Button>
+
+                        <Button Name ="Rectangle" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Figures/Rectangle.png"/>
+                        </Button>
+
+                        <Button Name ="RoundedRectangle" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+
+                            <Image Source="Images/Figures/ShapedRectangle.png"/>
+
+                        </Button>
+
+                        <Button Name ="Polygon" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="Triangle" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="RightTriangle" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="Rhombus" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="Pentagon" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="Hexagon" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="RightArrow" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+                        <Button Name ="LeftArrow" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="UpArrow" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="DownArrow" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="FourPointedStar" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="FivePointedStar" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="SixPointedStar" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="RoundedRectangularLeader" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="OvalCallout" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="CalloutCloud" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="Heart" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+                        <Button Name ="Lightning" Height="22" Width="22" 
+                                Style="{StaticResource NoStyleButton}"
+                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseEnter="MainPanelBoxes_MouseEnter"
+                                Click="Figure_Click">
+                            <Image Source="Images/Other/InProgress.png"/>
+                        </Button>
+
+
+                    </WrapPanel>
                 </Border>
                 <Label Grid.Row="1" 
                        VerticalAlignment="Center" 
@@ -930,96 +1125,126 @@
                 <WrapPanel Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,100,0" Name="asd">
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#000000" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#7f7f7f" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#880015" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ed1c24" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ff7f27" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#fff200" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#22b14c" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#00a2e8" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#3f48cc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#a349a4" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
 
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ffffff" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#c3c3c3" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#b97a57" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ffaec9" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ffc90e" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#efe4b0" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#b5e61d" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#99d9ea" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#7092be" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#c8bfe7" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
 
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                     <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#f8f9fc" Margin="5 5 0 0" 
-                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"/>
+                            MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
+                            Click="Color_Click"/>
                 </WrapPanel>
 
                 <Border Grid.Column="2" Grid.Row="0" 

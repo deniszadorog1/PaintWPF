@@ -93,10 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ColorParams.cs" />
+    <Compile Include="Models\Enums\ActionType.cs" />
     <Compile Include="Models\Enums\BrushType.cs" />
+    <Compile Include="Models\Enums\FigureTypes.cs" />
     <Compile Include="Models\MainPaint.cs" />
     <Compile Include="Models\PalleteModel.cs" />
-    <Compile Include="Models\Tools\HSVConvertor.cs" />
+    <Compile Include="Models\Tools\ColorConvertor.cs" />
     <Compile Include="Models\Tools\ProgressBarConverter.cs" />
     <Compile Include="Pallete.xaml.cs">
       <DependentUpon>Pallete.xaml</DependentUpon>
@@ -197,6 +199,15 @@
     <Resource Include="Images\Change\Copy.png" />
     <Resource Include="Images\Change\Paste.png" />
     <Resource Include="Images\Change\Scissors.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Circle.png" />
+    <Resource Include="Images\Figures\Line.png" />
+    <Resource Include="Images\Figures\Rectangle.png" />
+    <Resource Include="Images\Figures\ShapedRectangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Other\InProgress.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
