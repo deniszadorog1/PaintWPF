@@ -209,5 +209,36 @@
   <ItemGroup>
     <Resource Include="Images\Other\InProgress.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\DownArrow.png" />
+    <Resource Include="Images\Figures\FivePointedStar.png" />
+    <Resource Include="Images\Figures\LeftArrow.png" />
+    <Resource Include="Images\Figures\Pentagon.png" />
+    <Resource Include="Images\Figures\Rhombus.png" />
+    <Resource Include="Images\Figures\RightTriangle.png" />
+    <Resource Include="Images\Figures\UpArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Hexagon.png" />
+    <Resource Include="Images\Figures\RightArrow.png" />
+    <Resource Include="Images\Figures\Triangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\FourPointStar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\SixPointedStar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Lightning.png" />
+    <Resource Include="Images\Figures\OvalMessage.png" />
+    <Resource Include="Images\Figures\ShapeRectMeesage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Heart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Cloud.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

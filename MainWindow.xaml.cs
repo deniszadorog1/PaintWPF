@@ -138,13 +138,11 @@ namespace PaintWPF
 
             button.Content = greyCircle;
         }
-
         public void ClearMainColorBorders()
         {
             ClearMainColorBorder(FirstColor);
             ClearMainColorBorder(SecondColor);
         }
-
         public void ClearMainColorBorder(Button button)
         {
 
@@ -292,7 +290,6 @@ namespace PaintWPF
             _chosenTool = null;
             CleaBgsForFigures();
         }
-
         public void ClearBGForTools()
         {
             SolidColorBrush trancparenBrush = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255));
@@ -319,16 +316,26 @@ namespace PaintWPF
         {
             CursCords.Content = "";
         }
+        private RenderTargetBitmap _renderBitmap;
+
         private void Field_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                _main.ColorToPaint = _main.FirstColor;
+            }
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                _main.ColorToPaint = _main.SecondColor;
+            }
+
             previousPoint = e.GetPosition(DrawingCanvas);
             InitDeed();
             if (IfFilling)
             {
-                Color color = (Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF000000");
-
                 Point point = e.GetPosition(DrawingCanvas);
-                FloodFill((int)point.X, (int)point.Y, Color.FromRgb(255, 0, 0), color);
+                RenderCanvasToBitmap();
+                PerformFloodFill((int)point.X, (int)point.Y);
             }
             else if (IfFiguring)
             {
@@ -340,6 +347,15 @@ namespace PaintWPF
                 SetPaintingMarker(e);
             }
         }
+        private void RenderCanvasToBitmap()
+        {
+            double dpi = 96;
+            _renderBitmap = new RenderTargetBitmap((int)DrawingCanvas.ActualWidth,
+                (int)DrawingCanvas.ActualHeight, dpi, dpi, PixelFormats.Pbgra32);
+            _renderBitmap.Render(DrawingCanvas);
+        }
+
+
         private void InitDeed()
         {
             if (_type == ActionType.Drawing)
@@ -401,54 +417,140 @@ namespace PaintWPF
                     }
                 case FigureTypes.RoundedRectangle:
                     {
-
-                        _figToPaint = new System.Windows.Shapes.Path()
-                        {
-                            Stroke = Brushes.Black,
-                            StrokeThickness = 3,
-                            RenderTransform = new ScaleTransform(1, 1)
-                        };
-
+                        GetPathToPaint();
                         ((System.Windows.Shapes.Path)_figToPaint).Data =
-                        Geometry.Parse("M 10 10 L 170 10 L 170 150 L 10 10");
+                        Geometry.Parse("M 20 10 L 160 10 A 10 10 0 0 1 170 20 L 170 140 A 10 10 0 0 1 160 150 " +
+                        "L 20 150 A 10 10 0 0 1 10 140 L 10, 20 A 10 10 0 0 1 20 10");
                         break;
                     }
                 case FigureTypes.Polygon:
                     break;
                 case FigureTypes.Triangle:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 10 150 L 170 150 L 90 10 Z");
+                        break;
+                    }
                 case FigureTypes.RightTriangle:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 10 150 L 170 150 L 10 10 Z");
+                        break;
+                    }
                 case FigureTypes.Rhombus:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 90 10 L 170 80 L 90 150 L 10 80 Z");
+                        break;
+                    }
                 case FigureTypes.Pentagon:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 100 10 L 170 60 L 140 150 L 60 150 L 30 60 Z");
+                        break;
+                    }
                 case FigureTypes.Hexagon:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 100 10 L 150 40 L 150 100 L 100 130 L 50 100 L 50 40 Z");
+                        break;
+                    }
                 case FigureTypes.RightArrow:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 10 50 L 100 50 L 100 30 L 150 70 L 100 110 L 100 90 L 10 90 Z");
+                        break;
+                    }
                 case FigureTypes.LeftArrow:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 150 50 L 50 50 L 50 30 L 0 70 L 50 110 L 50 90 L 150 90 Z");
+                        break;
+                    }
                 case FigureTypes.UpArrow:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 50 150 L 50 50 L 30 50 L 70 0 L 110 50 L 90 50 L 90 150 Z");
+                        break;
+                    }
                 case FigureTypes.DownArrow:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 50 50 L 50 150 L 30 150 L 70 200 L 110 150 L 90 150 L 90 50 Z");
+                        break;
+                    }     
                 case FigureTypes.FourPointedStar:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 95 20 L 110 70 L 180 80 L 110 100 L 95 160 L 75 100 L 20 80 L 80 70 L 95 20");
+                        break;
+                    }
                 case FigureTypes.FivePointedStar:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 100 10  L 130 90 L 200 90 L 145 130 L 170 200 L 100 160 L 30 200  L 55 130 L 0 90  L 70 90 Z");
+                        break;
+                    }                  
                 case FigureTypes.SixPointedStar:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 100 10 L 130 60 L 180 60 L 150 100 L 180 140 L 130 140 L 100 180 L 70 140 L 20 140 L 50 100 L 20 60 L 70 60 Z");
+                        break;
+                    }             
                 case FigureTypes.RoundedRectangularLeader:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 120 10 L 150 10 Q 170, 10, 170 40 L 170 100 Q 170 120, 150 120 L 75 120 L 65 140 L 55 120 Q 25, 120, 25 100 L 25 40 Q 25 10, 40 10 Z");
+                        break;
+                    }
                 case FigureTypes.OvalCallout:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 100,100 A 40, 30 0 1 1 200, 100 A 60, 60 1 0 1 140, 130 L 125 145 L 120 130 Q 100 120 100 100 ");
+                        break;
+                    }
+                    
                 case FigureTypes.CalloutCloud:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 80,50 A 20 10 1 1 1 150 45 A 20 10 1 1 1 210 40 " +
+                        "A 10 5 1 1 1 270 70 A 10 10 1 1 1 270 120 A 10 10 1 1 1 240 155 " +
+                        "A 15 12 1 1 1 180 165 A 18 10 1 1 1 90 170 A 45 35 1 0 1 30 130 " +
+                        "A 15 20 1 0 1 25 90 A 20 20 0 0 1 80 50 " +
+                        "M 30 180 A 20 10 0 0 1 70 180 A 20 10 0 0 1 30 180 " +
+                        "M 20 200 A 20 10 0 0 1 60 200 A 20 10 0 0 1 20 200 " +
+                        "M 15 215 A 20 20 0 0 1 45 215 A 20 20 0 0 1 15 215");
+                        break;
+                    }
                 case FigureTypes.Heart:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 50 100 C 50 0 150 0 150 100 C 150 200 50 250 50 350 C 50, 250 -50 200 -50 100 C -50 0 50 0 50 100 Z");
+                        break;
+                    }
                 case FigureTypes.Lightning:
-                    break;
+                    {
+                        GetPathToPaint();
+                        ((System.Windows.Shapes.Path)_figToPaint).Data =
+                        Geometry.Parse("M 80,50 L 120 40 L 150 80 L 140 85 L 175 120 L 165 125 L 200 170 L 140 140 L 150 135 L 105 90 L 120 85 Z");
+                        break;
+                    }
                 default:
                     {
                         MessageBox.Show("How did you get here?");
@@ -463,7 +565,18 @@ namespace PaintWPF
             Canvas.SetLeft(_figToPaint, e.GetPosition(DrawingCanvas).X);
             DrawingCanvas.Children.Add(_figToPaint);
         }
+        private void GetPathToPaint()
+        {
+            _figToPaint = new System.Windows.Shapes.Path()
+            {
+                Stroke = Brushes.Black,
+                StrokeThickness = 3,
+                RenderTransform = new ScaleTransform(1, 1),
+                Stretch = Stretch.Fill
 
+            };
+
+        }
         private void Field_MouseMove(object sender, MouseEventArgs e)
         {
             Point position = e.GetPosition(DrawingCanvas);
@@ -498,88 +611,123 @@ namespace PaintWPF
                     break;
                 case FigureTypes.Oval:
                     {
-                        double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
-                        double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
-                        double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
-                        double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
-
-                        _figToPaint.Width = width;
-                        _figToPaint.Height = height;
-
-                        Canvas.SetLeft(_figToPaint, x);
-                        Canvas.SetTop(_figToPaint, y);
-
-                        break;
+                        FigureRotation(e);
+                        return;
                     }
                 case FigureTypes.Rectangle:
                     {
-                        double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
-                        double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
-                        double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
-                        double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
-
-                        _figToPaint.Width = width;
-                        _figToPaint.Height = height;
-
-                        Canvas.SetLeft(_figToPaint, x);
-                        Canvas.SetTop(_figToPaint, y);
+                        FigureRotation(e);
                         return;
                     }
                 case FigureTypes.RoundedRectangle:
                     {
-                        double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
-                        double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
-                        double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
-                        double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
-
-                        _figToPaint.Width = width;
-                        _figToPaint.Height = height;
-
-                        Canvas.SetLeft(_figToPaint, x);
-                        Canvas.SetTop(_figToPaint, y);
-
-
+                        FigureRotation(e);
                         return;
                     }
                 case FigureTypes.Polygon:
                     break;
                 case FigureTypes.Triangle:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.RightTriangle:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.Rhombus:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.Pentagon:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.Hexagon:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.RightArrow:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.LeftArrow:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.UpArrow:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.DownArrow:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.FourPointedStar:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.FivePointedStar:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.SixPointedStar:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.RoundedRectangularLeader:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.OvalCallout:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.CalloutCloud:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.Heart:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 case FigureTypes.Lightning:
-                    break;
+                    {
+                        FigureRotation(e);
+                        break;
+                    }
                 default:
                     break;
             }
+        }
+        private void FigureRotation(MouseEventArgs e)
+        {
+
+            double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
+            double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
+            double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
+            double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
+
+            _figToPaint.Width = width;
+            _figToPaint.Height = height;
+
+            Canvas.SetLeft(_figToPaint, x);
+            Canvas.SetTop(_figToPaint, y);
         }
         private void BrushPaint(MouseEventArgs e)
         {
@@ -641,22 +789,18 @@ namespace PaintWPF
                     Opacity = 0.4,
                     Width = random.NextDouble() * (brushThickness),
                     Height = random.NextDouble() * (brushThickness),
-                    Fill = new SolidColorBrush(Color.FromArgb((byte)(random.Next(50, 255)),
-                                _main.FirstColor.TColor.R, _main.FirstColor.TColor.G, _main.FirstColor.TColor.B))
+                    Fill = _main.FirstColor
                 };
-
                 double x = point.X + offsetX;
                 double y = point.Y + offsetY;
                 Canvas.SetLeft(ellipse, x);
                 Canvas.SetTop(ellipse, y);
 
                 DrawingCanvas.Children.Add(ellipse);
-                //drawnElements.Add(ellipse); // Сохранение элемента для возможности отмены
             }
             if (polylines.Last().Points.Last() ==
                             e.GetPosition(DrawingCanvas))
                 return;
-
 
             if (polylines.Last().Points.Count > 0 &&
                 polylines.Last().Points.Contains(point))
@@ -706,11 +850,8 @@ namespace PaintWPF
             polyline.StrokeThickness = brushThickness;
             polyline.Stroke = ConvertColorIntoBrushes();
 
-
             polyline.Opacity = 0.5;
-
         }
-
         private void ColorPencilBrushPaint()
         {
             Random random = new Random();
@@ -747,7 +888,7 @@ namespace PaintWPF
                 Y1 = currentPoint.Y,
                 X2 = currentPoint.X,
                 Y2 = currentPoint.Y,
-                Stroke = new SolidColorBrush(_main.FirstColor.TColor),
+                Stroke = _main.FirstColor,
                 StrokeThickness = brushThickness,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
@@ -764,7 +905,7 @@ namespace PaintWPF
         private void OilBrushPaint()
         {
             Random random = new Random();
-            SolidColorBrush brush = new SolidColorBrush(_main.FirstColor.TColor);
+            SolidColorBrush brush = _main.FirstColor;
 
             int pointsCount = (int)(brushThickness * 2);
             for (int i = 0; i < pointsCount; i++)
@@ -774,10 +915,10 @@ namespace PaintWPF
 
                 Ellipse ellipse = new Ellipse
                 {
+                    Opacity = 0.5,
                     Width = random.NextDouble() * (brushThickness / 2),
                     Height = random.NextDouble() * (brushThickness / 2),
-                    Fill = new SolidColorBrush(Color.FromArgb((byte)(random.Next(50, 150)),
-                            _main.FirstColor.TColor.R, _main.FirstColor.TColor.G, _main.FirstColor.TColor.B))
+                    Fill = _main.FirstColor
                 };
                 Canvas.SetLeft(ellipse, currentPoint.X + offsetX);
                 Canvas.SetTop(ellipse, currentPoint.Y + offsetY);
@@ -848,7 +989,7 @@ namespace PaintWPF
                 X2 = currentPoint.X,
                 Y2 = currentPoint.Y,
 
-                Stroke = IfErazing ? Brushes.White : new SolidColorBrush(_main.FirstColor.TColor),
+                Stroke = IfErazing ? Brushes.White : _main.ColorToPaint,
                 StrokeThickness = brushThickness,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
@@ -858,7 +999,7 @@ namespace PaintWPF
         }
         public Brush ConvertColorIntoBrushes()
         {
-            return new SolidColorBrush(_main.FirstColor.TColor);
+            return _main.ColorToPaint;
         }
         private void Paint_MouseUp(object sender, MouseEventArgs e)
         {
@@ -874,50 +1015,80 @@ namespace PaintWPF
             SaveCanvasState();
         }
 
-        private WriteableBitmap bitmap = new WriteableBitmap(1000, 400, 96, 96, PixelFormats.Bgra32, null);
-        private byte[] pixels = new byte[1000 * 400 * 4]; // 400x400 image with 4 bytes per pixel (BGR32 format)
-
-        private void FloodFill(int x, int y, Color newColor, Color targetColor)
+        private void PerformFloodFill(int x, int y)
         {
-            if (x < 0 || x >= DrawingCanvas.Width || y < 0 || y >= DrawingCanvas.Height || GetPixelColor(x, y) != targetColor)
+            // Проверка границ изображения
+            if (x < 0 || x >= _renderBitmap.PixelWidth || y < 0 || y >= _renderBitmap.PixelHeight)
                 return;
 
-            SetPixelColor(x, y, newColor);
-            DrawImage();
+            // Получаем пиксели изображения
+            int stride = _renderBitmap.PixelWidth * (_renderBitmap.Format.BitsPerPixel / 8);
+            byte[] pixels = new byte[stride * _renderBitmap.PixelHeight];
+            _renderBitmap.CopyPixels(pixels, stride, 0);
 
-            FloodFill(x - 1, y, newColor, targetColor);
-            FloodFill(x + 1, y, newColor, targetColor);
-            FloodFill(x, y - 1, newColor, targetColor);
-            FloodFill(x, y + 1, newColor, targetColor);
-        }
-        private void DrawImage()
-        {
-            Int32Rect rect = new Int32Rect(0, 0, 1000, 400);
-            bitmap.WritePixels(rect, pixels, 400 * 4, 0);
-            System.Windows.Controls.Image img = new System.Windows.Controls.Image
+            Color targetColor = GetPixelColor(pixels, stride, x, y);
+            if (targetColor == _main.ColorToPaint.Color) return;
+
+            // Выполняем заливку области
+            Queue<Point> points = new Queue<Point>();
+            points.Enqueue(new Point(x, y));
+
+            while (points.Count > 0)
             {
-                Source = bitmap
-            };
+                Point pt = points.Dequeue();
+                int px = (int)pt.X;
+                int py = (int)pt.Y;
 
-            DrawingCanvas.Children.Clear();
+                if (px < 0 || px >= _renderBitmap.PixelWidth || py < 0 || py >= _renderBitmap.PixelHeight)
+                    continue;
 
-            DrawingCanvas.Children.Add(img);
+                if (GetPixelColor(pixels, stride, px, py) != targetColor)
+                    continue;
+
+                SetPixelColor(pixels, stride, px, py, _main.ColorToPaint.Color);
+
+                points.Enqueue(new Point(px - 1, py));
+                points.Enqueue(new Point(px + 1, py));
+                points.Enqueue(new Point(px, py - 1));
+                points.Enqueue(new Point(px, py + 1));
+            }
+
+            UpdateBitmap(pixels, stride);
+        }
+        private Color GetPixelColor(byte[] pixels, int stride, int x, int y)
+        {
+            int index = (y * stride) + (x * (_renderBitmap.Format.BitsPerPixel / 8));
+            byte blue = pixels[index];
+            byte green = pixels[index + 1];
+            byte red = pixels[index + 2];
+            byte alpha = pixels[index + 3];
+            return Color.FromArgb(alpha, red, green, blue);
         }
 
-        private Color GetPixelColor(int x, int y)
+        private void SetPixelColor(byte[] pixels, int stride, int x, int y, Color color)
         {
-            int index = (y * 1000 + x) * 4;
-            Color asd = Color.FromRgb(pixels[index + 2], pixels[index + 1], pixels[index]);
-            return asd;
-        }
-
-        private void SetPixelColor(int x, int y, Color color)
-        {
-            int index = (y * 400 + x) * 4;
+            int index = (y * stride) + (x * (_renderBitmap.Format.BitsPerPixel / 8));
             pixels[index] = color.B;
             pixels[index + 1] = color.G;
             pixels[index + 2] = color.R;
             pixels[index + 3] = color.A;
+        }
+        private void UpdateBitmap(byte[] pixels, int stride)
+        {
+            // Создаем новое изображение на основе измененных пикселей
+            BitmapSource bitmapSource = BitmapSource.Create(
+                _renderBitmap.PixelWidth,
+                _renderBitmap.PixelHeight,
+                _renderBitmap.DpiX,
+                _renderBitmap.DpiY,
+                _renderBitmap.Format,
+                null,
+                pixels,
+                stride
+            );
+
+            DrawingCanvas.Children.Clear();
+            DrawingCanvas.Background = new ImageBrush(bitmapSource);
         }
         private void ValueCanvas_PreViewMouseUp(object sender, MouseEventArgs e)
         {
@@ -926,11 +1097,8 @@ namespace PaintWPF
         }
         private void ValueCanvas_PreViewMouseMove(object sender, MouseEventArgs e)
         {
-            Point buttonPosRelativeToAncestor = draggableButton.TransformToAncestor(this).Transform(new Point(0, 0));
-
             if (valueDragElem == null) return;
             var position = e.GetPosition(sender as IInputElement);
-
 
             if (position.Y < draggableButton.Height / 2)
             {
@@ -971,7 +1139,6 @@ namespace PaintWPF
 
             IfThinBiggerCheck(centerY);
 
-
             if (IfMadeThickBigger && prevYPos != 0)
             {
                 paintInBlueCan.Margin = new Thickness(0, paintInBlueCan.Margin.Top, 0,
@@ -981,14 +1148,11 @@ namespace PaintWPF
             {
                 paintInBlueCan.Margin = new Thickness(0, paintInBlueCan.Margin.Top, 0,
                paintInBlueCan.Margin.Bottom - 1);
-
             }
-
             valueDragElem = sender as UIElement;
-            valueOffset = new Point((int)centerX, (int)centerY); //e.GetPosition(ValueCanvas);
+            valueOffset = new Point((int)centerX, (int)centerY);
 
             valueOffset.Y -= Canvas.GetTop(valueDragElem);
-            //valueOffset.X -= Canvas.GetLeft(valueDragElem);
             ValueCanvas.CaptureMouse();
         }
         public void IfThinBiggerCheck(double butYCord)
@@ -1007,7 +1171,6 @@ namespace PaintWPF
                 IfMadeThickBigger = false;
             }
         }
-
         private void BrushType_Click(object sender, EventArgs e)
         {
             if (sender is MenuItem item)
@@ -1033,7 +1196,6 @@ namespace PaintWPF
             string brushDir = System.IO.Path.Combine(imagePath, "BrushType");
             return System.IO.Path.Combine(brushDir, $"{_main.TempBrushType.ToString()}.png");
         }
-
         public string GetSourseForNewBrushType(BrushType type)
         {
             return type == BrushType.UsualBrush ? "Images/BrushType/UsualBrush.png" :
@@ -1061,7 +1223,7 @@ namespace PaintWPF
         {
             if (currentIndex > 0)
             {
-                // Очищаем Canvas
+                DrawingCanvas.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 DrawingCanvas.Children.Clear();
 
                 currentIndex--;
@@ -1077,9 +1239,9 @@ namespace PaintWPF
             }
             else if (currentIndex == 0)
             {
+                DrawingCanvas.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 currentIndex--;
                 DrawingCanvas.Children.Clear();
-
             }
         }
         private void NextCanvas_Click(object sender, EventArgs e)
@@ -1097,7 +1259,7 @@ namespace PaintWPF
 
         }
         private List<BitmapSource> canvasHistory = new List<BitmapSource>();
-        private int currentIndex = -1; // текущий индекс истории
+        private int currentIndex = -1;
 
         public void SaveCanvasState()
         {
@@ -1200,14 +1362,37 @@ namespace PaintWPF
         {
             DrawingCanvas.Children.Clear();
         }
-        private void Color_Click(object sender, EventArgs e)
+        private void Color_MouseDown(object sender, MouseEventArgs e)
         {
             if (sender is Button but)
             {
-                FirstColor.Background = but.Background;
-                string asd = FirstColor.Background.ToString();
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    _main.FirstColor = new SolidColorBrush(ColorConvertor.HexToRGB(but.Background.ToString()));
+                }
+                if (e.RightButton == MouseButtonState.Pressed)
+                {
+                    _main.SecondColor = new SolidColorBrush(ColorConvertor.HexToRGB(but.Background.ToString()));
+                }
+            }
+        }
 
-                _main.FirstColor = new ColorParams(ColorConvertor.HexToRGB(asd));
+        private void Color_PreviewMouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            if (sender is Button but &&
+                e.LeftButton == MouseButtonState.Pressed)
+            {
+                _main.FirstColor = new SolidColorBrush(ColorConvertor.HexToRGB(but.Background.ToString()));
+                FirstColor.Background = but.Background;
+            }
+        }
+        private void Color_PreviewMouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            if (sender is Button but &&
+                e.RightButton == MouseButtonState.Pressed)
+            {
+                _main.SecondColor = new SolidColorBrush(ColorConvertor.HexToRGB(but.Background.ToString()));
+                SecondColor.Background = but.Background;
             }
         }
         private void CloseApp_Click(object sender, EventArgs e)

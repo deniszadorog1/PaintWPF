@@ -8,7 +8,7 @@
 
         mc:Ignorable="d"
         Title="Pallete" Height="660" Width="680">
-        
+
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -130,7 +130,53 @@
         </Style>
 
 
+        <LinearGradientBrush x:Key="Spectrum" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="Red" Offset="0.0"/>
+            <GradientStop Color="Orange" Offset="0.1"/>
+            <GradientStop Color="Yellow" Offset="0.2"/>
+            <GradientStop Color="#06ff05" Offset="0.3"/>
+            <GradientStop Color="#12f9ff" Offset="0.4"/>
+            <GradientStop Color="Blue" Offset="0.5"/>
+            <GradientStop Color="#ff06e2" Offset="0.6"/>
+            <GradientStop Color="Red" Offset="0.7"/>
+        </LinearGradientBrush>
 
+        <DrawingBrush x:Key="SpectrumWithVerticalFade">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <!-- Horizontal gradient from left to right -->
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,1,1" />
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="Red" Offset="0.0"/>
+                                <GradientStop Color="Orange" Offset="0.15"/>
+                                <GradientStop Color="Yellow" Offset="0.30"/>
+                                <GradientStop Color="#06ff05" Offset="0.45"/>
+                                <GradientStop Color="#12f9ff" Offset="0.60"/>
+                                <GradientStop Color="Blue" Offset="0.75"/>
+                                <GradientStop Color="#ff06e2" Offset="0.90"/>
+                                <GradientStop Color="Red" Offset="1"/>
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+                    <!-- Vertical gradient from top to bottom to white -->
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,1,1" />
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="Transparent" Offset="0.0"/>
+                                <GradientStop Color="White" Offset="1.0"/>
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
     </Window.Resources>
 
     <Grid>
@@ -163,10 +209,22 @@
 
                 </Grid.ColumnDefinitions>
 
-                <Image Grid.Column="1" 
+                <Grid Grid.Column="1">
+                    <Rectangle 
+                           Margin="0 0 0 0" Name="coloeSpecter"
+                           Fill="{StaticResource SpectrumWithVerticalFade}"
+                           Stretch="Fill" Height="250" Width="260"/>
+                </Grid>
+                <!--<Image Grid.Column="1" 
                     Margin="0 0 0 0" Name="coloeSpecter" 
                    Source="Images/Pallete/ColorSpectre.png" 
-                   Stretch="Fill" Height="250" Width="260"/>
+                   Stretch="Fill" Height="250" Width="260"/> -->
+
+
+                <Image>
+
+                </Image>
+
 
                 <Canvas  Grid.Column="1" 
                          Name="SpecCanvas" 
@@ -207,9 +265,9 @@
                                  Height = "233"
                                  BorderBrush="Transparent" Background="Transparent" 
                                  Minimum="0" Maximum="100" 
-                                 >                              
+                                 >
                     </ProgressBar>
-                    
+
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                             <GradientStop Color="White" Offset="0.1"/>
@@ -292,7 +350,7 @@
                            VerticalAlignment="Center" Margin="2 0 0 0">
                         Third</Label>
                 </WrapPanel>
-                
+
                 <WrapPanel Name ="ChooseType"  Grid.Row="1">
                     <ComboBox Name ="ChooseParamTypeBox"  
                               Height="35" Width="120" SelectedIndex ="0" 

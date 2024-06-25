@@ -375,21 +375,21 @@ namespace PaintWPF
             if (specDragEl == null) return;
             var position = e.GetPosition(sender as IInputElement);
 
-            if (position.X < 5)
+            if (position.X < 0)
             {
-                position.X = 5;
+                position.X = 0;
             }
-            if (position.X > coloeSpecter.Width - 10)
+            if (position.X > coloeSpecter.Width - 1)
             {
-                position.X = coloeSpecter.Width - 10;
+                position.X = coloeSpecter.Width - 1;
             }
-            if (position.Y < 5)
+            if (position.Y < 0)
             {
-                position.Y = 5;
+                position.Y = 0;
             }
-            if (position.Y > coloeSpecter.Height)
+            if (position.Y > coloeSpecter.Height - 1)
             {
-                position.Y = coloeSpecter.Height;
+                position.Y = coloeSpecter.Height - 1;
             }
             Canvas.SetTop(specDragEl, position.Y - specCircleOffset.Y);
             Canvas.SetLeft(specDragEl, position.X - specCircleOffset.X);
@@ -414,11 +414,30 @@ namespace PaintWPF
         }
         public Color GetColorByCord(Point point)
         {
-            string path = GetDirToPallete();
+            Color color = GetColorAtPosition(coloeSpecter, (int)point.X, (int)point.Y);
+            return color;
+            /* string path = GetDirToPallete();
             using (Bitmap bitmap = new Bitmap(path))
             {
                 return bitmap.GetPixel((int)point.X, (int)point.Y);
-            }
+            }*/
+        }
+        private Color GetColorAtPosition(System.Windows.Shapes.Rectangle rectangle, int x, int y)
+        {
+            // Create a RenderTargetBitmap and render the rectangle into it
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
+                (int)rectangle.Width, (int)rectangle.Height, 96, 96, PixelFormats.Pbgra32);
+            rectangle.Measure(new System.Windows.Size((int)rectangle.Width, (int)rectangle.Height));
+            rectangle.Arrange(new Rect(new System.Windows.Size((int)rectangle.Width, (int)rectangle.Height)));
+            renderTargetBitmap.Render(rectangle);
+
+            // Copy the bitmap to a byte array
+            var croppedBitmap = new CroppedBitmap(renderTargetBitmap, new Int32Rect(x, y, 1, 1));
+            byte[] pixels = new byte[4];
+            croppedBitmap.CopyPixels(pixels, 4, 0);
+
+            // Convert the byte array to a Color
+            return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
         }
         public string GetDirToPallete()
         {
