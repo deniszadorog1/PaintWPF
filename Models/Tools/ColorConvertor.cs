@@ -12,7 +12,7 @@ namespace PaintWPF.Models.Tools
 {
     public static class ColorConvertor
     {
-        public static (int, int, int) RGBtoHSV(System.Windows.Media.Color color)
+        public static (int, int, int) RGBtoHCV(System.Windows.Media.Color color)
         {
             double r = color.R / 255.0;
             double g = color.G / 255.0;
@@ -54,35 +54,144 @@ namespace PaintWPF.Models.Tools
 
             return (h, s, v);
         }
-        public static Color HSVToRGB(double hue, double saturation, double value)
+        public static (double, double, double) RGBtoHSL(System.Windows.Media.Color color)
         {
-            double c = value * saturation;
-            double x = c * (1 - Math.Abs((hue / 60) % 2 - 1));
-            double m = value - c;
+            (double H, double S, double L) res;
 
+            int r;
+            int g;
+            double num4;
+            if (color.R > color.G)
+            {
+                r = color.R;
+                g = color.G;
+            }
+            else
+            {
+                r = color.G;
+                g = color.R;
+            }
+            if (color.B > r)
+            {
+                r = color.B;
+            }
+            else if (color.B < g)
+            {
+                g = color.B;
+            }
+            int num3 = r - g;
+            res.L = r / 255.0;
+            if (r == 0)
+            {
+                res.S = 0.0;
+            }
+            else
+            {
+                res.S = num3 / ((double)r);
+            }
+            if (num3 == 0)
+            {
+                num4 = 0.0;
+            }
+            else
+            {
+                num4 = 60.0 / num3;
+            }
+            if (r == color.R)
+            {
+                if (color.G < color.B)
+                {
+                    res.H = (360.0 + (num4 * (color.G - color.B))) / 360.0;
+                }
+                else
+                {
+                    res.H = (num4 * (color.G - color.B)) / 360.0;
+                }
+            }
+            else if (r == color.G)
+            {
+                res.H = (120.0 + (num4 * (color.B - color.R))) / 360.0;
+            }
+            else if (r == color.B)
+            {
+                res.H = (240.0 + (num4 * (color.R - color.G))) / 360.0;
+            }
+            else
+            {
+                res.H = 0.0;
+            }
+            return res;
+        }
+        public static System.Windows.Media.Color HSLtoRGB(double h, double s, double l)
+        {
+            int num2;
+            int red = Round(l * 255.0);
+            int blue = Round(((1.0 - s) * (l / 1.0)) * 255.0);
+            double num4 = (red - blue) / 255.0;
+            if ((h >= 0.0) && (h <= 0.16666666666666666))
+            {
+                num2 = Round((((h - 0.0) * num4) * 1530.0) + blue);
+                return System.Windows.Media.Color.FromArgb(255, (byte)red, (byte)num2, (byte)blue);
+            }
+            if (h <= 0.33333333333333331)
+            {
+                num2 = Round((-((h - 0.16666666666666666) * num4) * 1530.0) + red);
+                return System.Windows.Media.Color.FromArgb(255, (byte)num2, (byte)red, (byte)blue);
+            }
+            if (h <= 0.5)
+            {
+                num2 = Round((((h - 0.33333333333333331) * num4) * 1530.0) + blue);
+                return System.Windows.Media.Color.FromArgb(255, (byte)blue, (byte)red, (byte)num2);
+            }
+            if (h <= 0.66666666666666663)
+            {
+                num2 = Round((-((h - 0.5) * num4) * 1530.0) + red);
+                return System.Windows.Media.Color.FromArgb(255, (byte)blue, (byte)num2, (byte)red);
+            }
+            if (h <= 0.83333333333333337)
+            {
+                num2 = Round((((h - 0.66666666666666663) * num4) * 1530.0) + blue);
+                return System.Windows.Media.Color.FromArgb(255, (byte)num2, (byte)blue, (byte)red);
+            }
+            if (h <= 1.0)
+            {
+                num2 = Round((-((h - 0.83333333333333337) * num4) * 1530.0) + red);
+                return System.Windows.Media.Color.FromArgb(255, (byte)red, (byte)blue, (byte)num2);
+            }
+            return System.Windows.Media.Color.FromArgb(100, 0, 0, 0);
+        }
+        private static int Round(double val)
+        {
+            return (int)(val + 0.5);
+        }
+        public static System.Windows.Media.Color HcvToRgb(double h, double c, double v)
+        {
             double r = 0, g = 0, b = 0;
 
-            if (0 <= hue && hue < 60)
+            double x = c * (1 - Math.Abs((h / 60.0) % 2 - 1));
+            double m = v - c;
+
+            if (h >= 0 && h < 60)
             {
                 r = c; g = x; b = 0;
             }
-            else if (60 <= hue && hue < 120)
+            else if (h >= 60 && h < 120)
             {
                 r = x; g = c; b = 0;
             }
-            else if (120 <= hue && hue < 180)
+            else if (h >= 120 && h < 180)
             {
                 r = 0; g = c; b = x;
             }
-            else if (180 <= hue && hue < 240)
+            else if (h >= 180 && h < 240)
             {
                 r = 0; g = x; b = c;
             }
-            else if (240 <= hue && hue < 300)
+            else if (h >= 240 && h < 300)
             {
                 r = x; g = 0; b = c;
             }
-            else if (300 <= hue && hue < 360)
+            else if (h >= 300 && h < 360)
             {
                 r = c; g = 0; b = x;
             }
@@ -91,36 +200,8 @@ namespace PaintWPF.Models.Tools
             g = (g + m) * 255;
             b = (b + m) * 255;
 
-            return Color.FromArgb((byte)r, (byte)g, (byte)b);
+            return System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
         }
-        public static Color hsvToRgb(double h, double s, double v)
-        {
-            byte[] rgb = new byte[3];
-            double r = 0, g = 0, b = 0;
-
-            int i = (int)(h * 6);
-            double f = h * 6 - i;
-            double p = v * (1 - s);
-            double q = v * (1 - f * s);
-            double t = v * (1 - (1 - f) * s);
-
-            switch (i % 6)
-            {
-                case 0: r = v; g = t; b = p; break;
-                case 1: r = q; g = v; b = p; break;
-                case 2: r = p; g = v; b = t; break;
-                case 3: r = p; g = q; b = v; break;
-                case 4: r = t; g = p; b = v; break;
-                case 5: r = v; g = p; b = q; break;
-            }
-
-            rgb[0] = (byte)(r * 255);
-            rgb[1] = (byte)(g * 255);
-            rgb[2] = (byte)(b * 255);
-
-            return Color.FromArgb(rgb[0], rgb[1], rgb[2]);
-        }
-
         public static System.Windows.Media.Color HexToRGB(string hex)
         {
             // Удаляем символ '#' если он есть

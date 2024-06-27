@@ -74,6 +74,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CustomControls\Selection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,6 +85,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CustomControls\Selection.xaml.cs">
+      <DependentUpon>Selection.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -96,9 +103,11 @@
     <Compile Include="Models\Enums\ActionType.cs" />
     <Compile Include="Models\Enums\BrushType.cs" />
     <Compile Include="Models\Enums\FigureTypes.cs" />
+    <Compile Include="Models\Enums\SelectionType.cs" />
     <Compile Include="Models\MainPaint.cs" />
     <Compile Include="Models\PalleteModel.cs" />
     <Compile Include="Models\Tools\ColorConvertor.cs" />
+    <Compile Include="Models\Tools\TaskColor.cs" />
     <Compile Include="Models\Tools\ProgressBarConverter.cs" />
     <Compile Include="Pallete.xaml.cs">
       <DependentUpon>Pallete.xaml</DependentUpon>
@@ -239,6 +248,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Figures\Cloud.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\CroockedLine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Polygon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

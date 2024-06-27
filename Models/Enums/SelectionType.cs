@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace PaintWPF.Models.Enums
 {
-    public enum ActionType
+    public enum SelectionType
     {
-        Drawing = 0, 
-        Filling,
-        Erazing,
-        Figuring,
-        Selection,
+        Rectangle = 0, 
+        Custom, 
+        All,
         Nothing
     }
 }

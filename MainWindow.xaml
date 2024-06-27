@@ -229,6 +229,7 @@
         </Style>
 
 
+
     </Window.Resources>
 
 
@@ -522,7 +523,7 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Row = "2">
+        <Grid x:Name="CenterWindowPanel" Grid.Row = "2">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -538,6 +539,7 @@
 
             <Grid Grid.Column="1" Grid.Row="1" >
                 <Canvas 
+                    ClipToBounds="True"
                 Name = "DrawingCanvas" Background="White"
                 Height="400" Width="1000"
                 MouseDown="Field_MouseDown"
@@ -546,37 +548,11 @@
                 MouseLeave="PaintField_MouseLeave" VerticalAlignment="Center" Margin="-10,0,10,0">
                     <Label x:Name="AAA" Content="Label" Canvas.Top="35"/>
 
-                    <Path Data="M 80,50
-                           A 20 10 1 1 1 150 45 
-                           A 20 10 1 1 1 210 40
-                           A 10 5 1 1 1 270 70 
-                           A 10 10 1 1 1 270 120
-                           A 10 10 1 1 1 240 155
-                           A 15 12 1 1 1 180 165
-                           A 18 10 1 1 1 90 170
-                           A 45 35 1 0 1 30 130
-                           A 15 20 1 0 1 25 90
-                           A 20 20 0 0 1 80 50 
-                           M 30 180 
-                           A 20 10 0 0 1 70 180 
-                           A 20 10 0 0 1 30 180 
-                           M 20 200
-                           A 20 10 0 0 1 60 200 
-                           A 20 10 0 0 1 20 200
-                           M 15 215
-                           A 20 20 0 0 1 45 215
-                           A 20 20 0 0 1 15 215"
-                          
-                          Height="200" Width="500" Margin="100"/>
-
-                    <!--     20,0 
-             L 120,0 
-             
-             L 140,80 
-             Q 140,100 120,100 
-             L 40,100 
-             Q 20,100 20,80 
-             "   -->
+                    <Border Height="40" Width="40" Margin="100" 
+                            BorderBrush="Black" BorderThickness="2">
+                        <Canvas Height="40" Width="40"/>
+                    </Border> 
+                    
                 </Canvas>
 
 
@@ -634,7 +610,7 @@
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"   
-                          Click="BrushType_Click">
+                          Click="SquareSelection_Click">
                                 <MenuItem.Icon>
                                     <Image Source="Images/Selection/Select.png"/>
                                 </MenuItem.Icon>
@@ -940,7 +916,7 @@
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Other/InProgress.png"/>
+                            <Image Source="Images/Figures/CroockedLine.png"/>
                         </Button>
 
                         <Button Name ="Oval" Height="22" Width="22" 
@@ -974,7 +950,7 @@
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Other/InProgress.png"/>
+                            <Image Source="Images/Figures/Polygon.png"/>
                         </Button>
 
                         <Button Name ="Triangle" Height="22" Width="22" 

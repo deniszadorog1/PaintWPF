@@ -28,9 +28,11 @@ namespace PaintWPF
     /// </summary>
     public partial class Pallete : Window
     {
+        
         private PalleteModel _pallete;
         private UIElement[,] UserColors;
-        private (int, int) chosenCustomColor = (-1, -1);
+        private Point _colorPoint = new Point(0, 0);
+        private TaskColor _tempColor = new TaskColor(255, 0, 0, 0);
 
         private System.Windows.Media.Color _chosenColor;
         public Pallete(PalleteModel pallete)
@@ -40,7 +42,6 @@ namespace PaintWPF
 
             InitBasicParamsAfterInitComps();
         }
-
         public void InitBasicParamsAfterInitComps()
         {
             Canvas.SetTop(draggableButton, 20);
@@ -50,6 +51,23 @@ namespace PaintWPF
             Canvas.SetLeft(ValueBut, 1);
 
             InitUserColorsInArray();
+            FilluserColors();
+        }
+        public void FilluserColors()
+        {
+            for (int i = 0; i < _pallete.UserColors.GetLength(0); i++)
+            {
+                for (int j = 0; j < _pallete.UserColors.GetLength(1); j++)
+                {
+                    if (!(_pallete.UserColors[i, j] is null) &&
+                        UserColors[i, j] is Button but)
+                    {
+                        System.Windows.Media.Color color = _pallete.UserColors[i, j].HSLtoRGB(); /*System.Windows.Media.Color.FromRgb((byte)_pallete.UserColors[i, j].R,
+                            (byte)_pallete.UserColors[i, j].G, (byte)_pallete.UserColors[i, j].B);*/
+                        ChangeBgForInnerEllipseForCustomColor(color, but);
+                    }
+                }
+            }
         }
         public void InitUserColorsInArray()
         {
@@ -129,19 +147,16 @@ namespace PaintWPF
             }
             if (color is null) return;
 
-            //Get this in pallete [,] index 
             (int y, int x) mainColorIndex =
                 _pallete.GetMainColorIndexByColor((System.Windows.Media.Color)color);
             if (mainColorIndex.y == -1 && mainColorIndex.x == -1) return;
 
             // get point int specImg
-/*            System.Windows.Media.Color col =
-                (System.Windows.Media.Color)color;*/
+            /*            System.Windows.Media.Color col =
+                            (System.Windows.Media.Color)color;*/
 
 
-            Color col = ShowColorOnSpecForMainColor(mainColorIndex);
-
-            
+            System.Windows.Media.Color col = ShowColorOnSpecForMainColor(mainColorIndex);
 
             (int, int)? asd = GetColorCord(col.R, col.G, col.B);
             if (asd is null) return;
@@ -152,17 +167,21 @@ namespace PaintWPF
             specDragEl = null;
             SpecCanvas.ReleaseMouseCapture();
         }
-        public Color ShowColorOnSpecForMainColor((int, int) mainColorInPalleteIndex)
+        public System.Windows.Media.Color ShowColorOnSpecForMainColor((int, int) mainColorInPalleteIndex)
         {
-            (int h, int s, int v) hcvParam= 
-                _pallete.MainColors[mainColorInPalleteIndex.Item1, 
-                mainColorInPalleteIndex.Item2].HSVParam;
+            var asd = _pallete.MainColors[mainColorInPalleteIndex.Item1, mainColorInPalleteIndex.Item2];
 
-            Color first = ColorConvertor.hsvToRgb(hcvParam.h, hcvParam.s, hcvParam.v);
+            TaskColor color = new TaskColor(asd.TColor);
 
-            Color color = ColorConvertor.HSVToRGB(hcvParam.h, hcvParam.s, hcvParam.v);
+            color.Hue = asd.HSVParam.H;
+            color.Saturation = asd.HSVParam.S;
+            color.Luminance = asd.HSVParam.V;
 
-            return new Color();
+            System.Windows.Media.Color qwe = color.HSLtoRGB();
+
+
+
+            return qwe;
         }
         public string GetHexFromColor(int r, int g, int b)
         {
@@ -203,39 +222,42 @@ namespace PaintWPF
         {
             if (sender is Button button)
             {
-                Ellipse greyCircle = new Ellipse();
-                greyCircle.Width = button.Width + 1;
-                greyCircle.Height = button.Height + 1;
-
-                greyCircle.Stroke = Brushes.Green;
-                greyCircle.StrokeThickness = 1;
-
-                greyCircle.Margin = new Thickness(-10);
-
-                button.Content = greyCircle;
-
-                object asd = button.Tag.GetType();
+                InitCircleUponUserColor(button);
 
                 if (button.Tag is Tuple<int, int> tag)
                 {
-                    chosenCustomColor = (tag.Item1, tag.Item2);
+                    _pallete.ChosenCustomColorIndex = (tag.Item1, tag.Item2);
                 }
-                for (int i = 0; i < UserColors.GetLength(0); i++)
+                CleateUserColors();
+            }
+        }
+        
+        public void InitCircleUponUserColor(Button button)
+        {
+            Ellipse uponCircle = new Ellipse();
+            uponCircle.Width = button.Width + 1;
+            uponCircle.Height = button.Height + 1;
+
+            uponCircle.Stroke = Brushes.Green;
+            uponCircle.StrokeThickness = 1;
+
+            uponCircle.Margin = new Thickness(-10);
+
+            button.Content = uponCircle;
+        }
+
+        public void CleateUserColors()
+        {
+            for (int i = 0; i < UserColors.GetLength(0); i++)
+            {
+                for (int j = 0; j < UserColors.GetLength(1); j++)
                 {
-                    for (int j = 0; j < UserColors.GetLength(1); j++)
+                    if (UserColors[i, j] is Button but)
                     {
-                        if (UserColors[i, j] is Button but)
-                        {
-                            ClearEnterColor(but);
-                        }
+                        ClearEnterColor(but);
                     }
                 }
             }
-        }
-        private void RoundButton_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            MessageBox.Show("Round button clicked!");
         }
         private void OK_Click(object sender, EventArgs e)
         {
@@ -249,7 +271,7 @@ namespace PaintWPF
         {
             if (!(button is null) &&
                 button.Tag is Tuple<int, int> tag &&
-                chosenCustomColor == (tag.Item1, tag.Item2))
+                _pallete.ChosenCustomColorIndex == (tag.Item1, tag.Item2))
             {
                 return;
             }
@@ -268,7 +290,7 @@ namespace PaintWPF
         {
             if (button is null) return;
             if (button.Tag is Tuple<int, int> tag &&
-                chosenCustomColor == (tag.Item1, tag.Item2))
+                _pallete.ChosenCustomColorIndex == (tag.Item1, tag.Item2))
             {
                 return;
             }
@@ -304,43 +326,37 @@ namespace PaintWPF
         }
         private void ValueCanvas_PreViewMouseMove(object sender, MouseEventArgs e)
         {
-            Point buttonPosRelativeToAncestor = draggableButton.TransformToAncestor(this).Transform(new Point(0, 0));
-
-            Point imagePosRelativeToAncestor = coloeSpecter.TransformToAncestor(this).Transform(new Point(0, 0));
-
-            double relativeX = buttonPosRelativeToAncestor.X - imagePosRelativeToAncestor.X;
-            double relativeY = buttonPosRelativeToAncestor.Y - imagePosRelativeToAncestor.Y;
-
-            double centerX = relativeX + (draggableButton.ActualWidth / 2);
-            double centerY = relativeY + (draggableButton.ActualHeight / 2);
-
             if (valueDragElem == null) return;
-            var position = e.GetPosition(sender as IInputElement);
+            var pos = e.GetPosition(sender as IInputElement);
 
-            if (position.Y < 8)
+            if (pos.Y < 8)
             {
-                position.Y = 8;
+                pos.Y = 8;
             }
-            if (position.Y > ValueBorder.Height - 8)
+            if (pos.Y > ValueBorder.Height - 8)
             {
-                position.Y = ValueBorder.Height - 8;
+                pos.Y = ValueBorder.Height - 8;
             }
-            Canvas.SetTop(valueDragElem, position.Y - valueOffset.Y);
+            Canvas.SetTop(valueDragElem, pos.Y - valueOffset.Y);
+            ChangeProgressBarValue(pos.Y - valueOffset.Y);
 
-            ChangeProgressBarValue(position.Y - valueOffset.Y);
+            UpdateShowColor();
         }
         public void ChangeProgressBarValue(double pos)
         {
             double onePointHeight = ValueProgressBar.Height / ValueProgressBar.Maximum;
             double temp = pos / onePointHeight;
-            ThirdInfoBox.Text = Math.Abs(((int)temp) - 100).ToString();
+
+            int value = Math.Abs(((int)temp) - 100);
+            ThirdInfoBox.Text = value.ToString();
+
+            _pallete.TempL = value;
         }
         private void ValueCanvas_PreViewMouseUp(object sender, MouseEventArgs e)
         {
             valueDragElem = null;
             ValueCanvas.ReleaseMouseCapture();
         }
-
         private UIElement specDragEl = null;
         private Point specCircleOffset;
 
@@ -362,46 +378,53 @@ namespace PaintWPF
         }
         private void CanvasMain_PreViewMouseMove(object sender, MouseEventArgs e)
         {
-            Point buttonPosRelativeToAncestor = draggableButton.TransformToAncestor(this).Transform(new Point(0, 0));
-
-            Point imagePosRelativeToAncestor = coloeSpecter.TransformToAncestor(this).Transform(new Point(0, 0));
-
-            double relativeX = buttonPosRelativeToAncestor.X - imagePosRelativeToAncestor.X;
-            double relativeY = buttonPosRelativeToAncestor.Y - imagePosRelativeToAncestor.Y;
-
-            double centerX = relativeX + (draggableButton.ActualWidth / 2);
-            double centerY = relativeY + (draggableButton.ActualHeight / 2);
-
             if (specDragEl == null) return;
-            var position = e.GetPosition(sender as IInputElement);
-
-            if (position.X < 0)
+            _colorPoint = e.GetPosition(sender as IInputElement);
+            if (_colorPoint.X < 0)
             {
-                position.X = 0;
+                _colorPoint.X = 0;
             }
-            if (position.X > coloeSpecter.Width - 1)
+            if (_colorPoint.X > coloeSpecter.Width - 1)
             {
-                position.X = coloeSpecter.Width - 1;
+                _colorPoint.X = coloeSpecter.Width - 1;
             }
-            if (position.Y < 0)
+            if (_colorPoint.Y < 0)
             {
-                position.Y = 0;
+                _colorPoint.Y = 0;
             }
-            if (position.Y > coloeSpecter.Height - 1)
+            if (_colorPoint.Y > coloeSpecter.Height - 1)
             {
-                position.Y = coloeSpecter.Height - 1;
+                _colorPoint.Y = coloeSpecter.Height - 1;
             }
-            Canvas.SetTop(specDragEl, position.Y - specCircleOffset.Y);
-            Canvas.SetLeft(specDragEl, position.X - specCircleOffset.X);
+            Canvas.SetTop(specDragEl, _colorPoint.Y - specCircleOffset.Y);
+            Canvas.SetLeft(specDragEl, _colorPoint.X - specCircleOffset.X);
 
-            Color color = GetColorByCord(position);
+            UpdateShowColor();
+        }
+        public void UpdateShowColor()
+        {
+            System.Windows.Media.Color mediaColor =
+            GetColorAtPosition(coloeSpecter,
+            (int)_colorPoint.X, (int)_colorPoint.Y);
 
-            System.Windows.Media.Color mediaColor = System.Windows.Media.Color.FromArgb(
-                  color.A, color.R, color.G, color.B);
+            //HexTable.Text = GetHexFromColor(mediaColor.R, mediaColor.G, mediaColor.B);
+            ReInitColorShowCOlorPanel(mediaColor);
+        }
+        public void ReInitColorShowCOlorPanel(System.Windows.Media.Color color)
+        {
+            _tempColor = new TaskColor(color);
+            _tempColor.RGBtoHSL(color);
+            double lum = _pallete.TempL;
+            lum /= 100;
+            _tempColor.Luminance = lum;
+            System.Windows.Media.Color asd = _tempColor.HSLtoRGB();
+            HexTable.Text = asd.ToString();
+            ChosenColorShow.Background = new SolidColorBrush(asd);
 
-            ChosenColorShow.Background = new SolidColorBrush(mediaColor);
-            HexTable.Text = GetHexFromColor(mediaColor.R, mediaColor.G, mediaColor.B);
-            UpdateValueBackGroud(mediaColor);
+            LinearGradientBrush gradientBrush =
+            (LinearGradientBrush)ValueBorder.Background;
+            gradientBrush.GradientStops[0].Color = color;
+            UpdateColorParams(asd);
         }
         private void CanvasMain_PreViewMouseUp(object sender, MouseEventArgs e)
         {
@@ -412,32 +435,23 @@ namespace PaintWPF
         {
             Console.WriteLine();
         }
-        public Color GetColorByCord(Point point)
+
+        private System.Windows.Media.Color GetColorAtPosition
+            (System.Windows.Shapes.Rectangle rectangle, int x, int y)
         {
-            Color color = GetColorAtPosition(coloeSpecter, (int)point.X, (int)point.Y);
-            return color;
-            /* string path = GetDirToPallete();
-            using (Bitmap bitmap = new Bitmap(path))
-            {
-                return bitmap.GetPixel((int)point.X, (int)point.Y);
-            }*/
-        }
-        private Color GetColorAtPosition(System.Windows.Shapes.Rectangle rectangle, int x, int y)
-        {
-            // Create a RenderTargetBitmap and render the rectangle into it
             RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
                 (int)rectangle.Width, (int)rectangle.Height, 96, 96, PixelFormats.Pbgra32);
             rectangle.Measure(new System.Windows.Size((int)rectangle.Width, (int)rectangle.Height));
             rectangle.Arrange(new Rect(new System.Windows.Size((int)rectangle.Width, (int)rectangle.Height)));
             renderTargetBitmap.Render(rectangle);
 
-            // Copy the bitmap to a byte array
-            var croppedBitmap = new CroppedBitmap(renderTargetBitmap, new Int32Rect(x, y, 1, 1));
+            var croppedBitmap = new CroppedBitmap(renderTargetBitmap,
+                new Int32Rect(x, y, 1, 1));
             byte[] pixels = new byte[4];
             croppedBitmap.CopyPixels(pixels, 4, 0);
 
-            // Convert the byte array to a Color
-            return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
+            return System.Windows.Media.Color.FromArgb(pixels[3],
+                pixels[2], pixels[1], pixels[0]);
         }
         public string GetDirToPallete()
         {
@@ -451,26 +465,24 @@ namespace PaintWPF
             //return "";
 
         }
-        public void UpdateValueBackGroud(System.Windows.Media.Color color)
-        {
-            LinearGradientBrush gradientBrush = (LinearGradientBrush)ValueBorder.Background;
-            gradientBrush.GradientStops[0].Color = color;
-            UpdateColorParams(color);
-        }
+
         public void UpdateColorParams(System.Windows.Media.Color color)
         {
             _chosenColor = color;
+            //(int H, int S, int V) HCVParams = ColorConvertor.RGBtoHCV(color);
+
+            System.Windows.Media.Color check = _tempColor.HSLtoRGB();
+
             if (ChooseParamTypeBox.SelectedIndex == 0)
             {
-                FirstInfoBox.Text = color.R.ToString();
-                SecondInfoBox.Text = color.G.ToString();
-                ThirdInfoBox.Text = color.B.ToString();
+                FirstInfoBox.Text = check.R.ToString();
+                SecondInfoBox.Text = check.G.ToString();
+                ThirdInfoBox.Text = check.B.ToString();
                 return;
             }
-            (int H, int S, int V) HSVParams = ColorConvertor.RGBtoHSV(color);
-            FirstInfoBox.Text = HSVParams.H.ToString();
-            SecondInfoBox.Text = HSVParams.S.ToString();
-            ThirdInfoBox.Text = HSVParams.V.ToString();
+            FirstInfoBox.Text = _tempColor.H.ToString();
+            SecondInfoBox.Text = _tempColor.S.ToString();
+            ThirdInfoBox.Text = _tempColor.L.ToString();
         }
         private void ColorParamType_SelectionChanged(object sender, EventArgs e)
         {
@@ -493,9 +505,47 @@ namespace PaintWPF
             SecondInfoBox.Text = _chosenColor.G.ToString();
             ThirdInfoBox.Text = _chosenColor.B.ToString();
         }
+        private void AddCustomColor_Click(object sender, EventArgs e)
+        {
+            if (_pallete.ChosenCustomColorIndex != (-1, -1) &&
+                UserColors[_pallete.ChosenCustomColorIndex.Item1,
+                _pallete.ChosenCustomColorIndex.Item2] is Button but)
+            {
 
+                System.Windows.Media.Color newColor = _tempColor.HSLtoRGB();
+                /*System.Windows.Media.Color.FromArgb((byte)_tempColor.A,
+                    (byte)_tempColor.R, (byte)_tempColor.G, (byte)_tempColor.B);
+*/
+                _pallete.UserColors[_pallete.ChosenCustomColorIndex.Item1,
+                    _pallete.ChosenCustomColorIndex.Item2] = new TaskColor(newColor);
 
+                ChangeBgForInnerEllipseForCustomColor(newColor, but);
 
+                _pallete.MoveUserColorIndex();
+
+                InitCircleUponUserColor((Button)UserColors[_pallete.ChosenCustomColorIndex.Item1,
+                _pallete.ChosenCustomColorIndex.Item2]);
+                CleateUserColors();
+            }
+        }
+        public void ChangeBgForInnerEllipseForCustomColor(
+            System.Windows.Media.Color color, Button but)
+        {
+            if (but.Template != null)
+            {
+                Ellipse outerEllipse = but.Template.FindName("innerEllipse", but) as Ellipse;
+                if (outerEllipse != null)
+                {
+                    outerEllipse.Fill = new SolidColorBrush(color);
+                    outerEllipse.Stroke = null;
+                }
+            }
+        }
+
+        private void PalletePanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            FilluserColors();
+        }
     }
 }
 

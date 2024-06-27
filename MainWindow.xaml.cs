@@ -42,19 +42,26 @@ namespace PaintWPF
         private Button _chosenTool = null;
 
         private ActionType _type = ActionType.Nothing;
+        private SelectionType _selectionType = SelectionType.Nothing;
+
+        private Rectangle _selectionRect = new Rectangle();
+
         private bool IfDrawing = false;
         private bool IfFilling = false;
         private bool IfErazing = false;
         private bool IfFiguring = false;
+        private bool IfSelection = false;
 
 
         private FigureTypes? _figType = null;
         private Shape _figToPaint;
+        private Polyline poligonFigure = null;
 
         private Point previousPoint;
         private int brushThickness = 2;
 
         private bool IfShowBrushSize = false;
+
 
         private UIElement valueDragElem = null;
         private Point valueOffset;
@@ -67,9 +74,12 @@ namespace PaintWPF
         private List<Polyline> polylines = new List<Polyline>();
         private List<Polygon> polygons = new List<Polygon>();
 
+        private readonly SolidColorBrush _clickedBorderColor = 
+            new SolidColorBrush(Color.FromRgb(0, 103, 192));
 
         private const double CalligraphyBrushAngle = 135 * Math.PI / 180;
         private const double FountainBrushAngle = 45 * Math.PI / 180;
+
 
         private readonly DrawingAttributes paeAttributes = new DrawingAttributes()
         {
@@ -240,13 +250,13 @@ namespace PaintWPF
             {
                 if (!(_chosenTool is null) && but.Name == _chosenTool.Name) return;
                 but.Background = transparentBrush;
-                but.BorderBrush = transparentBrush;
+                but.BorderBrush = but.BorderBrush != _clickedBorderColor ? transparentBrush : _clickedBorderColor;
                 return;
             }
             if (sender is Border bord)
             {
                 bord.Background = transparentBrush;
-                bord.BorderBrush = transparentBrush;
+                bord.BorderBrush = bord.BorderBrush != _clickedBorderColor ? transparentBrush : _clickedBorderColor;
                 return;
             }
             if (sender is Grid grid)
@@ -309,6 +319,7 @@ namespace PaintWPF
                 if (FigurePanel.Children[i] is Button but)
                 {
                     but.Background = trancparenBrush;
+                    but.BorderBrush = trancparenBrush;
                 }
             }
         }
@@ -331,11 +342,14 @@ namespace PaintWPF
 
             previousPoint = e.GetPosition(DrawingCanvas);
             InitDeed();
-            if (IfFilling)
+            if (IfSelection)
             {
-                Point point = e.GetPosition(DrawingCanvas);
+                MakeSelection(e);
+            }
+            else if (IfFilling)
+            {
                 RenderCanvasToBitmap();
-                PerformFloodFill((int)point.X, (int)point.Y);
+                PerformFloodFill((int)previousPoint.X, (int)previousPoint.Y);
             }
             else if (IfFiguring)
             {
@@ -347,6 +361,33 @@ namespace PaintWPF
                 SetPaintingMarker(e);
             }
         }
+        private void MakeSelection(MouseEventArgs e)
+        {
+            if (_selectionType == SelectionType.Rectangle)
+            {
+                MakeRecangleSelection(e);
+            }
+            else if (_selectionType == SelectionType.Custom)
+            {
+
+            }
+            else if (_selectionType == SelectionType.All)
+            {
+
+            }
+        }
+        private void MakeRecangleSelection(MouseEventArgs e)
+        {
+            _selectionRect = new Rectangle
+            {
+                Stroke = Brushes.LightBlue,
+                StrokeThickness = 3,
+                Fill = Brushes.Transparent
+            };
+            Canvas.SetLeft(_selectionRect, e.GetPosition(DrawingCanvas).X);
+            Canvas.SetTop(_selectionRect, e.GetPosition(DrawingCanvas).Y);
+            DrawingCanvas.Children.Add(_selectionRect);
+        }
         private void RenderCanvasToBitmap()
         {
             double dpi = 96;
@@ -354,8 +395,6 @@ namespace PaintWPF
                 (int)DrawingCanvas.ActualHeight, dpi, dpi, PixelFormats.Pbgra32);
             _renderBitmap.Render(DrawingCanvas);
         }
-
-
         private void InitDeed()
         {
             if (_type == ActionType.Drawing)
@@ -364,6 +403,7 @@ namespace PaintWPF
                 IfErazing = false;
                 IfFiguring = false;
                 IfFilling = false;
+                IfSelection = false;
             }
             else if (_type == ActionType.Figuring)
             {
@@ -371,6 +411,7 @@ namespace PaintWPF
                 IfErazing = false;
                 IfFiguring = true;
                 IfFilling = false;
+                IfSelection = false;
             }
             else if (_type == ActionType.Erazing)
             {
@@ -378,6 +419,7 @@ namespace PaintWPF
                 IfErazing = true;
                 IfFiguring = false;
                 IfFilling = false;
+                IfSelection = false;
             }
             else if (_type == ActionType.Filling)
             {
@@ -385,6 +427,15 @@ namespace PaintWPF
                 IfErazing = false;
                 IfFiguring = false;
                 IfFilling = true;
+                IfSelection = false;
+            }
+            else if (_type == ActionType.Selection)
+            {
+                IfSelection = true;
+                IfDrawing = false;
+                IfErazing = false;
+                IfFiguring = false;
+                IfFilling = false;
             }
             else
             {
@@ -392,6 +443,7 @@ namespace PaintWPF
                 IfErazing = false;
                 IfFiguring = false;
                 IfFilling = false;
+                IfSelection = false;
             }
         }
         private void InitShapesToPaint(MouseEventArgs e)
@@ -424,7 +476,15 @@ namespace PaintWPF
                         break;
                     }
                 case FigureTypes.Polygon:
-                    break;
+                    {
+                        if (poligonFigure is null)
+                        {
+                            poligonFigure = new Polyline();
+                        }
+                        _figToPaint = new Polyline();
+
+                        break;
+                    }
                 case FigureTypes.Triangle:
                     {
                         GetPathToPaint();
@@ -487,7 +547,7 @@ namespace PaintWPF
                         ((System.Windows.Shapes.Path)_figToPaint).Data =
                         Geometry.Parse("M 50 50 L 50 150 L 30 150 L 70 200 L 110 150 L 90 150 L 90 50 Z");
                         break;
-                    }     
+                    }
                 case FigureTypes.FourPointedStar:
                     {
                         GetPathToPaint();
@@ -501,14 +561,14 @@ namespace PaintWPF
                         ((System.Windows.Shapes.Path)_figToPaint).Data =
                         Geometry.Parse("M 100 10  L 130 90 L 200 90 L 145 130 L 170 200 L 100 160 L 30 200  L 55 130 L 0 90  L 70 90 Z");
                         break;
-                    }                  
+                    }
                 case FigureTypes.SixPointedStar:
                     {
                         GetPathToPaint();
                         ((System.Windows.Shapes.Path)_figToPaint).Data =
                         Geometry.Parse("M 100 10 L 130 60 L 180 60 L 150 100 L 180 140 L 130 140 L 100 180 L 70 140 L 20 140 L 50 100 L 20 60 L 70 60 Z");
                         break;
-                    }             
+                    }
                 case FigureTypes.RoundedRectangularLeader:
                     {
                         GetPathToPaint();
@@ -523,7 +583,7 @@ namespace PaintWPF
                         Geometry.Parse("M 100,100 A 40, 30 0 1 1 200, 100 A 60, 60 1 0 1 140, 130 L 125 145 L 120 130 Q 100 120 100 100 ");
                         break;
                     }
-                    
+
                 case FigureTypes.CalloutCloud:
                     {
                         GetPathToPaint();
@@ -581,10 +641,13 @@ namespace PaintWPF
         {
             Point position = e.GetPosition(DrawingCanvas);
             string cursPosInPaintField = $"{position.X}, {position.Y}";
-
             CursCords.Content = cursPosInPaintField;
 
-            if (IfDrawing || IfErazing)
+            if (IfSelection)
+            {
+                ChangeSelectionSize(e);
+            }
+            else if (IfDrawing || IfErazing)
             {
                 BrushPaint(e);
             }
@@ -593,141 +656,66 @@ namespace PaintWPF
                 PaintFigures(e);
             }
         }
+        private void ChangeSelectionSize(MouseEventArgs e)
+        {
+            if(_selectionType == SelectionType.Rectangle)
+            {
+                FigureRotation(e, _selectionRect);
+
+                return;
+            }            
+            
+        }
+
         private void PaintFigures(MouseEventArgs e)
         {
-            switch (_figType)
+            if (_figType == FigureTypes.Line)
             {
-                case FigureTypes.Line:
-                    {
-                        (_figToPaint as Polyline).Points = new PointCollection()
-                        {
-                            new Point(0, 0),
-                            new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
-                            e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint))
-                        };
-                        return;
-                    }
-                case FigureTypes.Curve:
-                    break;
-                case FigureTypes.Oval:
-                    {
-                        FigureRotation(e);
-                        return;
-                    }
-                case FigureTypes.Rectangle:
-                    {
-                        FigureRotation(e);
-                        return;
-                    }
-                case FigureTypes.RoundedRectangle:
-                    {
-                        FigureRotation(e);
-                        return;
-                    }
-                case FigureTypes.Polygon:
-                    break;
-                case FigureTypes.Triangle:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.RightTriangle:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.Rhombus:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.Pentagon:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.Hexagon:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.RightArrow:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.LeftArrow:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.UpArrow:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.DownArrow:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.FourPointedStar:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.FivePointedStar:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.SixPointedStar:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.RoundedRectangularLeader:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.OvalCallout:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.CalloutCloud:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.Heart:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                case FigureTypes.Lightning:
-                    {
-                        FigureRotation(e);
-                        break;
-                    }
-                default:
-                    break;
+                (_figToPaint as Polyline).Points = new PointCollection()
+                {
+                    new Point(0, 0),
+                    new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
+                    e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint))
+                };
+            }
+            else if (_figType == FigureTypes.Polygon)
+            {
+                Point startPoint = poligonFigure.Points.Count == 0 ? new Point(0, 0) : new Point(-1, -1);
+
+                if (startPoint.X == -1 && startPoint.Y == -1)
+                {
+                    startPoint = poligonFigure.Points[poligonFigure.Points.Count - 1];
+                }
+                (_figToPaint as Polyline).Points = new PointCollection()
+                {
+                    new Point(startPoint.X, startPoint.Y),
+
+                    new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
+                    e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint))
+                };
+            }
+            else if (_figType == FigureTypes.Curve)
+            {
+
+            }
+            else
+            {
+                FigureRotation(e, _figToPaint);
             }
         }
-        private void FigureRotation(MouseEventArgs e)
+        private void FigureRotation(MouseEventArgs e, Shape shape)
         {
-
             double x = Math.Min(previousPoint.X, e.GetPosition(DrawingCanvas).X);
             double y = Math.Min(previousPoint.Y, e.GetPosition(DrawingCanvas).Y);
+
             double width = Math.Abs(e.GetPosition(DrawingCanvas).X - previousPoint.X);
             double height = Math.Abs(e.GetPosition(DrawingCanvas).Y - previousPoint.Y);
 
-            _figToPaint.Width = width;
-            _figToPaint.Height = height;
+            shape.Width = width;
+            shape.Height = height;
 
-            Canvas.SetLeft(_figToPaint, x);
-            Canvas.SetTop(_figToPaint, y);
+            Canvas.SetLeft(shape, x);
+            Canvas.SetTop(shape, y);
         }
         private void BrushPaint(MouseEventArgs e)
         {
@@ -1007,21 +995,40 @@ namespace PaintWPF
             IfErazing = false;
             IfFiguring = false;
             IfFilling = false;
+            IfSelection = false;
 
-            _figToPaint = null;
+            CheckForFigurePainting();
 
             sprayTimer.Stop();
-
             SaveCanvasState();
+        }
+        private void CheckForFigurePainting()
+        {
+            if (_figType != FigureTypes.Polygon)
+            {
+                _figToPaint = null;
+            }
+            else if (_figType == FigureTypes.Polygon)
+            {
+                for (int i = 0; i < ((Polyline)_figToPaint).Points.Count; i++)
+                {
+                    Point point = new Point(((Polyline)_figToPaint).Points[i].X,
+                        ((Polyline)_figToPaint).Points[i].Y);
+                    poligonFigure.Points.Add(point);
+                }
+                for (int i = 0; i < poligonFigure.Points.Count; i++)
+                {
+                    Point point = new Point(poligonFigure.Points[i].X,
+                        poligonFigure.Points[i].Y);
+                }
+            }
         }
 
         private void PerformFloodFill(int x, int y)
         {
-            // Проверка границ изображения
             if (x < 0 || x >= _renderBitmap.PixelWidth || y < 0 || y >= _renderBitmap.PixelHeight)
                 return;
 
-            // Получаем пиксели изображения
             int stride = _renderBitmap.PixelWidth * (_renderBitmap.Format.BitsPerPixel / 8);
             byte[] pixels = new byte[stride * _renderBitmap.PixelHeight];
             _renderBitmap.CopyPixels(pixels, stride, 0);
@@ -1029,7 +1036,6 @@ namespace PaintWPF
             Color targetColor = GetPixelColor(pixels, stride, x, y);
             if (targetColor == _main.ColorToPaint.Color) return;
 
-            // Выполняем заливку области
             Queue<Point> points = new Queue<Point>();
             points.Enqueue(new Point(x, y));
 
@@ -1288,6 +1294,8 @@ namespace PaintWPF
             ClearBGs();
             if (sender is Button but)
             {
+                but.BorderBrush = _clickedBorderColor;
+
                 FigureTypes? figType = ConvertSrtingIntoEnum(but.Name);
                 if (figType is null)
                 {
@@ -1399,5 +1407,11 @@ namespace PaintWPF
         {
             Close();
         }
+        private void SquareSelection_Click(object sender, EventArgs e)
+        {
+            _type = ActionType.Selection;
+            _selectionType = SelectionType.Rectangle;
+        }
+
     }
 }

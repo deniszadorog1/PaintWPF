@@ -5,12 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
+using PaintWPF.Models.Tools;
+
 namespace PaintWPF.Models
 {
     public class PalleteModel
     {
-        public Color?[,] UserColors { get; set; }
+        public TaskColor[,] UserColors { get; set; }
         public ColorParams[,] MainColors { get; set; }
+        public int TempL { get; set; }
+        public (int, int) ChosenCustomColorIndex { get; set; }
 
         const int userColorWidth = 6;
         const int userColorHeight = 5;
@@ -18,20 +22,42 @@ namespace PaintWPF.Models
         const int mainColorsWidth = 12;
         const int mainColors = 4;
 
+        const int customColorsWidth = 6;
+        const int customColorsHeight = 4;
+
+        const int _maxLValue = 100;
         public PalleteModel()
         {
-            InitLength();
+            InitUserColorLength();
             InitMainColors();
+            TempL = _maxLValue;
+            ChosenCustomColorIndex = (0, 0);
         }
-        public void InitLength()
+        public void InitUserColorLength()
         {
-            UserColors = new Color?[userColorWidth - 1, userColorHeight - 1];
+            UserColors = new TaskColor[userColorHeight, userColorWidth];
             for (int i = 0; i < UserColors.GetLength(0); i++)
             {
                 for (int j = 0; j < UserColors.GetLength(1); j++)
                 {
                     UserColors[i, j] = null;
                 }
+            }
+        }
+        public void MoveUserColorIndex()
+        {
+            if (ChosenCustomColorIndex.Item2 + 1 <= userColorWidth - 1)
+            {
+                ChosenCustomColorIndex = (ChosenCustomColorIndex.Item1, ChosenCustomColorIndex.Item2 + 1);
+            }
+            else if (ChosenCustomColorIndex.Item1 + 1 < userColorHeight - 1 &&
+                ChosenCustomColorIndex.Item2 + 1 > userColorHeight - 1)
+            {
+                ChosenCustomColorIndex = (ChosenCustomColorIndex.Item1 + 1, 0 );
+            }
+            else 
+            {
+                ChosenCustomColorIndex = (0, 0);
             }
         }
         public void InitMainColors()
@@ -94,7 +120,7 @@ namespace PaintWPF.Models
             MainColors[2, 0] = new ColorParams(
             Color.FromRgb(161, 251, 142), "#A1FB8E", (110, 43, 98));
             MainColors[2, 1] = new ColorParams(
-            Color.FromRgb(161, 250, 79), "#A1FA4F", (91, 68, 98)); 
+            Color.FromRgb(161, 250, 79), "#A1FA4F", (91, 68, 98));
             MainColors[2, 2] = new ColorParams(
             Color.FromRgb(117, 249, 77), "#75F94D", (106, 69, 98));
             MainColors[2, 3] = new ColorParams(
@@ -102,7 +128,7 @@ namespace PaintWPF.Models
             MainColors[2, 4] = new ColorParams(
             Color.FromRgb(131, 53, 98), "#75FA8D", (117, 250, 141));
             MainColors[2, 5] = new ColorParams(
-            Color.FromRgb(129, 128, 73), "#818049", (59, 43, 51)); 
+            Color.FromRgb(129, 128, 73), "#818049", (59, 43, 51));
             MainColors[2, 6] = new ColorParams(
             Color.FromRgb(239, 136, 190), "#EF88BE", (329, 43, 94));
             MainColors[2, 7] = new ColorParams(
@@ -142,12 +168,11 @@ namespace PaintWPF.Models
             MainColors[3, 11] = new ColorParams(
             Color.FromRgb(255, 255, 255), "#FFFFFF", (0, 0, 100));
         }
-
-        public (int,int) GetMainColorIndexByColor(System.Windows.Media.Color color)
+        public (int, int) GetMainColorIndexByColor(System.Windows.Media.Color color)
         {
-            for(int i = 0; i < MainColors.GetLength(0); i++)
+            for (int i = 0; i < MainColors.GetLength(0); i++)
             {
-                for(int j = 0; j < MainColors.GetLength(1); j++)
+                for (int j = 0; j < MainColors.GetLength(1); j++)
                 {
                     if (MainColors[i, j].TColor.Equals(color))
                     {
