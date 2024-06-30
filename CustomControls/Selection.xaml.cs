@@ -20,9 +20,11 @@ namespace PaintWPF.CustomControls
     /// </summary>
     public partial class Selection : UserControl
     {
+
         public Selection()
         {
             InitializeComponent();
         }
+
     }
 }

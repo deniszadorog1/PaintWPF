@@ -103,6 +103,7 @@
     <Compile Include="Models\Enums\ActionType.cs" />
     <Compile Include="Models\Enums\BrushType.cs" />
     <Compile Include="Models\Enums\FigureTypes.cs" />
+    <Compile Include="Models\Enums\SelectionSide.cs" />
     <Compile Include="Models\Enums\SelectionType.cs" />
     <Compile Include="Models\MainPaint.cs" />
     <Compile Include="Models\PalleteModel.cs" />
@@ -254,6 +255,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Figures\Polygon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Brushes\ColoredBrush.png" />
+    <Resource Include="Images\Brushes\OilBrush.png" />
+    <Resource Include="Images\Brushes\TexturePencilBrush.png" />
+    <Resource Include="Images\Brushes\WatercolorBrush.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

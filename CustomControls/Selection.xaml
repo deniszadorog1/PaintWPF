@@ -7,9 +7,54 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Border Height="40" Width="40" BorderBrush="White" BorderThickness="3"> 
-        <Canvas>
 
+    <Border Name ="SelectionBorder" Height="300" Width="300" 
+            BorderBrush="Red" BorderThickness="3">
+        <Canvas Name="SelectCan" Background="Transparent">
+            <Grid Width="{Binding ActualWidth, ElementName=SelectCan}" 
+             Height="{Binding ActualHeight, ElementName=SelectCan}">
+
+                <Rectangle Name="LeftTop"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Left"
+                           VerticalAlignment="Top" Margin="-5" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+                <Rectangle Name="CenterTop"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Center"
+                           VerticalAlignment="Top" Margin="0 -5 0 0" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+                <Rectangle Name="RightTop"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Right"
+                           VerticalAlignment="Top" Margin="-5" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+                <Rectangle Name="RightCenter"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Right"
+                           VerticalAlignment="Center" Margin="0 0 -5 0" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+                <Rectangle Name="RightBottom"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Right"
+                           VerticalAlignment="Bottom" Margin="-5" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+                <Rectangle Name="CenterBottom"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Center"
+                           VerticalAlignment="Bottom" Margin="0 0 0 -5" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+                <Rectangle Name="LeftBottom"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Left"
+                           VerticalAlignment="Bottom" Margin="-5" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+                <Rectangle Name="LeftCenter"
+                           Height="10" Width="10" 
+                           HorizontalAlignment ="Left"
+                           VerticalAlignment="Center" Margin="-5 0 0 0" Fill="White"
+                           StrokeThickness="1" Stroke="Black"/>
+            </Grid>
         </Canvas>
     </Border>
 </UserControl>

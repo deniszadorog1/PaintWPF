@@ -21,7 +21,7 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 
 using PaintWPF.Models.Tools;
-
+using PaintWPF.CustomControls;
 
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
@@ -51,8 +51,6 @@ namespace PaintWPF
         private bool IfErazing = false;
         private bool IfFiguring = false;
         private bool IfSelection = false;
-
-
         private FigureTypes? _figType = null;
         private Shape _figToPaint;
         private Polyline poligonFigure = null;
@@ -62,6 +60,7 @@ namespace PaintWPF
 
         private bool IfShowBrushSize = false;
 
+        Selection _selection = null;
 
         private UIElement valueDragElem = null;
         private Point valueOffset;
@@ -74,24 +73,23 @@ namespace PaintWPF
         private List<Polyline> polylines = new List<Polyline>();
         private List<Polygon> polygons = new List<Polygon>();
 
-        private readonly SolidColorBrush _clickedBorderColor = 
+        private readonly SolidColorBrush _clickedBorderColor =
             new SolidColorBrush(Color.FromRgb(0, 103, 192));
 
         private const double CalligraphyBrushAngle = 135 * Math.PI / 180;
         private const double FountainBrushAngle = 45 * Math.PI / 180;
 
-
-        private readonly DrawingAttributes paeAttributes = new DrawingAttributes()
-        {
-            Color = Colors.Black,
-            Height = 2,
-            Width = 2,
-
-        };
+        private string _oilBrushPath;
+        private string _coloredBrushPath;
+        private string _texturePencilBrushPath;
+        private string _watercolorBrushPath;
+        private Polyline _tempBrushLine;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            InitBrushFilePathes();
 
             InitToolButsInList();
             InitBrushTypesInList();
@@ -111,8 +109,19 @@ namespace PaintWPF
             _brushTypes.Add(SixBrushType);
             _brushTypes.Add(SevenBrushType);
             _brushTypes.Add(EightBrushType);
-
             InitTagsForBrushesTypes();
+        }
+        public void InitBrushFilePathes()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            string startdir = dirInfo.Parent.Parent.FullName;
+            string imgPath = System.IO.Path.Combine(startdir, "Images");
+            string brushPath = System.IO.Path.Combine(imgPath, "Brushes");
+
+            _oilBrushPath = System.IO.Path.Combine(brushPath, "OilBrush.png");
+            _coloredBrushPath = System.IO.Path.Combine(brushPath, "ColoredBrush.png");
+            _texturePencilBrushPath = System.IO.Path.Combine(brushPath, "TexturePencilBrush.png");
+            _watercolorBrushPath = System.IO.Path.Combine(brushPath, "WatercolorBrush.png");
         }
         public void InitTagsForBrushesTypes()
         {
@@ -331,6 +340,7 @@ namespace PaintWPF
 
         private void Field_MouseDown(object sender, MouseEventArgs e)
         {
+            if (!(_selection is null)) return;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 _main.ColorToPaint = _main.FirstColor;
@@ -339,7 +349,6 @@ namespace PaintWPF
             {
                 _main.ColorToPaint = _main.SecondColor;
             }
-
             previousPoint = e.GetPosition(DrawingCanvas);
             InitDeed();
             if (IfSelection)
@@ -358,8 +367,105 @@ namespace PaintWPF
             else
             {
                 previousPoint = e.GetPosition(DrawingCanvas);
+                SetMarkers(e);
+            }
+        }
+
+        public void SetMarkers(MouseEventArgs e)
+        {
+            if (_main.TempBrushType == BrushType.Marker)
+            {
                 SetPaintingMarker(e);
             }
+            else if (_main.TempBrushType == BrushType.OilPaintBrush)
+            {
+                SetImageBrush(_oilBrushPath);
+                InitBrushPolyline(e);
+            }
+            else if (_main.TempBrushType == BrushType.ColorPencil)
+            {
+                SetImageBrush(_coloredBrushPath);
+                InitBrushPolyline(e);
+            }
+            else if (_main.TempBrushType == BrushType.WatercolorBrush)
+            {
+                SetImageBrush(_watercolorBrushPath);
+                InitBrushPolyline(e);
+            }
+            else if (_main.TempBrushType == BrushType.TexturePencil)
+            {
+                SetImageBrush(_texturePencilBrushPath);
+                InitBrushPolyline(e);
+            }
+        }
+        private void InitBrushPolyline(MouseEventArgs e)
+        {
+            _tempBrushLine = new Polyline
+            {
+                Stroke = _tempBrush,
+                StrokeThickness = brushThickness
+            };
+            _tempBrushLine.Points.Add(previousPoint);
+            DrawingCanvas.Children.Add(_tempBrushLine);
+        }
+        private ImageBrush _tempBrush;
+        public void SetImageBrush(string brushPngPath)
+        {
+            BitmapImage bitmap = new BitmapImage();
+
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(brushPngPath, UriKind.RelativeOrAbsolute);
+            bitmap.EndInit();
+
+            WriteableBitmap writeableBitmap = new WriteableBitmap(bitmap);
+
+            // Получаем ширину и высоту изображения
+            int width = writeableBitmap.PixelWidth;
+            int height = writeableBitmap.PixelHeight;
+            int stride = width * (writeableBitmap.Format.BitsPerPixel / 8);
+            byte[] pixelData = new byte[height * stride];
+
+            // Чтение пикселей из WriteableBitmap
+            writeableBitmap.CopyPixels(pixelData, stride, 0);
+
+            // Изменяем цвет пикселей
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int index = y * stride + x * 4; // 4 байта на пиксель (BGRA)
+
+                    // Извлекаем компоненты цвета из пикселя
+                    byte b = pixelData[index];
+                    byte g = pixelData[index + 1];
+                    byte r = pixelData[index + 2];
+                    byte a = pixelData[index + 3];
+
+                    // Смешивание оригинального цвета с новым цветом
+                    double alpha = a / 255.0;
+                    byte newR = (byte)(r * alpha + _main.ColorToPaint.Color.R * (1 - alpha));
+                    byte newG = (byte)(g * alpha + _main.ColorToPaint.Color.G * (1 - alpha));
+                    byte newB = (byte)(b * alpha + _main.ColorToPaint.Color.B * (1 - alpha));
+
+                    // Записываем новый цвет в массив пикселей
+                    pixelData[index] = newB;
+                    pixelData[index + 1] = newG;
+                    pixelData[index + 2] = newR;
+                    pixelData[index + 3] = a; // сохраняем оригинальную альфу
+                }
+            }
+
+            // Записываем измененные пиксели обратно в WriteableBitmap
+            writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), pixelData, stride, 0);
+
+            _tempBrush = new ImageBrush();
+            _tempBrush.ImageSource = writeableBitmap;
+
+            _tempBrush.TileMode = TileMode.Tile;
+            _tempBrush.Stretch = Stretch.None;
+
+            _tempBrush.Viewport = new Rect(0, 0, 100, 100);
+            _tempBrush.ViewportUnits = BrushMappingMode.Absolute;
         }
         private void MakeSelection(MouseEventArgs e)
         {
@@ -386,6 +492,9 @@ namespace PaintWPF
             };
             Canvas.SetLeft(_selectionRect, e.GetPosition(DrawingCanvas).X);
             Canvas.SetTop(_selectionRect, e.GetPosition(DrawingCanvas).Y);
+
+            _firstSelectionStart = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
+
             DrawingCanvas.Children.Add(_selectionRect);
         }
         private void RenderCanvasToBitmap()
@@ -477,12 +586,13 @@ namespace PaintWPF
                     }
                 case FigureTypes.Polygon:
                     {
+                        if (!(_figToPaint is null)) return;
                         if (poligonFigure is null)
                         {
                             poligonFigure = new Polyline();
                         }
                         _figToPaint = new Polyline();
-
+                        _amountOfPointInPolygon = 0;
                         break;
                     }
                 case FigureTypes.Triangle:
@@ -658,15 +768,15 @@ namespace PaintWPF
         }
         private void ChangeSelectionSize(MouseEventArgs e)
         {
-            if(_selectionType == SelectionType.Rectangle)
+            if (_selectionType == SelectionType.Rectangle)
             {
                 FigureRotation(e, _selectionRect);
-
+                _firstSelectionEnd = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
                 return;
-            }            
-            
-        }
+            }
 
+        }
+        private int _amountOfPointInPolygon = 0;
         private void PaintFigures(MouseEventArgs e)
         {
             if (_figType == FigureTypes.Line)
@@ -680,19 +790,31 @@ namespace PaintWPF
             }
             else if (_figType == FigureTypes.Polygon)
             {
-                Point startPoint = poligonFigure.Points.Count == 0 ? new Point(0, 0) : new Point(-1, -1);
-
-                if (startPoint.X == -1 && startPoint.Y == -1)
+                if (_amountOfPointInPolygon != ((Polyline)_figToPaint).Points.Count)
                 {
-                    startPoint = poligonFigure.Points[poligonFigure.Points.Count - 1];
+                    ((Polyline)_figToPaint).Points.RemoveAt(((Polyline)_figToPaint).Points.Count - 1);
+                    ((Polyline)_figToPaint).Points.RemoveAt(((Polyline)_figToPaint).Points.Count - 1);
                 }
-                (_figToPaint as Polyline).Points = new PointCollection()
-                {
-                    new Point(startPoint.X, startPoint.Y),
 
-                    new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
-                    e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint))
-                };
+                if (_amountOfPointInPolygon == 0)
+                {
+                    ((Polyline)_figToPaint).Points = new PointCollection();
+
+                    ((Polyline)_figToPaint).Points.Add(new Point(0, 0));
+                    ((Polyline)_figToPaint).Points.Add(new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
+                        e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint)));
+
+                }
+                else
+                {
+                    ((Polyline)_figToPaint).Points.Add(((Polyline)_figToPaint).Points[((Polyline)_figToPaint).Points.Count - 1]);
+                    ((Polyline)_figToPaint).Points.Add(new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
+                         e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint)));
+                    for (int i = 0; i < _amountOfPointInPolygon; i++)
+                    {
+
+                    }
+                }
             }
             else if (_figType == FigureTypes.Curve)
             {
@@ -739,11 +861,14 @@ namespace PaintWPF
             }
             else if (_main.TempBrushType == BrushType.OilPaintBrush)
             {
-                OilBrushPaint();
+                PaintByPngBrush(e);
+                //OilBrushPaint();
             }
             else if (_main.TempBrushType == BrushType.ColorPencil)
             {
-                ColorPencilBrushPaint(); // not working
+                PaintByPngBrush(e);
+
+                //ColorPencilBrushPaint(); // not working
             }
             else if (_main.TempBrushType == BrushType.Marker)
             {
@@ -751,58 +876,22 @@ namespace PaintWPF
             }
             else if (_main.TempBrushType == BrushType.TexturePencil)
             {
-                TextureBrushPaint(e);
+                PaintByPngBrush(e);
+                //TextureBrushPaint(e);
             }
             else if (_main.TempBrushType == BrushType.WatercolorBrush)
             {
-                //not working 
+                PaintByPngBrush(e);
             }
             previousPoint = currentPoint;
         }
-        private void TextureBrushPaint(MouseEventArgs e)
+        private void PaintByPngBrush(MouseEventArgs e)
         {
-            var point = e.GetPosition(DrawingCanvas);
-            Random random = new Random();
-            int pointsCount = 10;
+            Point currentPoint = e.GetPosition(DrawingCanvas);
 
-            for (int i = 0; i < pointsCount; i++)
-            {
-                double angle = random.NextDouble() * Math.PI * 2;
-                double radius = random.NextDouble() * (brushThickness / 2);
-                double offsetX = Math.Cos(angle) * radius;
-                double offsetY = Math.Sin(angle) * radius;
+            _tempBrushLine.Points.Add(currentPoint);
 
-                Ellipse ellipse = new Ellipse
-                {
-                    Opacity = 0.4,
-                    Width = random.NextDouble() * (brushThickness),
-                    Height = random.NextDouble() * (brushThickness),
-                    Fill = _main.FirstColor
-                };
-                double x = point.X + offsetX;
-                double y = point.Y + offsetY;
-                Canvas.SetLeft(ellipse, x);
-                Canvas.SetTop(ellipse, y);
-
-                DrawingCanvas.Children.Add(ellipse);
-            }
-            if (polylines.Last().Points.Last() ==
-                            e.GetPosition(DrawingCanvas))
-                return;
-
-            if (polylines.Last().Points.Count > 0 &&
-                polylines.Last().Points.Contains(point))
-            {
-                var polygon = new Polygon();
-                polygon.Points = polylines.Last().Points;
-                polygon.Fill = Brushes.Transparent;
-
-                polygons.Add(polygon);
-                DrawingCanvas.Children.Add(polygon);
-
-                SetPaintingMarker(e);
-            }
-            polylines.Last().Points.Add(point);
+            previousPoint = currentPoint;
         }
         private void MarkerBrushPaint(MouseEventArgs e)
         {
@@ -834,86 +923,11 @@ namespace PaintWPF
             polylines.Add(polyline);
             polyline.Points.Add(e.GetPosition(DrawingCanvas));
             DrawingCanvas.Children.Add(polyline);
-
             polyline.StrokeThickness = brushThickness;
             polyline.Stroke = ConvertColorIntoBrushes();
-
             polyline.Opacity = 0.5;
         }
-        private void ColorPencilBrushPaint()
-        {
-            Random random = new Random();
 
-            int pointsCount = (int)(brushThickness * 2);
-
-            List<Ellipse> ellipses = new List<Ellipse>();
-
-            for (double t = 0; t <= 1; t += 1.0 / pointsCount)
-            {
-                double x = previousPoint.X + (currentPoint.X - previousPoint.X) * t;
-                double y = previousPoint.Y + (currentPoint.Y - previousPoint.Y) * t;
-
-                double angle = random.NextDouble() * Math.PI * 2;
-                double radius = random.NextDouble() * (brushThickness / 2);
-
-                double offsetX = Math.Cos(angle) * radius;
-                double offsetY = Math.Sin(angle) * radius;
-
-                Ellipse ellipse = new Ellipse
-                {
-                    Width = 3,
-                    Height = 3,
-                    Fill = new SolidColorBrush(Color.FromArgb(128, 255, 255, 255))
-                };
-
-                Canvas.SetLeft(ellipse, x + offsetX);
-                Canvas.SetTop(ellipse, y + offsetY);
-                ellipses.Add(ellipse);
-            }
-            Line line = new Line
-            {
-                X1 = previousPoint.X,
-                Y1 = currentPoint.Y,
-                X2 = currentPoint.X,
-                Y2 = currentPoint.Y,
-                Stroke = _main.FirstColor,
-                StrokeThickness = brushThickness,
-                StrokeStartLineCap = PenLineCap.Round,
-                StrokeEndLineCap = PenLineCap.Round,
-                StrokeLineJoin = PenLineJoin.Round
-            };
-            foreach (Ellipse ellipse in ellipses)
-            {
-                DrawingCanvas.Children.Add(ellipse);
-            }
-            DrawingCanvas.Children.Add(line);
-
-            previousPoint = currentPoint;
-        }
-        private void OilBrushPaint()
-        {
-            Random random = new Random();
-            SolidColorBrush brush = _main.FirstColor;
-
-            int pointsCount = (int)(brushThickness * 2);
-            for (int i = 0; i < pointsCount; i++)
-            {
-                double offsetX = random.NextDouble() * brushThickness - brushThickness / 2;
-                double offsetY = random.NextDouble() * brushThickness - brushThickness / 2;
-
-                Ellipse ellipse = new Ellipse
-                {
-                    Opacity = 0.5,
-                    Width = random.NextDouble() * (brushThickness / 2),
-                    Height = random.NextDouble() * (brushThickness / 2),
-                    Fill = _main.FirstColor
-                };
-                Canvas.SetLeft(ellipse, currentPoint.X + offsetX);
-                Canvas.SetTop(ellipse, currentPoint.Y + offsetY);
-
-                DrawingCanvas.Children.Add(ellipse);
-            }
-        }
         private void CalligraphyBrushPaint(double angle)
         {
             Vector offset = new Vector(Math.Cos(angle) * brushThickness / 2,
@@ -991,6 +1005,9 @@ namespace PaintWPF
         }
         private void Paint_MouseUp(object sender, MouseEventArgs e)
         {
+            //check for selection
+            if (IfSelection) MakeSelection();
+
             IfDrawing = false;
             IfErazing = false;
             IfFiguring = false;
@@ -1002,6 +1019,38 @@ namespace PaintWPF
             sprayTimer.Stop();
             SaveCanvasState();
         }
+        private void MakeSelection()
+        {
+            if (_selectionType == SelectionType.Rectangle)
+            {
+                //int rect attrbs(loc, Size) for _selFigure
+                //_selectionRect
+
+                _selection = new Selection()
+                {
+                    Height = _selectionRect.Height + 10,
+                    Width = _selectionRect.Width + 10
+                };
+                _selection.SelectionBorder.Height = _selectionRect.Height + 10;
+                _selection.SelectionBorder.Width = _selectionRect.Width + 10;
+
+                double xLoc = Canvas.GetLeft(_selectionRect);
+                double yLoc = Canvas.GetTop(_selectionRect);
+
+                Canvas.SetLeft(_selection, xLoc - 5);
+                Canvas.SetTop(_selection, yLoc - 5);
+
+                DrawingCanvas.Children.Remove(_selectionRect);
+                DrawingCanvas.Children.Add(_selection);
+
+
+                InitSelectedBgInCanvas();
+
+
+                InitEventsForSelection();
+            }
+        }
+
         private void CheckForFigurePainting()
         {
             if (_figType != FigureTypes.Polygon)
@@ -1010,17 +1059,7 @@ namespace PaintWPF
             }
             else if (_figType == FigureTypes.Polygon)
             {
-                for (int i = 0; i < ((Polyline)_figToPaint).Points.Count; i++)
-                {
-                    Point point = new Point(((Polyline)_figToPaint).Points[i].X,
-                        ((Polyline)_figToPaint).Points[i].Y);
-                    poligonFigure.Points.Add(point);
-                }
-                for (int i = 0; i < poligonFigure.Points.Count; i++)
-                {
-                    Point point = new Point(poligonFigure.Points[i].X,
-                        poligonFigure.Points[i].Y);
-                }
+                _amountOfPointInPolygon = ((Polyline)_figToPaint).Points.Count;
             }
         }
 
@@ -1413,5 +1452,492 @@ namespace PaintWPF
             _selectionType = SelectionType.Rectangle;
         }
 
+        private Point _firstSelectionStart;
+        private Point _firstSelectionEnd;
+
+
+        private void InitSelectedBgInCanvas()
+        {
+            RenderTargetBitmap copy = GetRenderedCopy();
+
+            InsertBitmapToCanvas(copy);
+
+            ConvertRegionToWhite();
+        }
+        private void ConvertRegionToWhite()
+        {
+            // Получаем фоновое изображение Canvas
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
+                (int)DrawingCanvas.ActualWidth,
+                (int)DrawingCanvas.ActualHeight,
+                96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(DrawingCanvas);
+
+            // Создаем WriteableBitmap на основе RenderTargetBitmap
+            var writeableBitmap = new WriteableBitmap(
+                renderTargetBitmap.PixelWidth,
+                renderTargetBitmap.PixelHeight,
+                renderTargetBitmap.DpiX,
+                renderTargetBitmap.DpiY,
+                PixelFormats.Pbgra32,
+                null  
+            );
+            // Копируем пиксели из RenderTargetBitmap в WriteableBitmap
+            renderTargetBitmap.CopyPixels(new Int32Rect(0, 0, renderTargetBitmap.PixelWidth, renderTargetBitmap.PixelHeight),
+                                          writeableBitmap.BackBuffer,
+                                          writeableBitmap.BackBufferStride * writeableBitmap.PixelHeight,
+                                          writeableBitmap.BackBufferStride);
+
+            // Определяем границы прямоугольника, в котором нужно изменить цвет пикселей
+            int startX = (int)Math.Min(_firstSelectionStart.X, _firstSelectionEnd.X);
+            int endX = (int)Math.Max(_firstSelectionStart.X, _firstSelectionEnd.X);
+            int startY = (int)Math.Min(_firstSelectionStart.Y, _firstSelectionEnd.Y);
+            int endY = (int)Math.Max(_firstSelectionStart.Y, _firstSelectionEnd.Y);
+
+            // Изменяем пиксели в указанной области на белый цвет
+            for (int y = startY; y <= endY; y++)
+            {
+                for (int x = startX; x <= endX; x++)
+                {
+                    int index = y * writeableBitmap.BackBufferStride + 4 * x;
+
+                    writeableBitmap.WritePixels(new Int32Rect(x, y, 1, 1), new byte[] { 255, 255, 255, 255 }, 4, 0);
+                }
+            }
+
+            // Обновляем изображение в Canvas с измененными пикселями
+            writeableBitmap.Lock();
+            writeableBitmap.AddDirtyRect(new Int32Rect(startX, startY, endX - startX + 1, endY - startY + 1));
+            writeableBitmap.Unlock();
+
+            DrawingCanvas.Background = new ImageBrush(writeableBitmap);
+        }
+
+
+        private void InsertBitmapToCanvas(RenderTargetBitmap bitmap)
+        {
+            var image = new Image
+            {
+                Source = bitmap,
+                Width = _selection.Width,
+                Height = _selection.Height
+            };
+            SwipeWhiteColorWithTranspaentInImage(image);
+            Canvas.SetLeft(image, 0);
+            Canvas.SetTop(image, 0);
+            SetSelectionCanBgASImage(image);
+        }
+        private Image SwipeWhiteColorWithTranspaentInImage(Image image)
+        {
+            BitmapSource bitmapSource = image.Source as BitmapSource;
+            WriteableBitmap writeableBitmap = new WriteableBitmap(bitmapSource);
+
+            int width = writeableBitmap.PixelWidth;
+            int height = writeableBitmap.PixelHeight;
+            int stride = width * ((writeableBitmap.Format.BitsPerPixel + 7) / 8);
+            byte[] pixels = new byte[height * stride];
+            writeableBitmap.CopyPixels(pixels, stride, 0);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int index = y * stride + 4 * x;
+
+                    byte blue = pixels[index];
+                    byte green = pixels[index + 1];
+                    byte red = pixels[index + 2];
+                    byte alpha = pixels[index + 3];
+
+                    if (red == 255 && green == 255 && blue == 255 && alpha == 255)
+                    {
+                        pixels[index] = 0;     
+                        pixels[index + 1] = 0; 
+                        pixels[index + 2] = 0; 
+                        pixels[index + 3] = 0; 
+                    }
+                }
+            }
+
+            writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
+
+            image.Source = writeableBitmap;
+            return image;
+        }
+        private void SetSelectionCanBgASImage(Image image)
+        {
+            ImageSource imageSource = image.Source;
+
+            ImageBrush imageBrush = new ImageBrush();
+            imageBrush.ImageSource = imageSource;
+            imageBrush.Stretch = Stretch.UniformToFill; 
+
+            _selection.SelectCan.Background = imageBrush;
+        }
+        private RenderTargetBitmap GetRenderedCopy()
+        {
+            var renderTargetBitmap = new RenderTargetBitmap(
+                (int)_selection.Width,    
+                (int)_selection.Height,   
+                96, 96,                      
+                PixelFormats.Pbgra32         
+            );
+            var drawingVisual = new DrawingVisual();
+            using (var drawingContext = drawingVisual.RenderOpen())
+            {
+                var visualBrush = new VisualBrush(DrawingCanvas)
+                {
+                    Stretch = Stretch.None,
+                    ViewboxUnits = BrushMappingMode.Absolute,
+                    Viewbox = new Rect(_firstSelectionStart, _firstSelectionEnd)                  
+                };
+                drawingContext.DrawRectangle(
+                    visualBrush,
+                    null,
+                    new Rect(new Size(_selection.Width, _selection.Height))
+                );
+            }
+            renderTargetBitmap.Render(drawingVisual);
+            return renderTargetBitmap;
+        }
+
+
+        private bool _isDraggingSelection;
+        private bool IfSelectionIsClicked; 
+        private Point _startPointSelection;
+        private Point _anchorPointSelection;
+        private SelectionSide _selectionSizeToChangeSize;
+
+        private void InitEventsForSelection()
+        {
+            _selection.SelectCan.MouseLeftButtonDown += SelectionBorder_MouseLeftButtonDown;
+            _selection.SelectCan.MouseMove += SelectionBorder_MouseMove;
+            _selection.SelectCan.MouseLeftButtonUp += SelectionBorder_MouseLeftButtonUp;
+            _selection.MouseLeave += SelectionBorder_MouseLeave;
+
+            _selection.LeftTop.MouseLeftButtonDown += SelectionLeftTop_MouseDown;
+            _selection.CenterTop.MouseLeftButtonDown += SelectionCenterTop_MouseDown;
+            _selection.RightTop.MouseLeftButtonDown += SelectionRightTop_MouseDown;
+            _selection.RightCenter.MouseLeftButtonDown += SelectionRightCenter_MouseDown;
+            _selection.RightBottom.MouseLeftButtonDown += SelectionRightBottom_MouseDown;
+            _selection.CenterBottom.MouseLeftButtonDown += SelectionCenterBottom_MouseDown;
+            _selection.LeftBottom.MouseLeftButtonDown += SelectionLeftBottom_MouseDown;
+            _selection.LeftCenter.MouseLeftButtonDown += SelectionLeftCenter_MouseDown;
+
+        }
+        private void SelectionBorder_MouseLeave(object sender, EventArgs e)
+        {
+            //_selectionSizeToChangeSize = SelectionSide.Nothing;
+            //_isDraggingSelection = false;
+        }
+        private void SelectionLeftTop_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.LeftTop;
+        }
+        private void SelectionCenterTop_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.CenterTop;
+        }
+        private void SelectionRightTop_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.RightTop;
+        }
+        private void SelectionRightCenter_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.RightCenter;
+        }
+        private void SelectionRightBottom_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.RightBottom;
+        }
+        private void SelectionCenterBottom_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.CenterBottom;
+        }
+        private void SelectionLeftBottom_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.LeftBottom;
+        }
+        private void SelectionLeftCenter_MouseDown(object sender, MouseEventArgs e)
+        {
+            _selectionSizeToChangeSize = SelectionSide.LeftCenter;
+        }
+        private void SelectionBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingSelection = true;
+            _startPointSelection = e.GetPosition(DrawingCanvas);
+            _anchorPointSelection = new Point(Canvas.GetLeft(_selection), Canvas.GetTop(_selection));
+            IfSelectionIsClicked = true;
+        }
+        private void SelectionBorder_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDraggingSelection)
+            {
+                if (ChangeSizeForSelection(e)) return;
+                Point currentPoint = e.GetPosition(DrawingCanvas);
+                double offsetX = currentPoint.X - _startPointSelection.X;
+                double offsetY = currentPoint.Y - _startPointSelection.Y;
+
+                Canvas.SetLeft(_selection, _anchorPointSelection.X + offsetX);
+                Canvas.SetTop(_selection, _anchorPointSelection.Y + offsetY);
+            }
+        }
+        private void ChangeSizeSelection_MouseLeftButtonUp(object sender, MouseEventArgs e)
+        {
+            _isDraggingSelection = false;
+            IfSelectionIsClicked = false;
+        }
+        private void SelectionBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            //_isDraggingSelection = false;
+            //_selectionType = SelectionType.Nothing;
+        }
+        private bool ChangeSizeForSelection(MouseEventArgs e)
+        {
+            if (_selectionSizeToChangeSize == SelectionSide.Nothing)
+            {
+                return false;
+            }
+            if (_selectionSizeToChangeSize == SelectionSide.CenterTop)
+            {
+                ChangeCenterTop(e);
+            }
+            else if (_selectionSizeToChangeSize == SelectionSide.CenterBottom)
+            {
+                ChangeCenterBottom(e);
+            }
+            else if (_selectionSizeToChangeSize == SelectionSide.RightCenter)
+            {
+                ChangeRightCenter(e);
+            }
+            else if (_selectionSizeToChangeSize == SelectionSide.LeftCenter)
+            {
+                ChangeLeftCenter(e);
+            }
+            else if (_selectionSizeToChangeSize == SelectionSide.LeftTop)
+            {
+                ChangeLeftTop(e);
+            }
+            else if (_selectionSizeToChangeSize == SelectionSide.RightTop)
+            {
+                ChangeRightTop(e);
+            }
+            else if (_selectionSizeToChangeSize == SelectionSide.RightBottom)
+            {
+                ChangeRightBottom(e);
+            }
+            else if (_selectionSizeToChangeSize == SelectionSide.LeftBottom)
+            {
+                ChangeLeftBottom(e);
+            }
+            return true;
+        }
+        private void ChangeLeftBottom(MouseEventArgs e)
+        {
+            Point tempPoint = e.GetPosition(DrawingCanvas);
+            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            {
+                ChangeLeftCenter(e);
+                return;
+            }
+            ChangeCenterBottom(e);
+        }
+        private void ChangeRightBottom(MouseEventArgs e)
+        {
+            Point tempPoint = e.GetPosition(DrawingCanvas);
+            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            {
+                ChangeRightCenter(e);
+                return;
+            }
+            ChangeCenterBottom(e);
+        }
+        private void ChangeRightTop(MouseEventArgs e)
+        {
+            Point tempPoint = e.GetPosition(DrawingCanvas);
+            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            {
+                ChangeRightCenter(e);
+                return;
+            }
+            ChangeCenterTop(e);
+        }
+        private void ChangeLeftTop(MouseEventArgs e)
+        {
+            Point tempPoint = e.GetPosition(DrawingCanvas);
+            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            {
+                ChangeLeftCenter(e);
+                return;
+            }
+            ChangeCenterTop(e);
+        }
+        public void ChangeLeftCenter(MouseEventArgs e)
+        {
+            Point point = e.GetPosition(DrawingCanvas);
+            double newWidth = _selection.Width;
+            double offsetX = point.X - _startPointSelection.X;
+
+            if (point.X > _startPointSelection.X)
+            {
+                newWidth = _selection.Width - offsetX;
+
+            }
+            else if (point.X < _startPointSelection.X)
+            {
+                newWidth = _selection.Width - offsetX;
+            }
+            if (newWidth < 25)
+            {
+                return;
+            }
+            if (newWidth > 0)
+            {
+                Canvas.SetLeft(_selection, Canvas.GetLeft(_selection) + offsetX);
+                _selection.Width = newWidth;
+                _selection.SelectionBorder.Width = newWidth;
+            }
+            _startPointSelection = point;
+        }
+        public void ChangeRightCenter(MouseEventArgs e)
+        {
+            Point point = e.GetPosition(DrawingCanvas);
+            double widthPoint = Canvas.GetLeft(_selection) + _selection.Width;
+
+            double newWidth = _selection.Width;
+            double offsetX = point.X - _startPointSelection.X;
+
+            if (widthPoint > _startPointSelection.X)
+            {
+                newWidth = _selection.Width + offsetX;
+            }
+            else if (widthPoint < _startPointSelection.X)
+            {
+                newWidth = _selection.Width - offsetX;
+            }
+            if (newWidth < 25)
+            {
+                return;
+            }
+            if (newWidth > 0)
+            {
+                _selection.Width = newWidth;
+                _selection.SelectionBorder.Width = newWidth;
+            }
+            _startPointSelection = point;
+        }
+        public void ChangeCenterBottom(MouseEventArgs e)
+        {
+            Point point = e.GetPosition(DrawingCanvas);
+
+            double heightPoint = Canvas.GetTop(_selection) + _selection.Height;
+
+            double newHeight = _selection.Height;
+            double offsetY = point.Y - _startPointSelection.Y;
+
+            if (heightPoint > _startPointSelection.Y)
+            {
+                newHeight = _selection.Height + offsetY;
+            }
+            else if (heightPoint < _startPointSelection.Y)
+            {
+                newHeight = _selection.Height + offsetY;
+            }
+            if (newHeight < 25)
+            {
+                return;
+            }
+            if (newHeight > 0)
+            {
+                _selection.Height = newHeight;
+                _selection.SelectionBorder.Height = newHeight;
+            }
+            _startPointSelection = point;
+        }
+        public void ChangeCenterTop(MouseEventArgs e)
+        {
+            Point point = e.GetPosition(DrawingCanvas);
+            double newHeight = _selection.Height;
+            double offsetY = point.Y - _startPointSelection.Y;
+
+            if (point.Y > _startPointSelection.Y)
+            {
+                newHeight = _selection.Height - offsetY;
+
+            }
+            else if (point.Y < _startPointSelection.Y)
+            {
+                newHeight = _selection.Height - offsetY;
+            }
+            if (newHeight < 25)
+            {
+                return;
+            }
+            if (newHeight > 0)
+            {
+                Canvas.SetTop(_selection, Canvas.GetTop(_selection) + offsetY);
+                _selection.Height = newHeight;
+                _selection.SelectionBorder.Height = newHeight;
+            }
+            _startPointSelection = point;
+        }
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDraggingSelection)
+            {
+                ChangeSizeForSelection(e);
+            }
+        }
+        private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingSelection = false;
+            IfSelectionIsClicked = false;
+            _selectionSizeToChangeSize = SelectionSide.Nothing;
+        }
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if(!(_selection is null) && !IfSelectionIsClicked)
+            {
+                SetSelectedItemInDrawingCanvas();
+                _selection = null;
+                RemoveSelection();
+            }
+        }
+        private void SetSelectedItemInDrawingCanvas()
+        {
+            // Получаем фоновую кисть из исходного Canvas
+            Brush backgroundBrush = _selection.SelectCan.Background;
+
+            // Проверяем, является ли фоновая кисть ImageBrush
+            if (backgroundBrush is ImageBrush imageBrush)
+            {
+                // Получаем изображение из ImageBrush
+                ImageSource imageSource = imageBrush.ImageSource;
+
+                // Создаем новую Image элемент с полученным изображением
+                Image image = new Image
+                {
+                    Source = imageSource,
+                    Width = _selection.SelectCan.ActualWidth,
+                    Height = _selection.SelectCan.ActualHeight
+                };
+
+                // Добавляем Image на целевой Canvas с теми же размерами и расположением
+                Canvas.SetLeft(image, Canvas.GetLeft(_selection));
+                Canvas.SetTop(image, Canvas.GetTop(_selection));
+                DrawingCanvas.Children.Add(image);
+            }
+        }
+        private void RemoveSelection()
+        {
+            for(int i = 0; i < DrawingCanvas.Children.Count; i++) 
+            {
+                if (DrawingCanvas.Children[i] is Selection)
+                {
+                    DrawingCanvas.Children.RemoveAt(i);
+                }
+            }
+        }
     }
 }
+
