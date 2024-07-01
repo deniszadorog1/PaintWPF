@@ -51,6 +51,8 @@ namespace PaintWPF
         private bool IfErazing = false;
         private bool IfFiguring = false;
         private bool IfSelection = false;
+        private bool IfTexting = false;
+
         private FigureTypes? _figType = null;
         private Shape _figToPaint;
         private Polyline poligonFigure = null;
@@ -85,10 +87,17 @@ namespace PaintWPF
         private string _watercolorBrushPath;
         private Polyline _tempBrushLine;
 
+        private TextEditor _text = null;
+        private TextBox _textBox = null;
+
+        private double _startThisHeight;
+        private Selection _changedSizeText;
+
         public MainWindow()
         {
             InitializeComponent();
 
+            InitStartHeight();
             InitBrushFilePathes();
 
             InitToolButsInList();
@@ -96,6 +105,39 @@ namespace PaintWPF
 
             InitializeSprayTimer();
             CanvasSize.Content = $"{DrawingCanvas.Width} x {DrawingCanvas.Height}";
+
+            InitForTextControl();
+        }
+
+        public void InitStartHeight()
+        {
+            double height = Height;
+            _startThisHeight = height;
+        }
+        public void InitForTextControl()
+        {
+            _text = new TextEditor();
+
+            UpdateTextLocation();
+
+            Grid.SetRow(_text, 0);
+            Grid.SetColumn(_text, 1);
+
+            CenterWindowPanel.Children.Add(_text);
+        }
+
+        public void UpdateTextLocation()
+        {
+            double locX = _text.TextObject.Width;
+            double locY = 5;
+
+            double heightDiffer = Height - _startThisHeight;
+            double resMargin = heightDiffer / 2;
+
+            _text.Margin = new Thickness(0, 0, 0, resMargin);
+
+            Canvas.SetLeft(_text, locX);
+            Canvas.SetTop(_text, locY);
         }
         public void InitBrushTypesInList()
         {
@@ -301,6 +343,10 @@ namespace PaintWPF
                 {
                     _type = ActionType.Filling;
                 }
+                else if (but.Name == "Text")
+                {
+                    _type = ActionType.Text;
+                }
             }
         }
         public void ClearBGs()
@@ -351,7 +397,12 @@ namespace PaintWPF
             }
             previousPoint = e.GetPosition(DrawingCanvas);
             InitDeed();
-            if (IfSelection)
+
+            if (IfTexting)
+            {
+
+            }
+            else if (IfSelection)
             {
                 MakeSelection(e);
             }
@@ -506,54 +557,44 @@ namespace PaintWPF
         }
         private void InitDeed()
         {
+            MakeAllActionsNegative();
             if (_type == ActionType.Drawing)
             {
                 IfDrawing = true;
-                IfErazing = false;
-                IfFiguring = false;
-                IfFilling = false;
-                IfSelection = false;
             }
             else if (_type == ActionType.Figuring)
             {
-                IfDrawing = false;
-                IfErazing = false;
                 IfFiguring = true;
-                IfFilling = false;
-                IfSelection = false;
             }
             else if (_type == ActionType.Erazing)
             {
-                IfDrawing = false;
                 IfErazing = true;
-                IfFiguring = false;
-                IfFilling = false;
-                IfSelection = false;
             }
             else if (_type == ActionType.Filling)
             {
-                IfDrawing = false;
-                IfErazing = false;
-                IfFiguring = false;
                 IfFilling = true;
-                IfSelection = false;
             }
             else if (_type == ActionType.Selection)
             {
                 IfSelection = true;
-                IfDrawing = false;
-                IfErazing = false;
-                IfFiguring = false;
-                IfFilling = false;
+            }
+            else if (_type == ActionType.Text)
+            {
+                IfTexting = true;
             }
             else
             {
                 IfDrawing = true;
-                IfErazing = false;
-                IfFiguring = false;
-                IfFilling = false;
-                IfSelection = false;
             }
+        }
+        private void MakeAllActionsNegative()
+        {
+            IfSelection = false;
+            IfDrawing = false;
+            IfErazing = false;
+            IfFiguring = false;
+            IfFilling = false;
+            IfTexting = false;
         }
         private void InitShapesToPaint(MouseEventArgs e)
         {
@@ -1047,7 +1088,7 @@ namespace PaintWPF
                 InitSelectedBgInCanvas();
 
 
-                InitEventsForSelection();
+                //InitEventsForSelection();
             }
         }
 
@@ -1466,53 +1507,50 @@ namespace PaintWPF
         }
         private void ConvertRegionToWhite()
         {
-            // Получаем фоновое изображение Canvas
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
-                (int)DrawingCanvas.ActualWidth,
-                (int)DrawingCanvas.ActualHeight,
-                96, 96, PixelFormats.Pbgra32);
-            renderTargetBitmap.Render(DrawingCanvas);
+            Rect selectedBounds = new Rect(_firstSelectionStart, _firstSelectionEnd); // Функция для расчета границ выделенной области
 
-            // Создаем WriteableBitmap на основе RenderTargetBitmap
-            var writeableBitmap = new WriteableBitmap(
-                renderTargetBitmap.PixelWidth,
-                renderTargetBitmap.PixelHeight,
-                renderTargetBitmap.DpiX,
-                renderTargetBitmap.DpiY,
-                PixelFormats.Pbgra32,
-                null  
-            );
-            // Копируем пиксели из RenderTargetBitmap в WriteableBitmap
-            renderTargetBitmap.CopyPixels(new Int32Rect(0, 0, renderTargetBitmap.PixelWidth, renderTargetBitmap.PixelHeight),
-                                          writeableBitmap.BackBuffer,
-                                          writeableBitmap.BackBufferStride * writeableBitmap.PixelHeight,
-                                          writeableBitmap.BackBufferStride);
-
-            // Определяем границы прямоугольника, в котором нужно изменить цвет пикселей
-            int startX = (int)Math.Min(_firstSelectionStart.X, _firstSelectionEnd.X);
-            int endX = (int)Math.Max(_firstSelectionStart.X, _firstSelectionEnd.X);
-            int startY = (int)Math.Min(_firstSelectionStart.Y, _firstSelectionEnd.Y);
-            int endY = (int)Math.Max(_firstSelectionStart.Y, _firstSelectionEnd.Y);
-
-            // Изменяем пиксели в указанной области на белый цвет
-            for (int y = startY; y <= endY; y++)
+            // Очистка дочерних элементов, находящихся внутри или пересекающих выделенную область
+            List<UIElement> elementsToRemove = new List<UIElement>();
+            foreach (UIElement child in DrawingCanvas.Children)
             {
-                for (int x = startX; x <= endX; x++)
-                {
-                    int index = y * writeableBitmap.BackBufferStride + 4 * x;
+                Rect childBounds = VisualTreeHelper.GetDescendantBounds(child);
+                Point childTopLeft = child.TranslatePoint(new Point(), DrawingCanvas);
 
-                    writeableBitmap.WritePixels(new Int32Rect(x, y, 1, 1), new byte[] { 255, 255, 255, 255 }, 4, 0);
+                if (selectedBounds.IntersectsWith(childBounds))
+                {
+                    // Проверяем, находится ли вся область элемента внутри выделенной области
+                    if (selectedBounds.Contains(childTopLeft) && selectedBounds.Contains(new Point(childTopLeft.X + childBounds.Width, childTopLeft.Y + childBounds.Height)))
+                    {
+                        // Если элемент полностью внутри выделенной области, удаляем его
+                        elementsToRemove.Add(child);
+                    }
+                    else
+                    {
+                        // Иначе определяем части элемента, которые находятся внутри выделенной области
+                        // и модифицируем элемент соответствующим образом
+                        Rect intersection = Rect.Intersect(selectedBounds, childBounds);
+
+                        if (child is Shape shape)
+                        {
+                            // Пример: изменение цвета фона части элемента
+                            shape.Fill = Brushes.White;
+                            shape.Clip = new RectangleGeometry(intersection);
+                        }
+                        else if (child is Control control)
+                        {
+                            control.Background = Brushes.White;
+                            control.Clip = new RectangleGeometry(intersection);
+                        }
+                    }
                 }
             }
 
-            // Обновляем изображение в Canvas с измененными пикселями
-            writeableBitmap.Lock();
-            writeableBitmap.AddDirtyRect(new Int32Rect(startX, startY, endX - startX + 1, endY - startY + 1));
-            writeableBitmap.Unlock();
-
-            DrawingCanvas.Background = new ImageBrush(writeableBitmap);
+            // Удаление элементов, которые полностью находятся внутри выделенной области
+            foreach (UIElement element in elementsToRemove)
+            {
+                DrawingCanvas.Children.Remove(element);
+            }
         }
-
 
         private void InsertBitmapToCanvas(RenderTargetBitmap bitmap)
         {
@@ -1551,10 +1589,10 @@ namespace PaintWPF
 
                     if (red == 255 && green == 255 && blue == 255 && alpha == 255)
                     {
-                        pixels[index] = 0;     
-                        pixels[index + 1] = 0; 
-                        pixels[index + 2] = 0; 
-                        pixels[index + 3] = 0; 
+                        pixels[index] = 0;
+                        pixels[index + 1] = 0;
+                        pixels[index + 2] = 0;
+                        pixels[index + 3] = 0;
                     }
                 }
             }
@@ -1570,17 +1608,17 @@ namespace PaintWPF
 
             ImageBrush imageBrush = new ImageBrush();
             imageBrush.ImageSource = imageSource;
-            imageBrush.Stretch = Stretch.UniformToFill; 
+            imageBrush.Stretch = Stretch.UniformToFill;
 
             _selection.SelectCan.Background = imageBrush;
         }
         private RenderTargetBitmap GetRenderedCopy()
         {
             var renderTargetBitmap = new RenderTargetBitmap(
-                (int)_selection.Width,    
-                (int)_selection.Height,   
-                96, 96,                      
-                PixelFormats.Pbgra32         
+                (int)_selection.Width,
+                (int)_selection.Height,
+                96, 96,
+                PixelFormats.Pbgra32
             );
             var drawingVisual = new DrawingVisual();
             using (var drawingContext = drawingVisual.RenderOpen())
@@ -1589,7 +1627,7 @@ namespace PaintWPF
                 {
                     Stretch = Stretch.None,
                     ViewboxUnits = BrushMappingMode.Absolute,
-                    Viewbox = new Rect(_firstSelectionStart, _firstSelectionEnd)                  
+                    Viewbox = new Rect(_firstSelectionStart, _firstSelectionEnd)
                 };
                 drawingContext.DrawRectangle(
                     visualBrush,
@@ -1600,303 +1638,38 @@ namespace PaintWPF
             renderTargetBitmap.Render(drawingVisual);
             return renderTargetBitmap;
         }
-
-
-        private bool _isDraggingSelection;
-        private bool IfSelectionIsClicked; 
-        private Point _startPointSelection;
-        private Point _anchorPointSelection;
-        private SelectionSide _selectionSizeToChangeSize;
-
-        private void InitEventsForSelection()
-        {
-            _selection.SelectCan.MouseLeftButtonDown += SelectionBorder_MouseLeftButtonDown;
-            _selection.SelectCan.MouseMove += SelectionBorder_MouseMove;
-            _selection.SelectCan.MouseLeftButtonUp += SelectionBorder_MouseLeftButtonUp;
-            _selection.MouseLeave += SelectionBorder_MouseLeave;
-
-            _selection.LeftTop.MouseLeftButtonDown += SelectionLeftTop_MouseDown;
-            _selection.CenterTop.MouseLeftButtonDown += SelectionCenterTop_MouseDown;
-            _selection.RightTop.MouseLeftButtonDown += SelectionRightTop_MouseDown;
-            _selection.RightCenter.MouseLeftButtonDown += SelectionRightCenter_MouseDown;
-            _selection.RightBottom.MouseLeftButtonDown += SelectionRightBottom_MouseDown;
-            _selection.CenterBottom.MouseLeftButtonDown += SelectionCenterBottom_MouseDown;
-            _selection.LeftBottom.MouseLeftButtonDown += SelectionLeftBottom_MouseDown;
-            _selection.LeftCenter.MouseLeftButtonDown += SelectionLeftCenter_MouseDown;
-
-        }
-        private void SelectionBorder_MouseLeave(object sender, EventArgs e)
-        {
-            //_selectionSizeToChangeSize = SelectionSide.Nothing;
-            //_isDraggingSelection = false;
-        }
-        private void SelectionLeftTop_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.LeftTop;
-        }
-        private void SelectionCenterTop_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.CenterTop;
-        }
-        private void SelectionRightTop_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.RightTop;
-        }
-        private void SelectionRightCenter_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.RightCenter;
-        }
-        private void SelectionRightBottom_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.RightBottom;
-        }
-        private void SelectionCenterBottom_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.CenterBottom;
-        }
-        private void SelectionLeftBottom_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.LeftBottom;
-        }
-        private void SelectionLeftCenter_MouseDown(object sender, MouseEventArgs e)
-        {
-            _selectionSizeToChangeSize = SelectionSide.LeftCenter;
-        }
-        private void SelectionBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            _isDraggingSelection = true;
-            _startPointSelection = e.GetPosition(DrawingCanvas);
-            _anchorPointSelection = new Point(Canvas.GetLeft(_selection), Canvas.GetTop(_selection));
-            IfSelectionIsClicked = true;
-        }
-        private void SelectionBorder_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isDraggingSelection)
-            {
-                if (ChangeSizeForSelection(e)) return;
-                Point currentPoint = e.GetPosition(DrawingCanvas);
-                double offsetX = currentPoint.X - _startPointSelection.X;
-                double offsetY = currentPoint.Y - _startPointSelection.Y;
-
-                Canvas.SetLeft(_selection, _anchorPointSelection.X + offsetX);
-                Canvas.SetTop(_selection, _anchorPointSelection.Y + offsetY);
-            }
-        }
-        private void ChangeSizeSelection_MouseLeftButtonUp(object sender, MouseEventArgs e)
-        {
-            _isDraggingSelection = false;
-            IfSelectionIsClicked = false;
-        }
-        private void SelectionBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            //_isDraggingSelection = false;
-            //_selectionType = SelectionType.Nothing;
-        }
-        private bool ChangeSizeForSelection(MouseEventArgs e)
-        {
-            if (_selectionSizeToChangeSize == SelectionSide.Nothing)
-            {
-                return false;
-            }
-            if (_selectionSizeToChangeSize == SelectionSide.CenterTop)
-            {
-                ChangeCenterTop(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.CenterBottom)
-            {
-                ChangeCenterBottom(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.RightCenter)
-            {
-                ChangeRightCenter(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.LeftCenter)
-            {
-                ChangeLeftCenter(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.LeftTop)
-            {
-                ChangeLeftTop(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.RightTop)
-            {
-                ChangeRightTop(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.RightBottom)
-            {
-                ChangeRightBottom(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.LeftBottom)
-            {
-                ChangeLeftBottom(e);
-            }
-            return true;
-        }
-        private void ChangeLeftBottom(MouseEventArgs e)
-        {
-            Point tempPoint = e.GetPosition(DrawingCanvas);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
-            {
-                ChangeLeftCenter(e);
-                return;
-            }
-            ChangeCenterBottom(e);
-        }
-        private void ChangeRightBottom(MouseEventArgs e)
-        {
-            Point tempPoint = e.GetPosition(DrawingCanvas);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
-            {
-                ChangeRightCenter(e);
-                return;
-            }
-            ChangeCenterBottom(e);
-        }
-        private void ChangeRightTop(MouseEventArgs e)
-        {
-            Point tempPoint = e.GetPosition(DrawingCanvas);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
-            {
-                ChangeRightCenter(e);
-                return;
-            }
-            ChangeCenterTop(e);
-        }
-        private void ChangeLeftTop(MouseEventArgs e)
-        {
-            Point tempPoint = e.GetPosition(DrawingCanvas);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
-            {
-                ChangeLeftCenter(e);
-                return;
-            }
-            ChangeCenterTop(e);
-        }
-        public void ChangeLeftCenter(MouseEventArgs e)
-        {
-            Point point = e.GetPosition(DrawingCanvas);
-            double newWidth = _selection.Width;
-            double offsetX = point.X - _startPointSelection.X;
-
-            if (point.X > _startPointSelection.X)
-            {
-                newWidth = _selection.Width - offsetX;
-
-            }
-            else if (point.X < _startPointSelection.X)
-            {
-                newWidth = _selection.Width - offsetX;
-            }
-            if (newWidth < 25)
-            {
-                return;
-            }
-            if (newWidth > 0)
-            {
-                Canvas.SetLeft(_selection, Canvas.GetLeft(_selection) + offsetX);
-                _selection.Width = newWidth;
-                _selection.SelectionBorder.Width = newWidth;
-            }
-            _startPointSelection = point;
-        }
-        public void ChangeRightCenter(MouseEventArgs e)
-        {
-            Point point = e.GetPosition(DrawingCanvas);
-            double widthPoint = Canvas.GetLeft(_selection) + _selection.Width;
-
-            double newWidth = _selection.Width;
-            double offsetX = point.X - _startPointSelection.X;
-
-            if (widthPoint > _startPointSelection.X)
-            {
-                newWidth = _selection.Width + offsetX;
-            }
-            else if (widthPoint < _startPointSelection.X)
-            {
-                newWidth = _selection.Width - offsetX;
-            }
-            if (newWidth < 25)
-            {
-                return;
-            }
-            if (newWidth > 0)
-            {
-                _selection.Width = newWidth;
-                _selection.SelectionBorder.Width = newWidth;
-            }
-            _startPointSelection = point;
-        }
-        public void ChangeCenterBottom(MouseEventArgs e)
-        {
-            Point point = e.GetPosition(DrawingCanvas);
-
-            double heightPoint = Canvas.GetTop(_selection) + _selection.Height;
-
-            double newHeight = _selection.Height;
-            double offsetY = point.Y - _startPointSelection.Y;
-
-            if (heightPoint > _startPointSelection.Y)
-            {
-                newHeight = _selection.Height + offsetY;
-            }
-            else if (heightPoint < _startPointSelection.Y)
-            {
-                newHeight = _selection.Height + offsetY;
-            }
-            if (newHeight < 25)
-            {
-                return;
-            }
-            if (newHeight > 0)
-            {
-                _selection.Height = newHeight;
-                _selection.SelectionBorder.Height = newHeight;
-            }
-            _startPointSelection = point;
-        }
-        public void ChangeCenterTop(MouseEventArgs e)
-        {
-            Point point = e.GetPosition(DrawingCanvas);
-            double newHeight = _selection.Height;
-            double offsetY = point.Y - _startPointSelection.Y;
-
-            if (point.Y > _startPointSelection.Y)
-            {
-                newHeight = _selection.Height - offsetY;
-
-            }
-            else if (point.Y < _startPointSelection.Y)
-            {
-                newHeight = _selection.Height - offsetY;
-            }
-            if (newHeight < 25)
-            {
-                return;
-            }
-            if (newHeight > 0)
-            {
-                Canvas.SetTop(_selection, Canvas.GetTop(_selection) + offsetY);
-                _selection.Height = newHeight;
-                _selection.SelectionBorder.Height = newHeight;
-            }
-            _startPointSelection = point;
-        }
+     
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDraggingSelection)
+            if (!(_selection is null) &&
+                _selection._isDraggingSelection)
             {
-                ChangeSizeForSelection(e);
+                _selection.ChangeSizeForSelection(e);
+            }
+            else if (!(_changedSizeText is null) &&
+                    _changedSizeText._isDraggingSelection)
+            {
+                _changedSizeText.ChangeSizeForSelection(e);
             }
         }
         private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _isDraggingSelection = false;
-            IfSelectionIsClicked = false;
-            _selectionSizeToChangeSize = SelectionSide.Nothing;
+            if (!(_selection is null))
+            {
+                _selection._isDraggingSelection = false;
+                _selection.IfSelectionIsClicked = false;
+                _selection._selectionSizeToChangeSize = SelectionSide.Nothing;
+            }
+            else if (!(_changedSizeText is null))
+            {
+                _changedSizeText._isDraggingSelection = false;
+                _changedSizeText.IfSelectionIsClicked = false;
+                _changedSizeText._selectionSizeToChangeSize = SelectionSide.Nothing;
+            }
         }
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(!(_selection is null) && !IfSelectionIsClicked)
+            if (!(_selection is null) && !_selection.IfSelectionIsClicked)
             {
                 SetSelectedItemInDrawingCanvas();
                 _selection = null;
@@ -1905,16 +1678,12 @@ namespace PaintWPF
         }
         private void SetSelectedItemInDrawingCanvas()
         {
-            // Получаем фоновую кисть из исходного Canvas
             Brush backgroundBrush = _selection.SelectCan.Background;
 
-            // Проверяем, является ли фоновая кисть ImageBrush
             if (backgroundBrush is ImageBrush imageBrush)
             {
-                // Получаем изображение из ImageBrush
                 ImageSource imageSource = imageBrush.ImageSource;
 
-                // Создаем новую Image элемент с полученным изображением
                 Image image = new Image
                 {
                     Source = imageSource,
@@ -1922,7 +1691,6 @@ namespace PaintWPF
                     Height = _selection.SelectCan.ActualHeight
                 };
 
-                // Добавляем Image на целевой Canvas с теми же размерами и расположением
                 Canvas.SetLeft(image, Canvas.GetLeft(_selection));
                 Canvas.SetTop(image, Canvas.GetTop(_selection));
                 DrawingCanvas.Children.Add(image);
@@ -1930,7 +1698,7 @@ namespace PaintWPF
         }
         private void RemoveSelection()
         {
-            for(int i = 0; i < DrawingCanvas.Children.Count; i++) 
+            for (int i = 0; i < DrawingCanvas.Children.Count; i++)
             {
                 if (DrawingCanvas.Children[i] is Selection)
                 {
@@ -1938,6 +1706,59 @@ namespace PaintWPF
                 }
             }
         }
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateTextLocation();
+        }
+
+        private bool IfTextBoxSizeChanging = false;
+        private void PaintWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (IfTexting)
+            {
+                InitSettingsForTextBox();
+                Point mousePoint = e.GetPosition(DrawingCanvas);
+
+                Canvas.SetLeft(_changedSizeText, mousePoint.X);
+                Canvas.SetTop(_changedSizeText, mousePoint.Y);
+
+                DrawingCanvas.Children.Add(_changedSizeText);
+                _textBox.FontFamily = _text._chosenFont;
+                _textBox.FontSize = _text._chosenFontSize;
+                _textBox.Text = "woidfsljkro;tisfdgjirejfhgnusdfgjnvuosfdjnvupiogfjdnv";
+            }
+        }
+        private void InitSettingsForTextBox()
+        {
+            _changedSizeText = new Selection();
+            _changedSizeText.Height = 50;
+            _changedSizeText.SelectionBorder.Height = 50;
+            _changedSizeText.Width = 160;
+            _changedSizeText.SelectionBorder.Width = 160;
+
+            _textBox = new TextBox()
+            {
+                Visibility = Visibility.Visible,
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                FontSize = 14,
+                AcceptsReturn = true,
+                Height = 40,
+                Width = 150,
+                BorderThickness = new Thickness(3),
+                BorderBrush = new SolidColorBrush(Colors.Green)
+            };
+
+            _textBox.Width = _changedSizeText.Width - 10;
+            _textBox.Height = _changedSizeText.Height - 10;
+
+            Canvas.SetLeft(_textBox, 0);
+            Canvas.SetTop(_textBox, 0);
+
+            _changedSizeText.SelectCan.Children.Add(_textBox);
+        }
+
     }
 }
 

@@ -78,6 +78,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CustomControls\TextEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -88,6 +92,9 @@
     </Compile>
     <Compile Include="CustomControls\Selection.xaml.cs">
       <DependentUpon>Selection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\TextEditor.xaml.cs">
+      <DependentUpon>TextEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -261,6 +268,16 @@
     <Resource Include="Images\Brushes\OilBrush.png" />
     <Resource Include="Images\Brushes\TexturePencilBrush.png" />
     <Resource Include="Images\Brushes\WatercolorBrush.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Text\AlignCenter.png" />
+    <Resource Include="Images\Text\AlignLeft.png" />
+    <Resource Include="Images\Text\AlignRight.png" />
+    <Resource Include="Images\Text\Bold.png" />
+    <Resource Include="Images\Text\Crossed.png" />
+    <Resource Include="Images\Text\Italics.png" />
+    <Resource Include="Images\Text\Underline.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

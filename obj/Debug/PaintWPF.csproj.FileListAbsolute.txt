@@ -39,3 +39,6 @@ B:\GitHub\PaintWPF\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
 B:\GitHub\PaintWPF\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\Selection.g.cs
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\Selection.baml
+B:\GitHub\PaintWPF\obj\Debug\CustomControls\TextEditor.g.cs
+B:\GitHub\PaintWPF\obj\Debug\GeneratedInternalTypeHelper.g.cs
+B:\GitHub\PaintWPF\obj\Debug\CustomControls\TextEditor.baml

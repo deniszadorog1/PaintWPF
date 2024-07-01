@@ -13,6 +13,7 @@ namespace PaintWPF.Models.Enums
         Erazing,
         Figuring,
         Selection,
+        Text,
         Nothing
     }
 }
