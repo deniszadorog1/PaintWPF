@@ -26,6 +26,7 @@ using PaintWPF.CustomControls;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
+using System.Security.AccessControl;
 
 
 namespace PaintWPF
@@ -88,7 +89,7 @@ namespace PaintWPF
         private Polyline _tempBrushLine;
 
         private TextEditor _text = null;
-        private TextBox _textBox = null;
+        private RichTextBox _richTexBox = null;
 
         private double _startThisHeight;
         private Selection _changedSizeText;
@@ -116,10 +117,9 @@ namespace PaintWPF
         }
         public void InitForTextControl()
         {
-            _text = new TextEditor();
+            _text = new TextEditor(_main, _changedSizeText is null ? null : _changedSizeText.GetRichTextBoxObject());
 
             UpdateTextLocation();
-
             Grid.SetRow(_text, 0);
             Grid.SetColumn(_text, 1);
 
@@ -1509,7 +1509,6 @@ namespace PaintWPF
         {
             Rect selectedBounds = new Rect(_firstSelectionStart, _firstSelectionEnd); // Функция для расчета границ выделенной области
 
-            // Очистка дочерних элементов, находящихся внутри или пересекающих выделенную область
             List<UIElement> elementsToRemove = new List<UIElement>();
             foreach (UIElement child in DrawingCanvas.Children)
             {
@@ -1518,21 +1517,16 @@ namespace PaintWPF
 
                 if (selectedBounds.IntersectsWith(childBounds))
                 {
-                    // Проверяем, находится ли вся область элемента внутри выделенной области
                     if (selectedBounds.Contains(childTopLeft) && selectedBounds.Contains(new Point(childTopLeft.X + childBounds.Width, childTopLeft.Y + childBounds.Height)))
                     {
-                        // Если элемент полностью внутри выделенной области, удаляем его
                         elementsToRemove.Add(child);
                     }
                     else
                     {
-                        // Иначе определяем части элемента, которые находятся внутри выделенной области
-                        // и модифицируем элемент соответствующим образом
                         Rect intersection = Rect.Intersect(selectedBounds, childBounds);
 
                         if (child is Shape shape)
                         {
-                            // Пример: изменение цвета фона части элемента
                             shape.Fill = Brushes.White;
                             shape.Clip = new RectangleGeometry(intersection);
                         }
@@ -1545,7 +1539,6 @@ namespace PaintWPF
                 }
             }
 
-            // Удаление элементов, которые полностью находятся внутри выделенной области
             foreach (UIElement element in elementsToRemove)
             {
                 DrawingCanvas.Children.Remove(element);
@@ -1638,7 +1631,7 @@ namespace PaintWPF
             renderTargetBitmap.Render(drawingVisual);
             return renderTargetBitmap;
         }
-     
+
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
             if (!(_selection is null) &&
@@ -1646,11 +1639,11 @@ namespace PaintWPF
             {
                 _selection.ChangeSizeForSelection(e);
             }
-            else if (!(_changedSizeText is null) &&
+          /*  else if (!(_changedSizeText is null) &&
                     _changedSizeText._isDraggingSelection)
             {
                 _changedSizeText.ChangeSizeForSelection(e);
-            }
+            }*/
         }
         private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -1674,6 +1667,11 @@ namespace PaintWPF
                 SetSelectedItemInDrawingCanvas();
                 _selection = null;
                 RemoveSelection();
+            }
+            else if (!(_changedSizeText is null))
+            {
+                //ConvertRichTextBoxIntoImage();
+                //_changedSizeText = null;
             }
         }
         private void SetSelectedItemInDrawingCanvas()
@@ -1711,10 +1709,9 @@ namespace PaintWPF
             UpdateTextLocation();
         }
 
-        private bool IfTextBoxSizeChanging = false;
         private void PaintWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (IfTexting)
+            if (IfTexting )
             {
                 InitSettingsForTextBox();
                 Point mousePoint = e.GetPosition(DrawingCanvas);
@@ -1723,10 +1720,16 @@ namespace PaintWPF
                 Canvas.SetTop(_changedSizeText, mousePoint.Y);
 
                 DrawingCanvas.Children.Add(_changedSizeText);
-                _textBox.FontFamily = _text._chosenFont;
-                _textBox.FontSize = _text._chosenFontSize;
-                _textBox.Text = "woidfsljkro;tisfdgjirejfhgnusdfgjnvuosfdjnvupiogfjdnv";
+                _richTexBox.FontFamily = _text._chosenFont;
+                _richTexBox.FontSize = _text._chosenFontSize;
+                SetTextInRichTextBox();
             }
+        }
+
+        private void SetTextInRichTextBox()
+        {
+            _richTexBox.Document.Blocks.Clear();
+            _richTexBox.Document.Blocks.Add(new Paragraph(new Run("woidfsljkro;tisfdgjirejfhgnusdfgjnvuosfdjnvupiogfjdnv")));
         }
         private void InitSettingsForTextBox()
         {
@@ -1736,10 +1739,9 @@ namespace PaintWPF
             _changedSizeText.Width = 160;
             _changedSizeText.SelectionBorder.Width = 160;
 
-            _textBox = new TextBox()
+            _richTexBox = new RichTextBox()
             {
                 Visibility = Visibility.Visible,
-                TextWrapping = TextWrapping.Wrap,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 FontSize = 14,
@@ -1750,13 +1752,39 @@ namespace PaintWPF
                 BorderBrush = new SolidColorBrush(Colors.Green)
             };
 
-            _textBox.Width = _changedSizeText.Width - 10;
-            _textBox.Height = _changedSizeText.Height - 10;
+            _richTexBox.Width = _changedSizeText.Width - 15;
+            _richTexBox.Height = _changedSizeText.Height - 15;
 
-            Canvas.SetLeft(_textBox, 0);
-            Canvas.SetTop(_textBox, 0);
+            Canvas.SetLeft(_richTexBox, 5);
+            Canvas.SetTop(_richTexBox, 5);
 
-            _changedSizeText.SelectCan.Children.Add(_textBox);
+            _changedSizeText.SelectCan.Children.Add(_richTexBox);
+
+            InitForTextControl();
+        }
+        private void ConvertRichTextBoxIntoImage()
+        {
+            RichTextBox toSave = _changedSizeText.GetRichTextBoxObject();
+
+            if (toSave is null) return;
+            double width = toSave.ActualWidth;
+            double height = toSave.ActualHeight;
+
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
+                (int)width, (int)height, 96, 96, PixelFormats.Pbgra32);
+
+            renderTargetBitmap.Render(toSave);
+            Image img = new Image()
+            {
+                Source = renderTargetBitmap
+            };
+
+            Canvas.SetTop(img, Canvas.GetTop(_changedSizeText));
+            Canvas.SetLeft(img, Canvas.GetLeft(_changedSizeText));
+
+            DrawingCanvas.Children.Add(img);
+
+            _changedSizeText = null;
         }
 
     }

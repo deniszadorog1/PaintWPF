@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using PaintWPF.Models.Enums;
+using PaintWPF.CustomControls;
 
 namespace PaintWPF.CustomControls
 {
@@ -243,7 +244,7 @@ namespace PaintWPF.CustomControls
                 this.Width = newWidth;
                 this.SelectionBorder.Width = newWidth;
             }
-            _startPointSelection = point; 
+            _startPointSelection = point;
             CheckForTextBox();
         }
         public void ChangeCenterBottom(MouseEventArgs e)
@@ -304,16 +305,45 @@ namespace PaintWPF.CustomControls
         }
         public void CheckForTextBox()
         {
-            for(int i = 0; i < SelectCan.Children.Count; i++)
+            int richTextBoxIndex = GetRichTextBoxIndex();
+            if (richTextBoxIndex == -1) return;
+            ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Height = SelectionBorder.Height - 15;
+            ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Width = SelectionBorder.Width - 15;
+        }
+        public int GetRichTextBoxIndex()
+        {
+            for (int i = 0; i < SelectCan.Children.Count; i++)
             {
-                if (SelectCan.Children[i] is TextBox)
+                if (SelectCan.Children[i] is RichTextBox)
                 {
-                    ((TextBox)SelectCan.Children[i]).Height = SelectionBorder.Height - 10;
-                    ((TextBox)SelectCan.Children[i]).Width = SelectionBorder.Width - 10;
+                    return i;
                 }
             }
+            return -1;
         }
-
+        public void InitNewForecolorForText(SolidColorBrush forecolor)
+        {
+            int richTextBoxIndex = GetRichTextBoxIndex();
+            if (richTextBoxIndex == -1) return;
+            ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Foreground = forecolor;
+        }
+        public void InitNewBacgrounfColorForText(SolidColorBrush bgColor)
+        {
+            int textBoxIndex = GetRichTextBoxIndex();
+            if (textBoxIndex == -1) return;
+            ((RichTextBox)SelectCan.Children[textBoxIndex]).Background = bgColor;
+        }
+        public RichTextBox GetRichTextBoxObject()
+        {
+            for(int i = 0; i < SelectCan.Children.Count; i++)
+            {
+                if (SelectCan.Children[i] is RichTextBox)
+                {
+                    return (RichTextBox)SelectCan.Children[i];
+                }
+            }
+            return null;
+        }
 
     }
 }

@@ -2,7 +2,6 @@ B:\GitHub\PaintWPF\bin\Debug\PaintWPF.exe.config
 B:\GitHub\PaintWPF\bin\Debug\PaintWPF.exe
 B:\GitHub\PaintWPF\bin\Debug\PaintWPF.pdb
 B:\GitHub\PaintWPF\obj\Debug\PaintWPF.csproj.AssemblyReference.cache
-B:\GitHub\PaintWPF\obj\Debug\PaintWPF.csproj.SuggestedBindingRedirects.cache
 B:\GitHub\PaintWPF\obj\Debug\MainWindow.g.cs
 B:\GitHub\PaintWPF\obj\Debug\App.g.cs
 B:\GitHub\PaintWPF\obj\Debug\PaintWPF_MarkupCompile.cache
@@ -18,7 +17,6 @@ B:\GitHub\PaintWPF\obj\Debug\Pallete.g.cs
 B:\GitHub\PaintWPF\obj\Debug\Pallete.baml
 B:\GitHub\PaintWPF\bin\Debug\System.ValueTuple.dll
 B:\GitHub\PaintWPF\bin\Debug\System.ValueTuple.xml
-B:\GitHub\PaintWPF\obj\Debug\PaintWPF.csproj.CopyComplete
 B:\GitHub\PaintWPF\bin\Debug\Xceed.Wpf.AvalonDock.dll
 B:\GitHub\PaintWPF\bin\Debug\Xceed.Wpf.AvalonDock.Themes.Aero.dll
 B:\GitHub\PaintWPF\bin\Debug\Xceed.Wpf.AvalonDock.Themes.Metro.dll
@@ -42,3 +40,4 @@ B:\GitHub\PaintWPF\obj\Debug\CustomControls\Selection.baml
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\TextEditor.g.cs
 B:\GitHub\PaintWPF\obj\Debug\GeneratedInternalTypeHelper.g.cs
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\TextEditor.baml
+B:\GitHub\PaintWPF\obj\Debug\PaintWPF.csproj.Up2Date
