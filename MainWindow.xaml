@@ -547,7 +547,7 @@
                 Height="400" Width="1000"
                 MouseDown="Field_MouseDown"
                 MouseMove="Field_MouseMove"
-                MouseUp="Paint_MouseUp" 
+                MouseUp="Field_MouseUp" 
                 MouseLeave="PaintField_MouseLeave" VerticalAlignment="Center" Margin="-10,0,10,0">
                     <Label x:Name="AAA" Content="Label" Canvas.Top="35"/>
 
@@ -555,6 +555,7 @@
                             BorderBrush="Black" BorderThickness="2">
                         <Canvas Height="40" Width="40"/>
                     </Border>
+
 
                 </Canvas>
 
@@ -1236,51 +1237,61 @@
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
 
                     <Button Style="{StaticResource RoundButtonStyle}" 
+                            Name ="OnePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="TwoPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="ThreePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"   
+                            Name ="FourPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="FivePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="SixPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="SevenPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="EightPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="NinePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <Button Style="{StaticResource RoundButtonStyle}"  
+                            Name ="TenPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"

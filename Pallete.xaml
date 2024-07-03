@@ -593,81 +593,85 @@
             </WrapPanel>
 
 
-            <WrapPanel Name="UserColorPanel" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="2" Width="240">
+            <WrapPanel Name="UserColorPanel" HorizontalAlignment="Left" 
+                       Grid.Column="1" Grid.Row="2" Width="240">
                 <Button Style="{StaticResource RoundButtonStylee}" 
                         Margin="20 5 0 0"  Background="#ffffff"
-                        Name = "OneUserColor"></Button>
+                        Name = "OneUserColor" Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
                         Margin="8 5 0 0"  Background="#ffffff"
-                        Name ="TwoUserColor"></Button>
+                        Name ="TwoUserColor" Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
                         Margin="8 5 0 0" MouseEnter="MyButton_MouseEnter" 
                         MouseLeave="MyButton_MouseLeave" Background="#ffffff"
-                        Name ="ThreeUserColor"></Button>
+                        Name ="ThreeUserColor" Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
                         Margin="8 5 0 0"  Background="#ffffff"
-                        Name ="FourUserColor"></Button>
+                        Name ="FourUserColor" Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
                         Margin="8 5 0 0" Background="#ffffff"
-                        Name ="FiveUserColor"></Button>
+                        Name ="FiveUserColor" Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
                         Margin="8 5 0 0"  Background="#ffffff"
-                        Name ="SixUserColor"></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="20 5 0 0" Background="#ffffff"></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"
-                        ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"
-                        ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"
-                        ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"
-                        ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="20 5 0 0"  Background="#ffffff"
-                        ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0"  Background="#ffffff"
-                       ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"
-                       ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0"  Background="#ffffff"
-                        ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0"  Background="#ffffff"
-                        ></Button>
-                <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"
-                       ></Button>
+                        Name ="SixUserColor" Click="CustomColor_Click"/>
 
                 <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="20 5 0 0"  Background="#ffffff"
-                        ></Button>
+                        Margin="20 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0"  Background="#ffffff"
-                        ></Button>
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0" Background="#ffffff"
-                        ></Button>
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0"  Background="#ffffff"
-                        ></Button>
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0"  Background="#ffffff"
-                        ></Button>
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
                 <Button Style="{StaticResource RoundButtonStylee}" 
-                        Margin="8 5 0 0"  Background="#ffffff"
-                        ></Button>
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="20 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="20 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0" Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
+                <Button Style="{StaticResource RoundButtonStylee}" 
+                        Margin="8 5 0 0"  Background="#ffffff" 
+                        Click="CustomColor_Click"/>
             </WrapPanel>
-
         </Grid>
 
         <Grid Grid.Row="3" Background="#f3f3f3" Grid.ColumnSpan="2">

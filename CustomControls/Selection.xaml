@@ -12,8 +12,8 @@
             BorderBrush="Red" BorderThickness="3">
         <Canvas Name="SelectCan" Background="Transparent" 
                 Width="{Binding ActualWidth, ElementName=SelectionBorder}" 
-             Height="{Binding ActualHeight, ElementName=SelectionBorder}">
-            
+             Height="{Binding ActualHeight, ElementName=SelectionBorder}" MouseLeftButtonDown="SelectCan_MouseLeftButtonDown">
+
             <Grid Width="{Binding ActualWidth, ElementName=SelectCan}" 
              Height="{Binding ActualHeight, ElementName=SelectCan}">
 

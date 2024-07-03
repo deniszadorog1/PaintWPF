@@ -28,7 +28,6 @@ namespace PaintWPF
     /// </summary>
     public partial class Pallete : Window
     {
-        
         private PalleteModel _pallete;
         private UIElement[,] UserColors;
         private Point _colorPoint = new Point(0, 0);
@@ -144,17 +143,13 @@ namespace PaintWPF
             if (but.Background is SolidColorBrush brush)
             {
                 color = brush.Color;
+                _pallete.ChosenColor = brush;
             }
             if (color is null) return;
 
             (int y, int x) mainColorIndex =
                 _pallete.GetMainColorIndexByColor((System.Windows.Media.Color)color);
             if (mainColorIndex.y == -1 && mainColorIndex.x == -1) return;
-
-            // get point int specImg
-            /*            System.Windows.Media.Color col =
-                            (System.Windows.Media.Color)color;*/
-
 
             System.Windows.Media.Color col = ShowColorOnSpecForMainColor(mainColorIndex);
 
@@ -167,6 +162,8 @@ namespace PaintWPF
             specDragEl = null;
             SpecCanvas.ReleaseMouseCapture();
         }
+
+
         public System.Windows.Media.Color ShowColorOnSpecForMainColor((int, int) mainColorInPalleteIndex)
         {
             var asd = _pallete.MainColors[mainColorInPalleteIndex.Item1, mainColorInPalleteIndex.Item2];
@@ -231,7 +228,7 @@ namespace PaintWPF
                 CleateUserColors();
             }
         }
-        
+
         public void InitCircleUponUserColor(Button button)
         {
             Ellipse uponCircle = new Ellipse();
@@ -541,7 +538,20 @@ namespace PaintWPF
                 }
             }
         }
+        private void CustomColor_Click(object sender, EventArgs e)
+        {
+            if (sender is Button but &&
+                but.Background is SolidColorBrush brush)
+            {
 
+                Ellipse outerEllipse = but.Template.FindName("innerEllipse", but) as Ellipse;
+                if (outerEllipse != null)
+                {
+                    _pallete.ChosenColor = new SolidColorBrush(((SolidColorBrush)outerEllipse.Fill).Color);
+
+                }
+            }
+        }
         private void PalletePanel_Loaded(object sender, RoutedEventArgs e)
         {
             FilluserColors();

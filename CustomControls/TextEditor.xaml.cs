@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using Xceed.Wpf.Toolkit;
 using Color = System.Windows.Media.Color;
 using FontFamily = System.Windows.Media.FontFamily;
 using RichTextBox = System.Windows.Controls.RichTextBox;
+using Size = System.Windows.Size;
 
 namespace PaintWPF.CustomControls
 {
@@ -51,14 +53,11 @@ namespace PaintWPF.CustomControls
         public SolidColorBrush textBg = null;
 
         private RichTextBox _textBox = null;
+        private Selection _textSizeChanging;
 
-        public TextEditor(MainPaint paint, RichTextBox textBox)
+        public TextEditor(MainPaint paint, Selection textSizeChanging)
         {
-            _textBox = textBox;
-            if (!(_textBox is null))
-            {
-                _textBox.TextChanged += TextBox_TextChanged;
-            }
+            InitTextBox(textSizeChanging);
             _paintObj = paint;
 
             InitializeComponent();
@@ -66,17 +65,33 @@ namespace PaintWPF.CustomControls
             InitAlignmentList();
             InitComboboxes();
         }
+        public void InitTextBox(Selection textSizeChanging)
+        {
+            _textSizeChanging = textSizeChanging;
+            _textBox = _textSizeChanging == null ? null : _textSizeChanging.GetRichTextBoxObject();
+
+            if (!(_textBox is null))
+            {             
+                _textBox.BorderThickness = new Thickness(0.5);
+
+                _textBox.TextChanged += TextBox_TextChanged;
+            }
+        }
         private void TextBox_TextChanged(object sender, EventArgs e)
         {
-            if (_textBox == null) return;
+         /*   if (_textBox == null) return;
             TextSelection ts = _textBox.Selection;
             if (ts != null)
             {
                 ts.ApplyPropertyValue(TextElement.ForegroundProperty, _paintObj.FirstColor);
             }
-            _textBox.Focus();
+            _textBox.Focus();*/
+            /*if (_textBox != null)
+            {
+                _textSizeChanging.Height = _textSizeChanging.SelectionBorder.Height;
+                _textSizeChanging.SelectionBorder.Height = _textBox.Height + 15;
+            }*/
         }
-
         private void InitComboboxes()
         {
             for (int i = 0; i < _fonts.Count; i++)
@@ -153,7 +168,7 @@ namespace PaintWPF.CustomControls
             }
             else if (but.Name == "Underline")
             {
-                UnerliningText();
+                UnderliningText();
             }
             else if (but.Name == "Crossed")
             {
@@ -163,26 +178,36 @@ namespace PaintWPF.CustomControls
         private void CrossingText()
         {
             if (_textBox == null) return;
+
             TextSelection ts = _textBox.Selection;
             if (ts != null)
             {
                 bool isStrikethrough = false;
                 object value = ts.GetPropertyValue(Inline.TextDecorationsProperty);
-                if (value != DependencyProperty.UnsetValue && value is TextDecorationCollection decorations)
+                TextDecorationCollection decorations;
+
+                if (value != DependencyProperty.UnsetValue && value is TextDecorationCollection currentDecorations)
                 {
+                    decorations = new TextDecorationCollection(currentDecorations);
                     isStrikethrough = decorations.Any(td => td.Location == TextDecorationLocation.Strikethrough);
-                }
-                if (!isStrikethrough)
-                {
-                    TextDecorationCollection strikethrough = new TextDecorationCollection();
-                    strikethrough.Add(TextDecorations.Strikethrough.First());
-                    ts.ApplyPropertyValue(Inline.TextDecorationsProperty, strikethrough);
                 }
                 else
                 {
-                    ts.ApplyPropertyValue(Inline.TextDecorationsProperty, null);
+                    decorations = new TextDecorationCollection();
                 }
+
+                if (!isStrikethrough)
+                {
+                    decorations.Add(TextDecorations.Strikethrough.First());
+                }
+                else
+                {
+                    decorations = new TextDecorationCollection(decorations.Where(td => td.Location != TextDecorationLocation.Strikethrough));
+                }
+
+                ts.ApplyPropertyValue(Inline.TextDecorationsProperty, decorations);
             }
+
             _textBox.Focus();
         }
         private void BoldingText()
@@ -222,7 +247,7 @@ namespace PaintWPF.CustomControls
             }
             _textBox.Focus();
         }
-        private void UnerliningText()
+        private void UnderliningText()
         {
             if (_textBox == null) return;
 
@@ -231,22 +256,30 @@ namespace PaintWPF.CustomControls
             {
                 bool isUnderlined = false;
                 object value = ts.GetPropertyValue(Inline.TextDecorationsProperty);
-                if (value != DependencyProperty.UnsetValue && value is TextDecorationCollection decorations)
+                TextDecorationCollection decorations;
+
+                if (value != DependencyProperty.UnsetValue && value is TextDecorationCollection currentDecorations)
                 {
+                    decorations = new TextDecorationCollection(currentDecorations);
                     isUnderlined = decorations.Any(td => td.Location == TextDecorationLocation.Underline);
+                }
+                else
+                {
+                    decorations = new TextDecorationCollection();
                 }
 
                 if (!isUnderlined)
                 {
-                    TextDecorationCollection underline = new TextDecorationCollection();
-                    underline.Add(TextDecorations.Underline.First());
-                    ts.ApplyPropertyValue(Inline.TextDecorationsProperty, underline);
+                    decorations.Add(TextDecorations.Underline.First());
                 }
                 else
                 {
-                    ts.ApplyPropertyValue(Inline.TextDecorationsProperty, null);
+                    decorations = new TextDecorationCollection(decorations.Where(td => td.Location != TextDecorationLocation.Underline));
                 }
+
+                ts.ApplyPropertyValue(Inline.TextDecorationsProperty, decorations);
             }
+
             _textBox.Focus();
         }
         private void TextAlignment_Click(object sender, EventArgs e)

@@ -345,5 +345,10 @@ namespace PaintWPF.CustomControls
             return null;
         }
 
+        public bool IfSelectiongClicked = true;
+        private void SelectCan_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            IfSelectiongClicked = true;
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace PaintWPF.Models
         public ColorParams[,] MainColors { get; set; }
         public int TempL { get; set; }
         public (int, int) ChosenCustomColorIndex { get; set; }
+        public SolidColorBrush ChosenColor { get; set; }
 
         const int userColorWidth = 6;
         const int userColorHeight = 5;
