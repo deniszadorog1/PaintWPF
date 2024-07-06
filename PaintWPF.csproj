@@ -74,6 +74,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CustomControls\LineSizing.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomControls\Selection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -89,6 +93,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CustomControls\LineSizing.xaml.cs">
+      <DependentUpon>LineSizing.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\Selection.xaml.cs">
       <DependentUpon>Selection.xaml</DependentUpon>
@@ -110,6 +117,7 @@
     <Compile Include="Models\Enums\ActionType.cs" />
     <Compile Include="Models\Enums\BrushType.cs" />
     <Compile Include="Models\Enums\FigureTypes.cs" />
+    <Compile Include="Models\Enums\LineSizingRectType.cs" />
     <Compile Include="Models\Enums\SelectionSide.cs" />
     <Compile Include="Models\Enums\SelectionType.cs" />
     <Compile Include="Models\MainPaint.cs" />

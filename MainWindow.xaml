@@ -14,7 +14,7 @@
         Background="#eef4f9" MouseMove="Window_MouseMove" 
         MouseLeftButtonUp="Window_MouseLeftButtonUp" 
         MouseLeftButtonDown="Window_MouseLeftButtonDown" 
-        SizeChanged="Window_SizeChanged" MouseDoubleClick="PaintWindow_MouseDoubleClick">
+        SizeChanged="Window_SizeChanged" MouseDoubleClick="PaintWindow_MouseDoubleClick" MouseUp="PaintWindow_MouseUp">
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -636,7 +636,7 @@
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
-                          Click="BrushType_Click">
+                          Click = "ChooseAllSelection_MouseLeftButtonDown">
                                 <MenuItem.Icon>
                                     <Image Source="Images/Selection/ChooseAll.png"/>
                                 </MenuItem.Icon>

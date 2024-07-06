@@ -29,10 +29,19 @@ namespace PaintWPF.CustomControls
         private Point _anchorPointSelection;
         public SelectionSide _selectionSizeToChangeSize;
 
+        private Image _figuresImg = null;
         public Selection()
         {
             InitializeComponent();
             InitEventsForSelection();
+        }
+        public Selection(Image image)
+        {
+            _figuresImg = image;
+
+            InitializeComponent();
+            InitEventsForSelection();
+            InitShapeFigure();
         }
         private void InitEventsForSelection()
         {
@@ -95,9 +104,9 @@ namespace PaintWPF.CustomControls
         private void SelectionBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _isDraggingSelection = true;
-            _startPointSelection = e.GetPosition(this.Parent as IInputElement);
             _anchorPointSelection = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
             IfSelectionIsClicked = true;
+            _startPointSelection = e.GetPosition(this.Parent as IInputElement);
         }
         private void SelectionBorder_MouseMove(object sender, MouseEventArgs e)
         {
@@ -194,6 +203,8 @@ namespace PaintWPF.CustomControls
         }
         public void ChangeLeftCenter(MouseEventArgs e)
         {
+            if (!CheckForMousePressing(e)) return;
+
             Point point = e.GetPosition(this.Parent as IInputElement);
             double newWidth = this.Width;
             double offsetX = point.X - _startPointSelection.X;
@@ -217,10 +228,12 @@ namespace PaintWPF.CustomControls
                 this.SelectionBorder.Width = newWidth;
             }
             _startPointSelection = point;
-            CheckForTextBox();
+            CheckForAddedObjects();
         }
         public void ChangeRightCenter(MouseEventArgs e)
         {
+            if (!CheckForMousePressing(e)) return;
+
             Point point = e.GetPosition(this.Parent as IInputElement);
             double widthPoint = Canvas.GetLeft(this) + this.Width;
 
@@ -245,10 +258,12 @@ namespace PaintWPF.CustomControls
                 this.SelectionBorder.Width = newWidth;
             }
             _startPointSelection = point;
-            CheckForTextBox();
+            CheckForAddedObjects();
         }
         public void ChangeCenterBottom(MouseEventArgs e)
         {
+            if (!CheckForMousePressing(e)) return;
+
             Point point = e.GetPosition(this.Parent as IInputElement);
 
             double heightPoint = Canvas.GetTop(this) + this.Height;
@@ -274,10 +289,12 @@ namespace PaintWPF.CustomControls
                 this.SelectionBorder.Height = newHeight;
             }
             _startPointSelection = point;
-            CheckForTextBox();
+            CheckForAddedObjects();
         }
         public void ChangeCenterTop(MouseEventArgs e)
         {
+            if (!CheckForMousePressing(e)) return;
+            
             Point point = e.GetPosition(this.Parent as IInputElement);
             double newHeight = this.Height;
             double offsetY = point.Y - _startPointSelection.Y;
@@ -301,6 +318,11 @@ namespace PaintWPF.CustomControls
                 this.SelectionBorder.Height = newHeight;
             }
             _startPointSelection = point;
+            CheckForAddedObjects();
+        }
+        private void CheckForAddedObjects()
+        {
+            ReinitShapeSize();
             CheckForTextBox();
         }
         public void CheckForTextBox()
@@ -321,21 +343,9 @@ namespace PaintWPF.CustomControls
             }
             return -1;
         }
-        public void InitNewForecolorForText(SolidColorBrush forecolor)
-        {
-            int richTextBoxIndex = GetRichTextBoxIndex();
-            if (richTextBoxIndex == -1) return;
-            ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Foreground = forecolor;
-        }
-        public void InitNewBacgrounfColorForText(SolidColorBrush bgColor)
-        {
-            int textBoxIndex = GetRichTextBoxIndex();
-            if (textBoxIndex == -1) return;
-            ((RichTextBox)SelectCan.Children[textBoxIndex]).Background = bgColor;
-        }
         public RichTextBox GetRichTextBoxObject()
         {
-            for(int i = 0; i < SelectCan.Children.Count; i++)
+            for (int i = 0; i < SelectCan.Children.Count; i++)
             {
                 if (SelectCan.Children[i] is RichTextBox)
                 {
@@ -349,6 +359,62 @@ namespace PaintWPF.CustomControls
         private void SelectCan_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             IfSelectiongClicked = true;
+        }
+        private void InitShapeFigure()
+        {
+            if (_figuresImg is null) return;
+
+            SelectCan.Children.Add(_figuresImg);
+
+            SelectionBorder.Height = _figuresImg.Height + 15;
+            SelectionBorder.Width = _figuresImg.Width + 15;
+
+            Canvas.SetLeft(_figuresImg, 5);
+            Canvas.SetTop(_figuresImg, 5);
+        }
+        private void ReinitShapeSize()
+        {
+            Image shape = GetShapeImageObject();
+            if (shape is null) return;
+            shape.Height = SelectionBorder.Height - 15;
+            shape.Width = SelectionBorder.Width - 15;
+        }
+        public  Image GetShapeImageObject()
+        {
+            for (int i = 0; i < SelectCan.Children.Count; i++)
+            {
+                if (SelectCan.Children[i] is Image)
+                {
+                    return (Image)SelectCan.Children[i];
+                }
+            }
+            return null;
+        }
+        private bool CheckForMousePressing(MouseEventArgs e)
+        {
+            return e.LeftButton == MouseButtonState.Pressed;
+        }
+        public Point GetImageLocation()
+        {
+            for(int i = 0; i < SelectCan.Children.Count; i++)
+            {
+                if (SelectCan.Children[i] is Image)
+                {
+                    return new Point(Canvas.GetLeft(SelectCan.Children[i]), 
+                        Canvas.GetTop(SelectCan.Children[i]));
+                }
+            }
+            return new Point(-1, -1);
+        }
+        public void RemoveImagesFromCanvas()
+        {
+            for(int i = 0; i < SelectCan.Children.Count; i++)
+            {
+                if (SelectCan.Children[i] is Image)
+                {
+                    SelectCan.Children.RemoveAt(i);
+                }
+            }
         }
     }
 }

@@ -27,7 +27,8 @@ using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
 using System.Security.AccessControl;
-
+using System.Diagnostics.Eventing.Reader;
+using System.Security.Policy;
 
 namespace PaintWPF
 {
@@ -47,16 +48,19 @@ namespace PaintWPF
 
         private Rectangle _selectionRect = new Rectangle();
 
-        private bool IfDrawing = false;
-        private bool IfFilling = false;
-        private bool IfErazing = false;
-        private bool IfFiguring = false;
-        private bool IfSelection = false;
-        private bool IfTexting = false;
+        private bool _ifDrawing = false;
+        private bool _ifFilling = false;
+        private bool _ifErazing = false;
+        private bool _ifFiguring = false;
+        private bool _ifSelection = false;
+        private bool _ifTexting = false;
+        private bool _ifPickingColor = false;
+        private bool _ifChangingFigureSize = false;
 
         private FigureTypes? _figType = null;
         private Shape _figToPaint;
         private Polyline poligonFigure = null;
+        private bool _ifCurvnessIsDone = false;
 
         private Point previousPoint;
         private int brushThickness = 2;
@@ -87,6 +91,8 @@ namespace PaintWPF
         private string _texturePencilBrushPath;
         private string _watercolorBrushPath;
         private Polyline _tempBrushLine;
+        Selection _figureSizing = null;
+        LineSizing _lineSizeing = null;
 
         private TextEditor _text = null;
         private RichTextBox _richTexBox = null;
@@ -96,6 +102,9 @@ namespace PaintWPF
 
         private List<Button> _customColors = new List<Button>();
         private int _customColorIndex = 0;
+
+        private Button _chosenToPaintButton = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -202,17 +211,17 @@ namespace PaintWPF
         {
             ClearMainColorBorders();
             Button button = sender as Button;
-            Ellipse greyCircle = new Ellipse();
-            greyCircle.Width = button.Width + 1;
-            greyCircle.Height = button.Height + 1;
+            Ellipse external = new Ellipse();
+            external.Width = button.Width + 1;
+            external.Height = button.Height + 1;
 
-            greyCircle.Stroke = Brushes.Blue;
-            greyCircle.StrokeThickness = 1;
+            external.Stroke = Brushes.Blue;
+            external.StrokeThickness = 1;
 
-            // Задаем отступы для greyCircle
-            greyCircle.Margin = new Thickness(-10); // Отступы по умолчанию
+            external.Margin = new Thickness(-10);
 
-            button.Content = greyCircle;
+            button.Content = external;
+            _chosenToPaintButton = button;
         }
         public void ClearMainColorBorders()
         {
@@ -275,6 +284,7 @@ namespace PaintWPF
         }
         private void InitColorInCUstomColor(SolidColorBrush color)
         {
+            if (color is null) return;
             if (_customColorIndex == _customColors.Count - 1)
             {
                 MoveColorsIntListInLeft(color);
@@ -282,6 +292,17 @@ namespace PaintWPF
             }
             _customColors[_customColorIndex].Background = color;
             _customColorIndex++;
+            if (_chosenToPaintButton is null ||
+                _chosenToPaintButton.Name == "FirstColor")
+            {
+                _main.FirstColor = new SolidColorBrush(color.Color);
+                FirstColor.Background = new SolidColorBrush(color.Color);
+            }
+            else if (_chosenToPaintButton.Name == "SecondColor")
+            {
+                _main.SecondColor = new SolidColorBrush(color.Color);
+                SecondColor.Background = new SolidColorBrush(color.Color);
+            }
         }
         private void MoveColorsIntListInLeft(SolidColorBrush color)
         {
@@ -354,6 +375,7 @@ namespace PaintWPF
         private void Tool_MouseClick(object sender, EventArgs e)
         {
             EndWithPolygonFigures();
+            ClearFigureSizingInClicks();
             if (sender is Button but)
             {
                 if (!(_chosenTool is null) &&
@@ -382,6 +404,10 @@ namespace PaintWPF
                 else if (but.Name == "Text")
                 {
                     _type = ActionType.Text;
+                }
+                else if (but.Name == "ColorDrop")
+                {
+                    _type = ActionType.PickingColor;
                 }
             }
         }
@@ -434,28 +460,71 @@ namespace PaintWPF
             previousPoint = e.GetPosition(DrawingCanvas);
             InitDeed();
 
-            if (IfTexting)
+            if (_ifTexting)
             {
 
             }
-            else if (IfSelection)
+            else if (_ifPickingColor)
+            {
+                EnterInitedColor(e);
+            }
+            else if (_ifSelection)
             {
                 MakeSelection(e);
             }
-            else if (IfFilling)
+            else if (_ifFilling)
             {
                 RenderCanvasToBitmap();
                 PerformFloodFill((int)previousPoint.X, (int)previousPoint.Y);
             }
-            else if (IfFiguring)
+            else if (_ifFiguring)
             {
                 InitShapesToPaint(e);
+            }
+            else if (_ifChangingFigureSize)
+            {
+
             }
             else
             {
                 previousPoint = e.GetPosition(DrawingCanvas);
                 SetMarkers(e);
             }
+        }
+        private void EnterInitedColor(MouseEventArgs e)
+        {
+            Color gotColor = GetColorAtTempPosition(e);
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                _main.FirstColor = new SolidColorBrush(gotColor);
+                FirstColor.Background = _main.FirstColor;
+            }
+            else if (e.RightButton == MouseButtonState.Pressed)
+            {
+                _main.SecondColor = new SolidColorBrush(gotColor);
+                SecondColor.Background = _main.SecondColor;
+            }
+        }
+        private Color GetColorAtTempPosition(MouseEventArgs e)
+        {
+            Point position = e.GetPosition(DrawingCanvas);
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
+                (int)DrawingCanvas.ActualWidth,
+                (int)DrawingCanvas.ActualHeight,
+                96, 96,
+                PixelFormats.Pbgra32);
+
+            renderTargetBitmap.Render(DrawingCanvas);
+
+            CroppedBitmap croppedBitmap = new CroppedBitmap(
+                renderTargetBitmap,
+                new Int32Rect((int)position.X, (int)position.Y, 1, 1));
+
+            byte[] pixels = new byte[4];
+            croppedBitmap.CopyPixels(pixels, 4, 0);
+
+            return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
         }
         public void SetMarkers(MouseEventArgs e)
         {
@@ -595,46 +664,55 @@ namespace PaintWPF
             MakeAllActionsNegative();
             if (_type == ActionType.Drawing)
             {
-                IfDrawing = true;
+                _ifDrawing = true;
             }
             else if (_type == ActionType.Figuring)
             {
-                IfFiguring = true;
+                _ifFiguring = true;
             }
             else if (_type == ActionType.Erazing)
             {
-                IfErazing = true;
+                _ifErazing = true;
             }
             else if (_type == ActionType.Filling)
             {
-                IfFilling = true;
+                _ifFilling = true;
             }
             else if (_type == ActionType.Selection)
             {
-                IfSelection = true;
+                _ifSelection = true;
             }
             else if (_type == ActionType.Text)
             {
-                IfTexting = true;
+                _ifTexting = true;
+            }
+            else if (_type == ActionType.PickingColor)
+            {
+                _ifPickingColor = true;
+            }
+            else if (_type == ActionType.ChangingFigureSize)
+            {
+                _ifChangingFigureSize = true;
             }
             else
             {
-                IfDrawing = true;
+                _ifDrawing = true;
             }
         }
         private void MakeAllActionsNegative()
         {
-            IfSelection = false;
-            IfDrawing = false;
-            IfErazing = false;
-            IfFiguring = false;
-            IfFilling = false;
-            IfTexting = false;
+            _ifSelection = false;
+            _ifDrawing = false;
+            _ifErazing = false;
+            _ifFiguring = false;
+            _ifFilling = false;
+            _ifTexting = false;
+            _ifPickingColor = false;
+            _ifChangingFigureSize = false;
         }
         private Point _startPoint;
         private Point _endPoint;
         private Polyline _polyline;
-        private System.Windows.Shapes.Path _path;
         private PathFigure _pathFigure;
         private BezierSegment _bezierSegment;
         private bool _isDrawingLine;
@@ -652,7 +730,6 @@ namespace PaintWPF
                     {
                         if (!_isDrawingLine && !_isAdjustingCurve)
                         {
-                            // Начать рисование прямой линии
                             _startPoint = e.GetPosition(DrawingCanvas);
                             _polyline = new Polyline
                             {
@@ -666,7 +743,6 @@ namespace PaintWPF
                         }
                         else if (_isDrawingLine)
                         {
-                            // Завершить рисование прямой линии и перейти к настройке кривизны
                             _endPoint = _polyline.Points[1];// e.GetPosition(DrawingCanvas);
                             _polyline.Points.Add(_endPoint);
                             DrawingCanvas.Children.Remove(_polyline);
@@ -683,16 +759,19 @@ namespace PaintWPF
                             PathGeometry pathGeometry = new PathGeometry();
                             pathGeometry.Figures.Add(_pathFigure);
 
-                            _path = new System.Windows.Shapes.Path
+                            _figToPaint = new System.Windows.Shapes.Path
                             {
                                 Stroke = Brushes.Black,
                                 StrokeThickness = 2,
                                 Data = pathGeometry
                             };
 
-                            DrawingCanvas.Children.Add(_path);
+                            DrawingCanvas.Children.Add(_figToPaint);
                             _isDrawingLine = false;
                             _isAdjustingCurve = true;
+
+
+                            _ifCurvnessIsDone = true;
                         }
 
                     }
@@ -864,7 +943,12 @@ namespace PaintWPF
 
             Canvas.SetTop(_figToPaint, e.GetPosition(DrawingCanvas).Y);
             Canvas.SetLeft(_figToPaint, e.GetPosition(DrawingCanvas).X);
+
+            Console.WriteLine(_figToPaint.ActualHeight);
+            Console.WriteLine(_figToPaint.ActualWidth);
+
             DrawingCanvas.Children.Add(_figToPaint);
+
         }
         private void GetPathToPaint()
         {
@@ -876,7 +960,6 @@ namespace PaintWPF
                 Stretch = Stretch.Fill
 
             };
-
         }
         private void Field_MouseMove(object sender, MouseEventArgs e)
         {
@@ -884,17 +967,22 @@ namespace PaintWPF
             string cursPosInPaintField = $"{position.X}, {position.Y}";
             CursCords.Content = cursPosInPaintField;
 
-            if (IfSelection)
+            if (_ifSelection)
             {
                 ChangeSelectionSize(e);
             }
-            else if (IfDrawing || IfErazing)
+            else if (_ifDrawing || _ifErazing)
             {
                 BrushPaint(e);
             }
-            else if (IfFiguring && (!(_figToPaint is null) || !(_pathFigure is null) || !(_polyline is null)))
+/*            else if (_ifFiguring && (!(_figToPaint is null) ||
+                !(_pathFigure is null) || !(_polyline is null)))
             {
                 PaintFigures(e);
+            }*/
+            else if (!(_figureSizing is null) && _ifChangingFigureSize)
+            {
+                _firstSelectionEnd = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
             }
         }
         private void ChangeSelectionSize(MouseEventArgs e)
@@ -905,7 +993,6 @@ namespace PaintWPF
                 _firstSelectionEnd = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
                 return;
             }
-
         }
         private int _amountOfPointInPolygon = 0;
         private void PaintFigures(MouseEventArgs e)
@@ -916,7 +1003,7 @@ namespace PaintWPF
                 {
                     new Point(0, 0),
                     new Point(e.GetPosition(DrawingCanvas).X - Canvas.GetLeft(_figToPaint),
-                    e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint))
+                    e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_figToPaint)),
                 };
             }
             else if (_figType == FigureTypes.Polygon)
@@ -946,7 +1033,6 @@ namespace PaintWPF
             {
                 if (_isDrawingLine)
                 {
-                    // Обновление текущей прямой линии
                     Point currentPoint = e.GetPosition(DrawingCanvas);
                     if (_polyline.Points.Count > 1)
                         _polyline.Points[1] = currentPoint;
@@ -955,11 +1041,9 @@ namespace PaintWPF
                 }
                 else if (_isAdjustingCurve)
                 {
-                    // Обновление кривизны линии
                     Point currentPoint = e.GetPosition(DrawingCanvas);
                     _bezierSegment.Point2 = currentPoint;
                 }
-
             }
             else
             {
@@ -983,7 +1067,7 @@ namespace PaintWPF
         private void BrushPaint(MouseEventArgs e)
         {
             currentPoint = e.GetPosition(DrawingCanvas);
-            if (_main.TempBrushType == BrushType.UsualBrush || IfErazing)
+            if (_main.TempBrushType == BrushType.UsualBrush || _ifErazing)
             {
                 GetLineToPaint(currentPoint);
             }
@@ -1003,13 +1087,10 @@ namespace PaintWPF
             else if (_main.TempBrushType == BrushType.OilPaintBrush)
             {
                 PaintByPngBrush(e);
-                //OilBrushPaint();
             }
             else if (_main.TempBrushType == BrushType.ColorPencil)
             {
                 PaintByPngBrush(e);
-
-                //ColorPencilBrushPaint(); // not working
             }
             else if (_main.TempBrushType == BrushType.Marker)
             {
@@ -1018,7 +1099,6 @@ namespace PaintWPF
             else if (_main.TempBrushType == BrushType.TexturePencil)
             {
                 PaintByPngBrush(e);
-                //TextureBrushPaint(e);
             }
             else if (_main.TempBrushType == BrushType.WatercolorBrush)
             {
@@ -1132,7 +1212,7 @@ namespace PaintWPF
                 X2 = currentPoint.X,
                 Y2 = currentPoint.Y,
 
-                Stroke = IfErazing ? Brushes.White : _main.ColorToPaint,
+                Stroke = _ifErazing ? Brushes.White : _main.ColorToPaint,
                 StrokeThickness = brushThickness,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
@@ -1147,24 +1227,231 @@ namespace PaintWPF
         private void Field_MouseUp(object sender, MouseEventArgs e)
         {
             //check for selection
-            if (IfSelection) MakeSelection();
-            if (IfFiguring) InitFigureInSizingBorder();
-
-            IfDrawing = false;
-            IfErazing = false;
-            IfFiguring = false;
-            IfFilling = false;
-            IfSelection = false;
+            if (_ifSelection) MakeSelection();
+            if (_ifFiguring) FiguringMouseUp();
 
             CheckForFigurePainting();
 
+            MakeAllActionsNegative();
+
             sprayTimer.Stop();
             SaveCanvasState();
+        }
+        public void FiguringMouseUp()
+        {
+            bool polygonCheck = IfPolygonFigureIsDone();
+            bool curveCheck = IfCurveFigureIsDone();
+             
+            if (polygonCheck && curveCheck)
+            {
+                 InitFigureInSizingBorder();
+
+                ReloadCurvePainting();
+            }
+        }
+        private void ReloadCurvePainting()
+        {
+            _ifCurvnessIsDone = false;
+            _isDrawingLine = false;
+            _isAdjustingCurve = false;
+        }
+        public bool IfCurveFigureIsDone()
+        {
+            if (_figType != FigureTypes.Curve) return true;
+
+            if (_ifCurvnessIsDone) GetPathSize();
+
+            return _ifCurvnessIsDone;
+        }
+        public void GetPathSize()
+        {
+            if (_figToPaint is System.Windows.Shapes.Path path)
+            {
+                Rect bounds = path.Data.Bounds;
+
+                GeneralTransform transform = path.TransformToAncestor((Visual)path.Parent);
+                Rect transformedBounds = transform.TransformBounds(bounds);
+
+                _figToPaint.Width = transformedBounds.Width;
+                _figToPaint.Height = transformedBounds.Height;
+            }
+        }
+        public bool IfPolygonFigureIsDone()
+        {
+            if (_figType != FigureTypes.Polygon) return true;
+
+            if (((Polyline)_figToPaint).Points.Count > 2)
+            {
+                // Check for differ between first and last poit
+                double xDiffer = Math.Abs(((Polyline)_figToPaint).Points.Last().X -
+                    ((Polyline)_figToPaint).Points.First().X);
+                double yDiffer = Math.Abs(((Polyline)_figToPaint).Points.Last().Y -
+                    ((Polyline)_figToPaint).Points.First().Y);
+
+                if (xDiffer <= 10 && yDiffer <= 10)
+                {
+                    ((Polyline)_figToPaint).Points.RemoveAt(((Polyline)_figToPaint).Points.Count - 1);
+                    ((Polyline)_figToPaint).Points.Add(((Polyline)_figToPaint).Points.First());
+
+                    ((Polyline)_figToPaint).InvalidateVisual();
+                    DrawingCanvas.UpdateLayout();
+
+                    CalculatePolylineSize();
+                    return true;
+                }
+            }
+            return false;
+        }
+        public void GetBoundingBox(UserControl control)
+        {
+            if (_figToPaint is Polyline polyline)
+            {
+                double minX = double.MaxValue;
+                double minY = double.MaxValue;
+
+                foreach (var point in polyline.Points)
+                {
+                    if (point.X < minX) minX = point.X;
+                    if (point.Y < minY) minY = point.Y;
+                }
+
+                Point polylineStartPoint = new Point(minX, minY);
+                Point canvasPosition = polyline.TransformToAncestor(DrawingCanvas).Transform(polylineStartPoint);
+
+                Canvas.SetLeft(control, canvasPosition.X);
+                Canvas.SetTop(control, canvasPosition.Y);
+            }
+            else if (_figToPaint is System.Windows.Shapes.Path path)
+            {
+                Rect bounds = path.Data.Bounds;
+
+                Point pathStartPoint = new Point(bounds.X, bounds.Y);
+
+                Point canvasPosition = path.TransformToAncestor(DrawingCanvas).Transform(pathStartPoint);
+
+                Canvas.SetLeft(_figureSizing, canvasPosition.X);
+                Canvas.SetTop(_figureSizing, canvasPosition.Y);
+            }
+        }
+        public void CalculatePolylineSize()
+        {
+            if (_figToPaint is Polyline polyline)
+            {
+                double minX = double.MaxValue;
+                double maxX = double.MinValue;
+                double minY = double.MaxValue;
+                double maxY = double.MinValue;
+
+                foreach (var point in polyline.Points)
+                {
+                    if (point.X < minX)
+                        minX = point.X;
+                    if (point.X > maxX)
+                        maxX = point.X;
+                    if (point.Y < minY)
+                        minY = point.Y;
+                    if (point.Y > maxY)
+                        maxY = point.Y;
+                }
+                polyline.Width = maxX - minX;
+                polyline.Height = maxY - minY;
+            }
         }
         private void InitFigureInSizingBorder()
         {
             if (!(DrawingCanvas.Children[DrawingCanvas.Children.Count - 1] is Shape)) return;
             Shape createdFigure = (Shape)DrawingCanvas.Children[DrawingCanvas.Children.Count - 1];
+
+            ImageSource source = null;
+            if (createdFigure.Width is double.NaN || createdFigure.Height is double.NaN)
+            {
+                GetShapeSize(createdFigure);
+                source = ConvertShapeToImage(createdFigure, (int)createdFigure.Width, (int)createdFigure.Height);
+            }
+            else
+            {
+                source = ConvertShapeToImage(createdFigure, (int)createdFigure.Width, (int)createdFigure.Height);
+            }
+            Image shapeImg = new Image()
+            {
+                Source = source,
+                Height = source.Height,
+                Width = source.Width
+            };
+
+            if (_figType == FigureTypes.Line)
+            {
+                _lineSizeing = new LineSizing((Polyline)_figToPaint);
+
+                //InitLocationForFigure(_lineSizeing);
+                GetLinePositionOnCanvas();
+
+                DrawingCanvas.Children.RemoveAt(DrawingCanvas.Children.Count - 1);
+                DrawingCanvas.Children.Add(_lineSizeing);
+            }
+            else
+            {
+                _figureSizing = new Selection(shapeImg);
+
+                _figureSizing.Height = _figureSizing.SelectionBorder.Height;
+                _figureSizing.Width = _figureSizing.SelectionBorder.Width;
+
+                InitLocationForFigure(_figureSizing);
+
+                DrawingCanvas.Children.RemoveAt(DrawingCanvas.Children.Count - 1);
+                DrawingCanvas.Children.Add(_figureSizing);
+            }
+            _type = ActionType.ChangingFigureSize;
+        }
+        public void GetLinePositionOnCanvas()
+        {
+            if (DrawingCanvas.Children[DrawingCanvas.Children.Count - 1] is Polyline line)
+            {
+                double xLoc = Canvas.GetLeft(line);
+                double yLoc = Canvas.GetTop(line);
+
+                Canvas.SetLeft(_lineSizeing, xLoc);
+                Canvas.SetTop(_lineSizeing, yLoc);
+            }
+        }
+        private void InitLocationForFigure(UserControl control)
+        {
+            if (_figType != FigureTypes.Polygon &&
+                _figType != FigureTypes.Curve && 
+                _figType != FigureTypes.Line)
+            {
+                Canvas.SetTop(_figureSizing, Canvas.GetTop(DrawingCanvas.Children[DrawingCanvas.Children.Count - 1]));
+                Canvas.SetLeft(_figureSizing, Canvas.GetLeft(DrawingCanvas.Children[DrawingCanvas.Children.Count - 1]));
+                return;
+            }
+            GetBoundingBox(control);
+        }
+        private void GetShapeSize(Shape shape)
+        {
+            if (shape is Polyline poly)
+            {
+                shape.Width = Math.Abs(poly.Points.Last().X -
+                 poly.Points.First().X);
+                shape.Height = Math.Abs(poly.Points.Last().Y -
+                    poly.Points.First().Y);
+            }
+        }
+
+        private ImageSource ConvertShapeToImage(Shape shape, int width, int height)
+        {
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            DrawingVisual drawingVisual = new DrawingVisual();
+
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                // Render the shape onto the DrawingContext
+                VisualBrush visualBrush = new VisualBrush(shape);
+                drawingContext.DrawRectangle(visualBrush, null, new Rect(0, 0, width, height));
+            }
+
+            renderTargetBitmap.Render(drawingVisual);
+
+            return renderTargetBitmap;
         }
         private void MakeSelection()
         {
@@ -1197,9 +1484,9 @@ namespace PaintWPF
                 //InitEventsForSelection();
             }
         }
-
         private void CheckForFigurePainting()
         {
+            if (_figToPaint is null) return;
             if (_figType != FigureTypes.Polygon)
             {
                 _figToPaint = null;
@@ -1319,7 +1606,6 @@ namespace PaintWPF
 
         private double prevYPos;
         private bool IfMadeThickBigger = false;
-
         private void ValueDrag_PreViewMouseDown(object sender, MouseEventArgs e)
         {
             Button button = sender as Button;
@@ -1478,6 +1764,7 @@ namespace PaintWPF
         private void Figure_Click(object sender, EventArgs e)
         {
             EndWithPolygonFigures();
+            ClearFigureSizingInClicks();
 
             ClearBGs();
             if (sender is Button but)
@@ -1605,36 +1892,39 @@ namespace PaintWPF
 
         private Point _firstSelectionStart;
         private Point _firstSelectionEnd;
-
-
         private void InitSelectedBgInCanvas()
         {
             RenderTargetBitmap copy = GetRenderedCopy();
 
             InsertBitmapToCanvas(copy);
 
+            DeleteAndTrimElements();
+
             ConvertRegionToWhite();
+        }
+        private void DeleteAndTrimElements()
+        {
+             
         }
         private void ConvertRegionToWhite()
         {
-            Rect selectedBounds = new Rect(_firstSelectionStart, _firstSelectionEnd); // Функция для расчета границ выделенной области
-
+            Rect selectedBounds = new Rect(_firstSelectionStart, _firstSelectionEnd);
             List<UIElement> elementsToRemove = new List<UIElement>();
             foreach (UIElement child in DrawingCanvas.Children)
             {
                 Rect childBounds = VisualTreeHelper.GetDescendantBounds(child);
                 Point childTopLeft = child.TranslatePoint(new Point(), DrawingCanvas);
-
                 if (selectedBounds.IntersectsWith(childBounds))
                 {
-                    if (selectedBounds.Contains(childTopLeft) && selectedBounds.Contains(new Point(childTopLeft.X + childBounds.Width, childTopLeft.Y + childBounds.Height)))
+                    if (selectedBounds.Contains(childTopLeft) && 
+                        selectedBounds.Contains(new Point(childTopLeft.X + childBounds.Width, 
+                        childTopLeft.Y + childBounds.Height)))
                     {
                         elementsToRemove.Add(child);
                     }
                     else
                     {
                         Rect intersection = Rect.Intersect(selectedBounds, childBounds);
-
                         if (child is Shape shape)
                         {
                             shape.Fill = Brushes.White;
@@ -1648,13 +1938,11 @@ namespace PaintWPF
                     }
                 }
             }
-
             foreach (UIElement element in elementsToRemove)
             {
                 DrawingCanvas.Children.Remove(element);
             }
         }
-
         private void InsertBitmapToCanvas(RenderTargetBitmap bitmap)
         {
             var image = new Image
@@ -1749,11 +2037,24 @@ namespace PaintWPF
             {
                 _selection.ChangeSizeForSelection(e);
             }
-            /*  else if (!(_changedSizeText is null) &&
-                      _changedSizeText._isDraggingSelection)
-              {
-                  _changedSizeText.ChangeSizeForSelection(e);
-              }*/
+            else if (!(_figureSizing is null) && _ifChangingFigureSize &&
+                e.LeftButton == MouseButtonState.Pressed)
+            {
+                _figureSizing._isDraggingSelection = true;
+                _figureSizing.ChangeSizeForSelection(e);
+            }
+            else if (!(_lineSizeing is null) &&
+                e.LeftButton == MouseButtonState.Pressed)
+            {
+                //_lineSizeing._isDraggingSelection = true;
+                _lineSizeing.ChangeSizeForSelection(e);
+            }
+
+            if (_ifFiguring && (!(_figToPaint is null) ||
+                 !(_pathFigure is null) || !(_polyline is null)))
+            {
+                PaintFigures(e);
+            }
         }
         private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -1769,6 +2070,18 @@ namespace PaintWPF
                 _changedSizeText.IfSelectionIsClicked = false;
                 _changedSizeText._selectionSizeToChangeSize = SelectionSide.Nothing;
             }
+            else if (!(_figureSizing is null))
+            {
+                _figureSizing._isDraggingSelection = false;
+                _figureSizing.IfSelectionIsClicked = false;
+                _figureSizing._selectionSizeToChangeSize = SelectionSide.Nothing;
+            }
+            else if(!(_lineSizeing is null))
+            {
+                _lineSizeing._isDraggingSelection = false;
+                _lineSizeing.IfSelectionIsClicked = false;
+                _lineSizeing._moveRect = LineSizingRectType.Nothing;
+            }
         }
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -1777,6 +2090,16 @@ namespace PaintWPF
                 SetSelectedItemInDrawingCanvas();
                 _selection = null;
                 RemoveSelection();
+                return;
+            }
+            if (!(_figureSizing is null) && !_figureSizing.IfSelectionIsClicked)
+            {
+                ClearFigureSizing();
+                return;
+            }
+            else if(!(_lineSizeing is null) && !_lineSizeing.IfSelectionIsClicked)
+            {
+                ClearLineSizing();
                 return;
             }
             if (!(_changedSizeText is null) &&
@@ -1792,6 +2115,82 @@ namespace PaintWPF
             {
                 _changedSizeText.IfSelectiongClicked = false;
             }
+        }
+        private void ClearFigureSizing()
+        {
+            if (!(_figureSizing is null))
+            {
+                InitSizedFigureIntoCanvas();
+                _figureSizing = null;
+                _type = ActionType.Figuring;
+                _figToPaint = null;
+                RemoveSelection();
+            }
+        }
+        private void ClearLineSizing()
+        {
+            if (!(_lineSizeing is null))
+            {
+                InitLineInCanvas();
+                _lineSizeing = null;
+                _type = ActionType.Figuring;
+                _figToPaint = null;
+                RemoveLineSizing();
+            }
+        }
+        private void ClearFigureSizingInClicks()
+        {
+            ClearFigureSizing();
+            ClearLineSizing();
+        }
+
+        private void InitLineInCanvas()
+        {
+            //Get line to add
+            Line lineToAdd = _lineSizeing.GetPolyLineObject();
+            if (lineToAdd is null) return;
+
+            //Init codes for positionation
+            InitCordForLine(lineToAdd);
+
+            //Delete line from _lineSizing
+            _lineSizeing.RemoveLineFromCanvas();
+
+            //Add in DrawingCanvas
+            DrawingCanvas.Children.Add(lineToAdd);
+        }
+        public void InitCordForLine(Line line)
+        {
+            //Point lineStartPoint = new Point(Math.Min(line.X1, line.X2), Math.Min(line.Y1, line.Y2));
+            Point lineStartPoint = new Point(line.X1, line.Y1);
+
+            GeneralTransform transform = line.TransformToAncestor(DrawingCanvas);
+            Point canvasPosition = transform.Transform(lineStartPoint);
+
+            Canvas.SetLeft(line, canvasPosition.X);
+            Canvas.SetTop(line, canvasPosition.Y);
+        }
+        private void RemoveLineSizing()
+        {
+            for(int i = 0; i < DrawingCanvas.Children.Count; i++)
+            {
+                if (DrawingCanvas.Children[i] is LineSizing)
+                {
+                    DrawingCanvas.Children.RemoveAt(i);
+                }
+            }
+        }
+        private void InitSizedFigureIntoCanvas()
+        {
+            Image image = _figureSizing.GetShapeImageObject();
+
+            Point imgLoc = _figureSizing.GetImageLocation();
+            if (imgLoc.X == -1 && imgLoc.Y == -1) return;
+            _figureSizing.RemoveImagesFromCanvas();
+
+            DrawingCanvas.Children.Add(image);
+            Canvas.SetLeft(image, Canvas.GetLeft(_figureSizing) + imgLoc.X);
+            Canvas.SetTop(image, Canvas.GetTop(_figureSizing) + imgLoc.Y);
         }
         private void SetSelectedItemInDrawingCanvas()
         {
@@ -1830,7 +2229,7 @@ namespace PaintWPF
         private bool _ifDoubleClicked = false;
         private void PaintWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (IfTexting && !_ifDoubleClicked)
+            if (_ifTexting && !_ifDoubleClicked)
             {
                 InitSettingsForTextBox();
                 Point mousePoint = e.GetPosition(DrawingCanvas);
@@ -1912,6 +2311,32 @@ namespace PaintWPF
             {
                 ((Polyline)_figToPaint).Points.Add(((Polyline)_figToPaint).Points.First());
             }
+        }
+
+        private void PaintWindow_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_ifFiguring) FiguringMouseUp();
+
+            if (!(_lineSizeing is null))
+            {
+                _lineSizeing._moveRect = LineSizingRectType.Nothing;
+                _lineSizeing._isDraggingSelection = false;
+            }
+        }
+        private void ChooseAllSelection_MouseLeftButtonDown(object sender, EventArgs e)
+        {
+            _selection = new Selection()
+            {
+                Height = DrawingCanvas.Height,
+                Width = DrawingCanvas.Width
+            };
+            _selection.SelectionBorder.Height = DrawingCanvas.Height;
+            _selection.SelectionBorder.Width = DrawingCanvas.Width;
+
+            Canvas.SetTop(_selection, 0);
+            Canvas.SetLeft(_selection, 0);
+
+            DrawingCanvas.Children.Add(_selection);
         }
 
     }
