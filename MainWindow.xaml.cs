@@ -57,6 +57,8 @@ namespace PaintWPF
         private bool _ifPickingColor = false;
         private bool _ifChangingFigureSize = false;
 
+        private bool IfSelectionIsMaken = false;
+
         private FigureTypes? _figType = null;
         private Shape _figToPaint;
         private Polyline poligonFigure = null;
@@ -277,10 +279,16 @@ namespace PaintWPF
         }
         private void Pallete_Click(object sender, EventArgs e)
         {
-            Pallete pallete = new Pallete(_main.PalleteMod);
+            Pallete pallete = new Pallete(_main.PalleteMod, GetSelectedColor());
             pallete.ShowDialog();
 
             InitColorInCUstomColor(_main.PalleteMod.ChosenColor);
+        }
+        private SolidColorBrush GetSelectedColor()
+        {
+            if (_chosenToPaintButton is null || 
+                _chosenToPaintButton.Name == "FirstColor") return _main.FirstColor;
+                return _main.SecondColor; 
         }
         private void InitColorInCUstomColor(SolidColorBrush color)
         {
@@ -681,6 +689,7 @@ namespace PaintWPF
             else if (_type == ActionType.Selection)
             {
                 _ifSelection = true;
+                IfSelectionIsMaken = false;
             }
             else if (_type == ActionType.Text)
             {
@@ -709,6 +718,8 @@ namespace PaintWPF
             _ifTexting = false;
             _ifPickingColor = false;
             _ifChangingFigureSize = false;
+
+            IfSelectionIsMaken = false;
         }
         private Point _startPoint;
         private Point _endPoint;
@@ -1218,7 +1229,52 @@ namespace PaintWPF
                 StrokeEndLineCap = PenLineCap.Round,
                 StrokeLineJoin = PenLineJoin.Round,
             };
+
+            Image image = ConvertLineToImage(line, DrawingCanvas.Width, DrawingCanvas.Height);
+            
+
+
             DrawingCanvas.Children.Add(line);
+
+        }
+        public Image ConvertLineToImage(Line line, double canvasWidth, double canvasHeight)
+        {
+            // Создаем DrawingVisual для рисования линии
+            DrawingVisual drawingVisual = new DrawingVisual();
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawLine(
+                    new Pen(line.Stroke, line.StrokeThickness)
+                    {
+                        StartLineCap = line.StrokeStartLineCap,
+                        EndLineCap = line.StrokeEndLineCap,
+                        LineJoin = line.StrokeLineJoin
+                    },
+                    new Point(line.X1, line.Y1),
+                    new Point(line.X2, line.Y2)
+                );
+            }
+
+            // Определяем размеры для RenderTargetBitmap
+            Rect bounds = new Rect(new Point(Math.Min(line.X1, line.X2), Math.Min(line.Y1, line.Y2)),
+                                   new Size(Math.Abs(line.X2 - line.X1), Math.Abs(line.Y2 - line.Y1)));
+
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)canvasWidth, (int)canvasHeight, 96, 96, PixelFormats.Pbgra32);
+            renderBitmap.Render(drawingVisual);
+
+            // Создаем Image с полученным RenderTargetBitmap
+            Image image = new Image
+            {
+                Source = renderBitmap,
+                Width = bounds.Width,
+                Height = bounds.Height
+            };
+
+            // Устанавливаем позицию Image на Canvas
+            Canvas.SetLeft(image, bounds.X);
+            Canvas.SetTop(image, bounds.Y);
+
+            return image;
         }
         public Brush ConvertColorIntoBrushes()
         {
@@ -1227,7 +1283,7 @@ namespace PaintWPF
         private void Field_MouseUp(object sender, MouseEventArgs e)
         {
             //check for selection
-            if (_ifSelection) MakeSelection();
+            if (_ifSelection && !IfSelectionIsMaken) MakeSelection();
             if (_ifFiguring) FiguringMouseUp();
 
             CheckForFigurePainting();
@@ -1482,6 +1538,7 @@ namespace PaintWPF
 
 
                 //InitEventsForSelection();
+                IfSelectionIsMaken = true;
             }
         }
         private void CheckForFigurePainting()
@@ -1898,14 +1955,171 @@ namespace PaintWPF
 
             InsertBitmapToCanvas(copy);
 
-            DeleteAndTrimElements();
+            Point start = new Point(Canvas.GetLeft(_selectionRect), Canvas.GetTop(_selectionRect));
+            Point end = new Point(start.X + _selectionRect.Width, start.Y + _selectionRect.Height);
+            
+            DeleteAndTrimElements(start, end);
 
-            ConvertRegionToWhite();
+            //ConvertRegionToWhite();
         }
-        private void DeleteAndTrimElements()
+        private void DeleteAndTrimElements(Point point1, Point point2)
         {
-             
+            double minX = Math.Min(point1.X, point2.X);
+            double minY = Math.Min(point1.Y, point2.Y);
+            double maxX = Math.Max(point1.X, point2.X);
+            double maxY = Math.Max(point1.Y, point2.Y);
+
+            var elementsToRemove = new List<UIElement>();
+            var elementsToAdd = new List<UIElement>();
+
+            for(int i = 0; i < DrawingCanvas.Children.Count; i++)
+            {
+                var bounds = VisualTreeHelper.GetDescendantBounds(DrawingCanvas.Children[i]);
+
+                var topLeft = DrawingCanvas.Children[i].
+                    TransformToAncestor(DrawingCanvas).Transform(new Point(0, 0));
+
+                var bottomRight = new Point(
+                    topLeft.X + bounds.Width, topLeft.Y + bounds.Height);
+
+                if (topLeft.X >= minX && topLeft.Y >= minY && 
+                    bottomRight.X <= maxX && bottomRight.Y <= maxY)
+                {
+                    elementsToRemove.Add(DrawingCanvas.Children[i]);
+                }
+                else if (IsPartiallyInRegion(topLeft, bottomRight, minX, minY, maxX, maxY))
+                {
+                    if (DrawingCanvas.Children[i] is Image image)
+                    {
+                        var trimmedImages = TrimImage(image, minX, minY, maxX, maxY, topLeft);
+                        if (trimmedImages != null && trimmedImages.Count > 0)
+                        {
+                            elementsToAdd.AddRange(trimmedImages);
+                            elementsToRemove.Add(DrawingCanvas.Children[i]);
+                        }
+                    }
+                    else
+                    {
+                        var trimmedElement = TrimElement(DrawingCanvas.Children[i],
+                            minX, minY, maxX, maxY);
+                        if (trimmedElement != null)
+                        {
+                            elementsToAdd.Add(trimmedElement);
+                            elementsToRemove.Add(DrawingCanvas.Children[i]);
+                        }
+                    }
+                }
+            }
+
+            for(int i = 0; i < elementsToRemove.Count; i++)
+            {
+                DrawingCanvas.Children.Remove(elementsToRemove[i]);
+            }
+            for(int i = 0; i < elementsToAdd.Count; i++)
+            {
+                DrawingCanvas.Children.Add(elementsToAdd[i]);
+            }
         }
+        private List<Image> TrimImage(Image image, double minX, double minY, double maxX, double maxY, Point topLeft)
+        {
+            var bitmap = image.Source as BitmapSource;
+            if (bitmap == null) return null;
+
+            var trimmedImages = new List<Image>();
+
+            // Определяем области для обрезки и сохранения
+            var areas = new List<Int32Rect>
+    {
+        // Левая часть
+        new Int32Rect(0, 0, (int)Math.Max(0, minX - topLeft.X), bitmap.PixelHeight),
+        // Правая часть
+        new Int32Rect((int)Math.Min(bitmap.PixelWidth, maxX - topLeft.X), 0, (int)Math.Max(0, bitmap.PixelWidth - (maxX - topLeft.X)), bitmap.PixelHeight),
+        // Верхняя часть
+        new Int32Rect(0, 0, bitmap.PixelWidth, (int)Math.Max(0, minY - topLeft.Y)),
+        // Нижняя часть
+        new Int32Rect(0, (int)Math.Min(bitmap.PixelHeight, maxY - topLeft.Y), bitmap.PixelWidth, (int)Math.Max(0, bitmap.PixelHeight - (maxY - topLeft.Y)))
+    };
+
+            foreach (var area in areas)
+            {
+                if (area.Width > 0 && area.Height > 0)
+                {
+                    var croppedBitmap = new CroppedBitmap(bitmap, area);
+                    var newImage = new Image
+                    {
+                        Source = croppedBitmap,
+                        Width = area.Width,
+                        Height = area.Height
+                    };
+
+                    // Расчет позиции нового изображения на Canvas
+                    double offsetX = area.X == 0 ? topLeft.X : topLeft.X + area.X;
+                    double offsetY = area.Y == 0 ? topLeft.Y : topLeft.Y + area.Y;
+
+                    Canvas.SetLeft(newImage, offsetX);
+                    Canvas.SetTop(newImage, offsetY);
+
+                    trimmedImages.Add(newImage);
+                }
+            }
+
+            return trimmedImages;
+        }
+        private bool IsPartiallyInRegion(Point topLeft, Point bottomRight, 
+            double minX, double minY, double maxX, double maxY)
+        {
+            return (topLeft.X < maxX && bottomRight.X > minX && 
+                topLeft.Y < maxY && bottomRight.Y > minY);
+        }
+        private UIElement TrimElement(UIElement element, double minX, 
+            double minY, double maxX, double maxY)
+        {
+            if (element is Line line)
+            {
+                return TrimLine(line, minX, minY, maxX, maxY);
+            }
+            else if (element is Polyline polyline)
+            {
+                return TrimPolyline(polyline, minX, minY, maxX, maxY);
+            }
+
+            //return new UIElement();
+            throw new NotSupportedException("Unsupported element type for trimming");
+        }
+        private Polyline TrimPolyline(Polyline polyline, double minX, 
+            double minY, double maxX, double maxY)
+        {
+            var trimmedPoints = new PointCollection();
+
+            foreach (var point in polyline.Points)
+            {
+                if (point.X >= minX && point.X <= maxX && 
+                    point.Y >= minY && point.Y <= maxY)
+                {
+                    trimmedPoints.Add(point);
+                }
+            }
+
+            return new Polyline { Points = trimmedPoints, Stroke = polyline.Stroke, StrokeThickness = polyline.StrokeThickness };
+        }
+        private Line TrimLine(Line line, double minX, double minY, double maxX, double maxY)
+        {
+
+            if (line.X1 >= minX && line.X1 <= maxX && 
+                line.Y1 >= minY && line.Y1 <= maxY)
+            {
+                line.X1 = Math.Max(minX, Math.Min(line.X1, maxX));
+                line.Y1 = Math.Max(minY, Math.Min(line.Y1, maxY));
+            }
+            if (line.X2 >= minX && line.X2 <= maxX && 
+                line.Y2 >= minY && line.Y2 <= maxY)
+            {
+                line.X2 = Math.Max(minX, Math.Min(line.X2, maxX));
+                line.Y2 = Math.Max(minY, Math.Min(line.Y2, maxY));
+            }
+            return line;
+        }
+
         private void ConvertRegionToWhite()
         {
             Rect selectedBounds = new Rect(_firstSelectionStart, _firstSelectionEnd);
@@ -2315,6 +2529,7 @@ namespace PaintWPF
 
         private void PaintWindow_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (_ifSelection && !IfSelectionIsMaken) MakeSelection();
             if (_ifFiguring) FiguringMouseUp();
 
             if (!(_lineSizeing is null))
@@ -2337,6 +2552,11 @@ namespace PaintWPF
             Canvas.SetLeft(_selection, 0);
 
             DrawingCanvas.Children.Add(_selection);
+        }
+        private void SelectionMenu_MouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            EndWithPolygonFigures();
+            ClearFigureSizingInClicks();
         }
 
     }

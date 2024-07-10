@@ -3,51 +3,73 @@
   "WorkspaceRootPath": "B:\\GitHub\\PaintWPF\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\mainwindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\mainwindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:mainwindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\tools\\taskcolor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\tools\\taskcolor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\tools\\progressbarconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\tools\\progressbarconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\pallete.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:pallete.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\customcontrols\\linesizing.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\linesizing.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\pallete.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:pallete.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\de77ce3deb6b4ce2fccf1325cdd04d12bf8c9c50a53c508e67558e9c507e333b\\RenderTargetBitmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\mainpaint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\mainpaint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\e8d68e7af1fb94bc3cfd753c560f12bc92ccb3bdaccf6e4be8ffa111bf800af6\\ExceptionWrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\palletemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\palletemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\b7dbd785a4a4b86912cb9bdd5c4a6ae404062a78ffae552fb5232ade7fa475a4\\Visual.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\pallete.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:pallete.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\customcontrols\\linesizing.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\linesizing.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\colorparams.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\colorparams.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\4bfa269c0399c4054c1e359f5f29c91af679ffcb3ccd79df3707f7c100c0dc83\\FrameworkElement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\obj\\debug\\pallete.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:obj\\debug\\pallete.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\customcontrols\\linesizing.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\linesizing.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\0d8cc38389b42e46aaa4aba7edaa20feaf69a6fd3dcb033d8c1bc7c5cb6e5d44\\Color.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\eaaead2b0f05871b62e4c955df5e555cd3e36193cd36458908b92ab6711fa132\\CroppedBitmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\selection.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\selection.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\models\\enums\\linesizingrecttype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\enums\\linesizingrecttype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\linesizing.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\linesizing.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6ae05715c4f47be812af4dfd14e059f33a96424703338c2cf1da7fe67272c5d0\\RoutedEventArgs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\4bfa269c0399c4054c1e359f5f29c91af679ffcb3ccd79df3707f7c100c0dc83\\FrameworkElement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\linesizing.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\linesizing.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\enums\\actiontype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -56,14 +78,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|B:\\GitHub\\PaintWPF\\obj\\Debug\\MainWindow.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:obj\\Debug\\MainWindow.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\customcontrols\\selection.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\selection.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\pallete.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:pallete.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\texteditor.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -80,18 +94,6 @@
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\pallete.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:pallete.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\pallete.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:pallete.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -104,26 +106,11 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:obj\\Debug\\MainWindow.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\be9939a430e6cfad77da0239279879985f3c7665f9b4de43bb5eed05f7bd0ea0\\UIElement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\enums\\figuretypes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\enums\\figuretypes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\texteditor.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\texteditor.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\palletemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\palletemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\tools\\taskcolor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\tools\\taskcolor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\texteditor.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -138,24 +125,12 @@
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\enums\\selectionside.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\mainpaint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\mainpaint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\images\\brushes\\coloredbrush.png||{177559E0-D141-11D0-92DF-00A0C9138C45}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:images\\brushes\\coloredbrush.png||{177559E0-D141-11D0-92DF-00A0C9138C45}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\tools\\colorconvertor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\tools\\colorconvertor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\colorparams.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\colorparams.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\tools\\progressbarconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\tools\\progressbarconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\images\\figures\\righttriangle.png||{177559E0-D141-11D0-92DF-00A0C9138C45}",
@@ -183,11 +158,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 6,
               "Title": "Pallete.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Pallete.xaml",
               "RelativeDocumentMoniker": "Pallete.xaml",
@@ -200,13 +175,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 4,
               "Title": "Pallete.xaml.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Pallete.xaml.cs",
               "RelativeDocumentMoniker": "Pallete.xaml.cs",
               "ToolTip": "B:\\GitHub\\PaintWPF\\Pallete.xaml.cs",
               "RelativeToolTip": "Pallete.xaml.cs",
-              "ViewState": "AQIAAA4CAAAAAAAAAAAYwBcCAAA/AAAA",
+              "ViewState": "AQIAABYAAAAAAAAAAAAAADIAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-19T11:28:53.457Z",
               "IsPinned": true,
@@ -214,7 +189,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MainWindow.xaml.cs",
+              "ViewState": "AQIAAAoBAAAAAAAAAAAvwBwBAABBAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-17T16:25:19.005Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MainWindow.xaml",
@@ -226,91 +214,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\MainWindow.xaml.cs",
-              "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AQIAAAsJAAAAAAAAAAAiwB0JAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-17T16:25:19.005Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Visual.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\b7dbd785a4a4b86912cb9bdd5c4a6ae404062a78ffae552fb5232ade7fa475a4\\Visual.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\b7dbd785a4a4b86912cb9bdd5c4a6ae404062a78ffae552fb5232ade7fa475a4\\Visual.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAAFsJAAAAAAAAAAAAwGoJAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T10:09:33.577Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Selection.xaml.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
-              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
-              "RelativeToolTip": "CustomControls\\Selection.xaml.cs",
-              "ViewState": "AQIAAHsBAAAAAAAAAAAcwIwBAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-01T22:27:52.001Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "Selection.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
-              "RelativeToolTip": "CustomControls\\Selection.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-06-27T17:31:15.947Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RenderTargetBitmap.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\de77ce3deb6b4ce2fccf1325cdd04d12bf8c9c50a53c508e67558e9c507e333b\\RenderTargetBitmap.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\de77ce3deb6b4ce2fccf1325cdd04d12bf8c9c50a53c508e67558e9c507e333b\\RenderTargetBitmap.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAAAQwCsAAAADAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-04T16:07:28.697Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ExceptionWrapper.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\e8d68e7af1fb94bc3cfd753c560f12bc92ccb3bdaccf6e4be8ffa111bf800af6\\ExceptionWrapper.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\e8d68e7af1fb94bc3cfd753c560f12bc92ccb3bdaccf6e4be8ffa111bf800af6\\ExceptionWrapper.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAwBkAAAAWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-04T22:40:34.768Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "LineSizingRectType.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\LineSizingRectType.cs",
-              "RelativeDocumentMoniker": "Models\\Enums\\LineSizingRectType.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\Enums\\LineSizingRectType.cs",
-              "RelativeToolTip": "Models\\Enums\\LineSizingRectType.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAgAAAAQAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-05T21:38:18.84Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 15,
               "Title": "LineSizing.xaml.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\LineSizing.xaml.cs",
               "RelativeDocumentMoniker": "CustomControls\\LineSizing.xaml.cs",
@@ -323,7 +227,120 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 10,
+              "Title": "ColorParams.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\ColorParams.cs",
+              "RelativeDocumentMoniker": "Models\\ColorParams.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\ColorParams.cs",
+              "RelativeToolTip": "Models\\ColorParams.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-17T21:22:47.53Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "MainPaint.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\MainPaint.cs",
+              "RelativeDocumentMoniker": "Models\\MainPaint.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\MainPaint.cs",
+              "RelativeToolTip": "Models\\MainPaint.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAQwBEAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-17T21:22:51.188Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Pallete.g.i.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\obj\\Debug\\Pallete.g.i.cs",
+              "RelativeDocumentMoniker": "obj\\Debug\\Pallete.g.i.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\obj\\Debug\\Pallete.g.i.cs",
+              "RelativeToolTip": "obj\\Debug\\Pallete.g.i.cs",
+              "ViewState": "AQIAAH8AAAAAAAAAAAAlwI4AAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-10T15:10:13.941Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ProgressBarConverter.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Tools\\ProgressBarConverter.cs",
+              "RelativeDocumentMoniker": "Models\\Tools\\ProgressBarConverter.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\Tools\\ProgressBarConverter.cs",
+              "RelativeToolTip": "Models\\Tools\\ProgressBarConverter.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-22T23:14:15.882Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TaskColor.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Tools\\TaskColor.cs",
+              "RelativeDocumentMoniker": "Models\\Tools\\TaskColor.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\Tools\\TaskColor.cs",
+              "RelativeToolTip": "Models\\Tools\\TaskColor.cs",
+              "ViewState": "AQIAACoAAAAAAAAAAAAjwDoAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T12:09:41.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Color.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\0d8cc38389b42e46aaa4aba7edaa20feaf69a6fd3dcb033d8c1bc7c5cb6e5d44\\Color.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\0d8cc38389b42e46aaa4aba7edaa20feaf69a6fd3dcb033d8c1bc7c5cb6e5d44\\Color.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
+              "ViewState": "AQIAANoCAAAAAAAAAAAAwOoCAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-10T08:34:18.513Z",
+              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PalleteModel.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\PalleteModel.cs",
+              "RelativeDocumentMoniker": "Models\\PalleteModel.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\PalleteModel.cs",
+              "RelativeToolTip": "Models\\PalleteModel.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAqwAsAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-17T21:34:55.473Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Selection.xaml.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
+              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
+              "RelativeToolTip": "CustomControls\\Selection.xaml.cs",
+              "ViewState": "AQIAAHsBAAAAAAAAAAAcwIwBAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-01T22:27:52.001Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Selection.xaml",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
+              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
+              "RelativeToolTip": "CustomControls\\Selection.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-06-27T17:31:15.947Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
               "Title": "ActionType.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\ActionType.cs",
               "RelativeDocumentMoniker": "Models\\Enums\\ActionType.cs",
@@ -331,23 +348,22 @@
               "RelativeToolTip": "Models\\Enums\\ActionType.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-22T10:29:44.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-22T10:29:44.277Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "RoutedEventArgs.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6ae05715c4f47be812af4dfd14e059f33a96424703338c2cf1da7fe67272c5d0\\RoutedEventArgs.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6ae05715c4f47be812af4dfd14e059f33a96424703338c2cf1da7fe67272c5d0\\RoutedEventArgs.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAAMMAAAAAAAAAAAAAwNIAAAADAAAA",
+              "DocumentIndex": 13,
+              "Title": "CroppedBitmap.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\eaaead2b0f05871b62e4c955df5e555cd3e36193cd36458908b92ab6711fa132\\CroppedBitmap.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\eaaead2b0f05871b62e4c955df5e555cd3e36193cd36458908b92ab6711fa132\\CroppedBitmap.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
+              "ViewState": "AQIAAGEAAAAAAAAAAAAAwHIAAAACAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-05T23:16:02.22Z",
+              "WhenOpened": "2024-07-07T15:57:29.218Z",
               "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 19,
               "Title": "MainWindow.g.i.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\obj\\Debug\\MainWindow.g.i.cs",
               "RelativeDocumentMoniker": "obj\\Debug\\MainWindow.g.i.cs",
@@ -355,8 +371,7 @@
               "RelativeToolTip": "obj\\Debug\\MainWindow.g.i.cs",
               "ViewState": "AQIAALEDAAAAAAAAAAAtwMgDAABKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T16:58:49.258Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-20T16:58:49.258Z"
             },
             {
               "$type": "Document",
@@ -372,7 +387,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "TextEditor.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\TextEditor.xaml",
               "RelativeDocumentMoniker": "CustomControls\\TextEditor.xaml",
@@ -384,18 +399,17 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 16,
               "Title": "FrameworkElement.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\4bfa269c0399c4054c1e359f5f29c91af679ffcb3ccd79df3707f7c100c0dc83\\FrameworkElement.cs",
               "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\4bfa269c0399c4054c1e359f5f29c91af679ffcb3ccd79df3707f7c100c0dc83\\FrameworkElement.cs",
               "ViewState": "AQIAAHgUAAAAAAAAAAAAwIcUAAADAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-04T20:47:15.433Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-04T20:47:15.433Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 17,
               "Title": "LineSizing.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\LineSizing.xaml",
               "RelativeDocumentMoniker": "CustomControls\\LineSizing.xaml",
@@ -407,7 +421,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 36,
               "Title": "SolidColorBrush.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\MetadataAsSource\\7d7043563c094763af56848d4be3047b\\DecompilationMetadataAsSourceFileProvider\\0dd99bcb8bd34bc1b5c4b47f3497a2e3\\SolidColorBrush.cs",
               "ToolTip": "System.Windows.Media.SolidColorBrush",
@@ -418,7 +432,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 28,
               "Title": "FigureTypes.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\FigureTypes.cs",
               "RelativeDocumentMoniker": "Models\\Enums\\FigureTypes.cs",
@@ -430,31 +444,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "PalleteModel.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\PalleteModel.cs",
-              "RelativeDocumentMoniker": "Models\\PalleteModel.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\PalleteModel.cs",
-              "RelativeToolTip": "Models\\PalleteModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwA0AAAAcAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-17T21:34:55.473Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "TaskColor.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Tools\\TaskColor.cs",
-              "RelativeDocumentMoniker": "Models\\Tools\\TaskColor.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\Tools\\TaskColor.cs",
-              "RelativeToolTip": "Models\\Tools\\TaskColor.cs",
-              "ViewState": "AQIAADgBAAAAAAAAAAAUwAkAAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T12:09:41.751Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 29,
               "Title": "TextEditor.xaml.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\TextEditor.xaml.cs",
               "RelativeDocumentMoniker": "CustomControls\\TextEditor.xaml.cs",
@@ -466,7 +456,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 22,
               "Title": "Nullable.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\72df45258b526409f3504a95f7b5e68ddd5d4b0392d6e67cf0f33b2e25d46850\\Nullable.cs",
               "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\72df45258b526409f3504a95f7b5e68ddd5d4b0392d6e67cf0f33b2e25d46850\\Nullable.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
@@ -478,18 +468,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 23,
-              "Title": "packages.config",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\packages.config",
-              "RelativeDocumentMoniker": "packages.config",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\packages.config",
-              "RelativeToolTip": "packages.config",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAALAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2024-06-19T18:48:37.48Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
               "Title": "DependencyObject.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs",
               "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
@@ -500,24 +478,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 27,
               "Title": "VisualCollection.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs",
               "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
               "ViewState": "AQIAAGcBAAAAAAAAAAAAwHYBAAADAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-04T12:02:41.011Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "UIElement.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\be9939a430e6cfad77da0239279879985f3c7665f9b4de43bb5eed05f7bd0ea0\\UIElement.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\be9939a430e6cfad77da0239279879985f3c7665f9b4de43bb5eed05f7bd0ea0\\UIElement.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAALMYAAAAAAAAAAAAwMwYAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-04T12:43:39.802Z",
               "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
             },
             {
@@ -546,7 +513,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 38,
               "Title": "WriteableBitmap.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\MetadataAsSource\\3fdc48a232dc4cc1b34e85a0957748f8\\DecompilationMetadataAsSourceFileProvider\\294fe38576434fe38e9a4f62ee47210c\\WriteableBitmap.cs",
               "ToolTip": "System.Windows.Media.Imaging.WriteableBitmap",
@@ -557,7 +524,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 31,
               "Title": "SelectionSide.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\SelectionSide.cs",
               "RelativeDocumentMoniker": "Models\\Enums\\SelectionSide.cs",
@@ -569,7 +536,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 34,
               "Title": "RightTriangle.png -  [\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (\u0420\u043E\u0441\u0441\u0438\u044F)] - PNG [24x24, 32-\u0440\u0430\u0437\u0440\u044F\u0434\u043D\u043E\u0435, PNG]",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Images\\Figures\\RightTriangle.png",
               "RelativeDocumentMoniker": "Images\\Figures\\RightTriangle.png",
@@ -580,7 +547,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 30,
               "Title": "SelectionType.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\SelectionType.cs",
               "RelativeDocumentMoniker": "Models\\Enums\\SelectionType.cs",
@@ -592,7 +559,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 35,
               "Title": "RightArrow.png -  [\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (\u0420\u043E\u0441\u0441\u0438\u044F)] - PNG [100x100, 32-\u0440\u0430\u0437\u0440\u044F\u0434\u043D\u043E\u0435, PNG]",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Images\\Figures\\RightArrow.png",
               "RelativeDocumentMoniker": "Images\\Figures\\RightArrow.png",
@@ -603,19 +570,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "MainPaint.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\MainPaint.cs",
-              "RelativeDocumentMoniker": "Models\\MainPaint.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\MainPaint.cs",
-              "RelativeToolTip": "Models\\MainPaint.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAArAAAA",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADtSURBVDhPYxgFCHDh4YX/sQtj/6u3qP9XblL\u002BHzk/8j9UiuHtx7f/VZpVwHxkNggwgohLjy79D18SzmAua86QZJbEwM/Bz3D91XWGCNMIRpAGo34jsGJkwMrMynCn9g5YP0PK0pT/3tO9/3/58gVuMjLA5wImEHH68WkGN3U3Bh4eHoiJJACwAb/\u002B/gI7CRuAeeH3398M8g3ycDayKxjC5oX9D54TjNX5IIDPC2Ann7x78n/E4ggGDw0PhgiDCLBrLj2/xJBhl0HQS3AFe67t\u002BT/lyBSGO2/uMHCxcTHYK9szdAd2kxwmIw8wMAAAESl0qwYO77cAAAAASUVORK5CYII=",
-              "WhenOpened": "2024-06-17T21:22:51.188Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 32,
               "Title": "ColoredBrush.png -  [\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (\u0420\u043E\u0441\u0441\u0438\u044F)] - PNG [4434x1108, 32-\u0440\u0430\u0437\u0440\u044F\u0434\u043D\u043E\u0435, PNG]",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Images\\Brushes\\ColoredBrush.png",
               "RelativeDocumentMoniker": "Images\\Brushes\\ColoredBrush.png",
@@ -626,19 +581,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "ColorParams.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\ColorParams.cs",
-              "RelativeDocumentMoniker": "Models\\ColorParams.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\ColorParams.cs",
-              "RelativeToolTip": "Models\\ColorParams.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAADgvyQAAAAPAAAA",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADtSURBVDhPYxgFCHDh4YX/sQtj/6u3qP9XblL\u002BHzk/8j9UiuHtx7f/VZpVwHxkNggwgohLjy79D18SzmAua86QZJbEwM/Bz3D91XWGCNMIRpAGo34jsGJkwMrMynCn9g5YP0PK0pT/3tO9/3/58gVuMjLA5wImEHH68WkGN3U3Bh4eHoiJJACwAb/\u002B/gI7CRuAeeH3398M8g3ycDayKxjC5oX9D54TjNX5IIDPC2Ann7x78n/E4ggGDw0PhgiDCLBrLj2/xJBhl0HQS3AFe67t\u002BT/lyBSGO2/uMHCxcTHYK9szdAd2kxwmIw8wMAAAESl0qwYO77cAAAAASUVORK5CYII=",
-              "WhenOpened": "2024-06-17T21:22:47.53Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 33,
               "Title": "ColorConvertor.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Tools\\ColorConvertor.cs",
               "RelativeDocumentMoniker": "Models\\Tools\\ColorConvertor.cs",
@@ -650,19 +593,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "ProgressBarConverter.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Tools\\ProgressBarConverter.cs",
-              "RelativeDocumentMoniker": "Models\\Tools\\ProgressBarConverter.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\Tools\\ProgressBarConverter.cs",
-              "RelativeToolTip": "Models\\Tools\\ProgressBarConverter.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADtSURBVDhPYxgFCHDh4YX/sQtj/6u3qP9XblL\u002BHzk/8j9UiuHtx7f/VZpVwHxkNggwgohLjy79D18SzmAua86QZJbEwM/Bz3D91XWGCNMIRpAGo34jsGJkwMrMynCn9g5YP0PK0pT/3tO9/3/58gVuMjLA5wImEHH68WkGN3U3Bh4eHoiJJACwAb/\u002B/gI7CRuAeeH3398M8g3ycDayKxjC5oX9D54TjNX5IIDPC2Ann7x78n/E4ggGDw0PhgiDCLBrLj2/xJBhl0HQS3AFe67t\u002BT/lyBSGO2/uMHCxcTHYK9szdAd2kxwmIw8wMAAAESl0qwYO77cAAAAASUVORK5CYII=",
-              "WhenOpened": "2024-06-22T23:14:15.882Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 37,
               "Title": "Paste.png -  [\u0420\u0443\u0441\u0441\u043A\u0438\u0439 (\u0420\u043E\u0441\u0441\u0438\u044F)] - PNG [50x50, 32-\u0440\u0430\u0437\u0440\u044F\u0434\u043D\u043E\u0435, PNG]",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Images\\Change\\Paste.png",
               "RelativeDocumentMoniker": "Images\\Change\\Paste.png",
@@ -679,19 +610,32 @@
       "Orientation": 0,
       "VerticalTabListWidth": 256,
       "FloatingWindowState": {
-        "Id": "f26e02e3-05a0-44d7-8c32-e9ce9c36b5ba",
+        "Id": "aeabc3bd-f50a-467a-8a46-2d0f097e5820",
         "Display": 0,
-        "X": 955,
-        "Y": 0,
-        "Width": 970,
-        "Height": 1037,
+        "X": 1,
+        "Y": 76,
+        "Width": 800,
+        "Height": 600,
         "WindowState": 0
       },
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Pallete.xaml",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Pallete.xaml",
+              "RelativeDocumentMoniker": "Pallete.xaml",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Pallete.xaml",
+              "RelativeToolTip": "Pallete.xaml",
+              "ViewState": "AQIAADoBAAAAAAAAAAAwwGYBAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-07-09T08:00:05.641Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -700,61 +644,9 @@
               "RelativeDocumentMoniker": "MainWindow.xaml",
               "ToolTip": "B:\\GitHub\\PaintWPF\\MainWindow.xaml",
               "RelativeToolTip": "MainWindow.xaml",
-              "ViewState": "AQIAAAYCAAAAAAAAAAAwwCECAAAlAAAA",
+              "ViewState": "AQIAAEsEAAAAAAAAAAAwwGgEAAAzAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-03T15:03:31.99Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "TextEditor.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\TextEditor.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\TextEditor.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\TextEditor.xaml",
-              "RelativeToolTip": "CustomControls\\TextEditor.xaml",
-              "ViewState": "AQIAAD0AAAAAAAAAAAAAwF8AAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-01T22:28:01.722Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Pallete.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Pallete.xaml",
-              "RelativeDocumentMoniker": "Pallete.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Pallete.xaml",
-              "RelativeToolTip": "Pallete.xaml",
-              "ViewState": "AQIAABoAAAAAAAAAAAAAAFcCAABGAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-03T14:40:59.21Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "LineSizing.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\LineSizing.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\LineSizing.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\LineSizing.xaml",
-              "RelativeToolTip": "CustomControls\\LineSizing.xaml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAiAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-05T21:10:38.395Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Selection.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
-              "RelativeToolTip": "CustomControls\\Selection.xaml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-04T13:52:59.563Z",
+              "WhenOpened": "2024-07-10T22:10:55.43Z",
               "EditorCaption": ""
             }
           ]

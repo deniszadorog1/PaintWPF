@@ -348,6 +348,10 @@ namespace PaintWPF.Models.Tools
                 Hue = 0.0;
             }
         }
+        public void GetByInitedColor()
+        {
+
+        }
 
         private int Round(double val)
         {

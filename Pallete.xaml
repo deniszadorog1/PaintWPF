@@ -7,7 +7,7 @@
         xmlns:tools="clr-namespace:PaintWPF.Models.Tools"
 
         mc:Ignorable="d"
-        Title="Pallete" Height="660" Width="680" Loaded="PalletePanel_Loaded">
+        Title="Pallete" Height="660" Width="680" Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp">
 
 
     <Window.Resources>
@@ -94,8 +94,8 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Height" Value="25"/>
-            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="15"/>
+            <Setter Property="Width" Value="15"/>
             <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="2"/>
@@ -151,14 +151,29 @@
                         </GeometryDrawing.Geometry>
                         <GeometryDrawing.Brush>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                <GradientStop Color="#FF0000" Offset="0.0"/>
-                                <GradientStop Color="Orange" Offset="0.15"/>
-                                <GradientStop Color="Yellow" Offset="0.30"/>
-                                <GradientStop Color="#06ff05" Offset="0.45"/>
-                                <GradientStop Color="#12f9ff" Offset="0.60"/>
-                                <GradientStop Color="Blue" Offset="0.75"/>
-                                <GradientStop Color="#ff06e2" Offset="0.90"/>
-                                <GradientStop Color="Red" Offset="1"/>
+                                <!-- Red -->
+                                <GradientStop Color="#FF0000" Offset="0.00"/>
+
+                                <!-- Orange -->
+                                <GradientStop Color="Orange" Offset="0.17"/>
+
+                                <!-- Yellow -->
+                                <GradientStop Color="Yellow" Offset="0.33"/>
+                                
+                                <!-- Green -->
+                                <GradientStop Color="#06ff05" Offset="0.50"/>
+                                
+                                <!-- Cyan -->
+                                <GradientStop Color="#12f9ff" Offset="0.67"/>
+                                
+                                <!-- Blue -->
+                                <GradientStop Color="Blue" Offset="0.83"/>
+                                
+                                <!-- Magenta -->
+                                <GradientStop Color="#ff06e2" Offset="0.92"/>
+                                
+                                <!-- Red -->
+                                <GradientStop Color="Red" Offset="1.00"/>
                             </LinearGradientBrush>
                         </GeometryDrawing.Brush>
                     </GeometryDrawing>
@@ -217,7 +232,7 @@
 
 
                 <Grid Grid.Column="1" ClipToBounds="True">
-                    <Rectangle 
+                    <Rectangle
                            Margin="0 0 0 0" Name="coloeSpecter"
                            Fill="{StaticResource SpectrumWithVerticalFade}"
                            Stretch="Fill" Height="250" Width="260"/>
@@ -232,8 +247,7 @@
                     <Button x:Name="draggableButton" 
                         Style="{StaticResource SpectreCircle}" 
                         Grid.Column="1" 
-                        PreviewMouseDown="DraggableButton_PreViewMouseDown"
-                            Click="asd_Click">
+                        PreviewMouseDown="DraggableButton_PreViewMouseDown">
                     </Button>
                 </Canvas>
             </Grid>
@@ -306,10 +320,12 @@
                         X
                     </Button>
                 </WrapPanel>
-
-
+                
                 <WrapPanel Name ="FirstParam" Grid.Row="2">
-                    <TextBox x:Name="FirstInfoBox" Width="100" Height="35">
+                    <TextBox x:Name="FirstInfoBox" Width="100" Height="35" 
+                             TextChanged="FirstParam_TextChanged"
+                             LostFocus="TextBoxFirstParam_LostFocus"
+                             PreviewTextInput="FirstInfoBox_PreviewTextInput">
 
                     </TextBox>
                     <Button  
@@ -323,7 +339,10 @@
                 </WrapPanel>
 
                 <WrapPanel Name ="SecondParam" Grid.Row="3">
-                    <TextBox x:Name="SecondInfoBox" Width="100" Height="35">
+                    <TextBox x:Name="SecondInfoBox" Width="100" Height="35"
+                             TextChanged="SecondParam_TextChanged"
+                             LostFocus="TextBoxSecondParam_LostFocus"
+                             PreviewTextInput="SecondInfoBox_PreviewTextInput">
 
                     </TextBox>
                     <Button  
@@ -337,7 +356,10 @@
                 </WrapPanel>
 
                 <WrapPanel Name ="ThirdParam" Grid.Row="4">
-                    <TextBox x:Name="ThirdInfoBox" Width="100" Height="35">
+                    <TextBox x:Name="ThirdInfoBox" Width="100" Height="35"
+                             TextChanged="ThirdParam_TextChanged" 
+                             LostFocus="TextBoxThirdParam_LostFocus"
+                             PreviewTextInput="ThirdInfoBox_PreviewTextInput">
                     </TextBox>
                     <Button  
                         Name="ThirdParamClear" Opacity="0.5"
@@ -353,8 +375,8 @@
                     <ComboBox Name ="ChooseParamTypeBox"  
                               Height="35" Width="120" SelectedIndex ="0" 
                                SelectionChanged ="ColorParamType_SelectionChanged">
-                        <ComboBoxItem Name="item1">RGB</ComboBoxItem>
-                        <ComboBoxItem Name="item2">HSC</ComboBoxItem>
+                        <ComboBoxItem Name="RGB">RGB</ComboBoxItem>
+                        <ComboBoxItem Name="HSL">HSC</ComboBoxItem>
                     </ComboBox>
                 </WrapPanel>
 

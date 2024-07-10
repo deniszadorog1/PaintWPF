@@ -600,13 +600,15 @@
 
                 <Grid Grid.Row="1" 
                   MouseLeave="MainPabelBoxes_MouseLeave"
-                    MouseEnter="MainPanelBoxes_MouseEnter">
+                    MouseEnter="MainPanelBoxes_MouseEnter" >
                     <Menu Background="Transparent" HorizontalAlignment="Center">
                         <MenuItem Width="40" Height="25"
-                        Style="{StaticResource DropDownMenu}">
-                            <MenuItem.Icon>
+                        Style="{StaticResource DropDownMenu}"
+                        MouseLeftButtonDown="SelectionMenu_MouseLeftButtonDown" >
+                            <MenuItem.Icon >
                                 <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
-                               Height="20" Width="20" Stretch="Uniform"/>
+                                Height="20" Width="20" Stretch="Uniform" 
+                                MouseLeftButtonDown="SelectionMenu_MouseLeftButtonDown"/>
                             </MenuItem.Icon>
 
                             <MenuItem Name = "ZeroSelection"  
