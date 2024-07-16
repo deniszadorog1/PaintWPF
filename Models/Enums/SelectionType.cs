@@ -11,6 +11,9 @@ namespace PaintWPF.Models.Enums
         Rectangle = 0, 
         Custom, 
         All,
+        Invert,
+        Transparent,
+        Delete,
         Nothing
     }
 }

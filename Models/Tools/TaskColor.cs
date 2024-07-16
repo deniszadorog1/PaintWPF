@@ -348,10 +348,39 @@ namespace PaintWPF.Models.Tools
                 Hue = 0.0;
             }
         }
-        public void GetByInitedColor()
+        public string GetHexFromRGB()
         {
-
+            return $"#{R:X2}{G:X2}{B:X2}";
         }
+        private const int _hexLength = 6;
+        private const string _hexSymbols = "0123456789ABCDEFabcdef";
+        public bool ConvertHexIntoRGB(string hex)
+        {
+            hex = hex.Replace("#", "");
+            if (hex == string.Empty) return false;
+
+            hex = HexFilling(hex);
+
+            if (!hex.All(x => _hexSymbols.Contains(x))) return false;
+
+            R = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            G = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            B = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            return true;
+        }
+        private string HexFilling(string tempHex)
+        {
+            string res = tempHex;
+            if (res.Length == _hexLength) return res;
+
+            int differ = res.Length;
+            for (int i = 0; i < _hexLength - differ; i++)
+            {
+                res = res.Insert(0, "0");
+            }
+            return res;
+        }
+
 
         private int Round(double val)
         {

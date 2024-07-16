@@ -231,7 +231,8 @@
                 <Grid Grid.Column ="0" Panel.ZIndex="1"/>
 
 
-                <Grid Grid.Column="1" ClipToBounds="True">
+                <Grid Grid.Column="1" ClipToBounds="True" 
+                         PreviewMouseDown="SpecCanvas_LeftMouseDown">
                     <Rectangle
                            Margin="0 0 0 0" Name="coloeSpecter"
                            Fill="{StaticResource SpectrumWithVerticalFade}"
@@ -241,13 +242,14 @@
                 <Canvas  Grid.Column="1" 
                          Name="SpecCanvas" 
                          ClipToBounds="True"
-                         PreviewMouseUp="CanvasMain_PreViewMouseUp"
-                         PreviewMouseMove="CanvasMain_PreViewMouseMove">
+                         PreviewMouseUp="SpecCanvas_PreViewMouseUp"
+                         PreviewMouseMove="SpecCanvas_PreViewMouseMove">
 
                     <Button x:Name="draggableButton" 
                         Style="{StaticResource SpectreCircle}" 
                         Grid.Column="1" 
-                        PreviewMouseDown="DraggableButton_PreViewMouseDown">
+                        PreviewMouseDown="DraggableButton_PreViewMouseDown"
+                            PreviewMouseUp="DraggableButton_PreViewMouseUp">
                     </Button>
                 </Canvas>
             </Grid>
@@ -311,7 +313,8 @@
                     <TextBox x:Name="HexTable"  
                          Width="100" Height="35"
                          FontSize="16" HorizontalAlignment="Left" 
-                         TextChanged="RGBTextBox_TextChanged">
+                         TextChanged="RGBTextBox_TextChanged" 
+                         LostFocus="HexTable_LostFocus"  >
                         #
                     </TextBox>
                     <Button  

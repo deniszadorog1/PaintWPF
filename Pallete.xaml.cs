@@ -12,8 +12,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit.PropertyGrid.Converters;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
@@ -32,7 +34,7 @@ namespace PaintWPF
         private Point _colorPoint = new Point(0, 0);
         private TaskColor _tempColor = new TaskColor(255, 0, 0, 0);
 
-        private System.Windows.Media.Color _chosenColor;
+        private System.Windows.Media.Color? _chosenColor = null;
         public Pallete(PalleteModel pallete, SolidColorBrush mainColor)
         {
             _pallete = pallete;
@@ -48,8 +50,11 @@ namespace PaintWPF
         }
         private void InitParamsForGivenColor()
         {
-            _tempColor = new TaskColor(System.Windows.Media.Color.FromRgb(
-                _colorToPaint.Color.R, _colorToPaint.Color.G, _colorToPaint.Color.B));
+            _tempColor.R = _colorToPaint.Color.R;
+            _tempColor.G = _colorToPaint.Color.G;
+            _tempColor.B = _colorToPaint.Color.B;
+            /*           _tempColor = new TaskColor(System.Windows.Media.Color.FromRgb(
+                           _colorToPaint.Color.R, _colorToPaint.Color.G, _colorToPaint.Color.B));*/
 
             //init R 
             FirstInfoBox.Text = _tempColor.R.ToString();
@@ -57,10 +62,12 @@ namespace PaintWPF
             SecondInfoBox.Text = _tempColor.G.ToString();
             //int B
             ThirdInfoBox.Text = _tempColor.B.ToString();
+            //Init Hex
+            HexTable.Text = _tempColor.GetHexFromRGB();
             //int showColor 
             ChosenColorShow.Background = _colorToPaint;
 
-            System.Windows.Media.Color color = 
+            System.Windows.Media.Color color =
                 GetColorWithThHighestLuminosity(_colorToPaint.Color);
             //init Gradient 
             InitStartLuminanceGradientValue(color);
@@ -146,7 +153,40 @@ namespace PaintWPF
                     box.CaretIndex = box.Text.Length;
                     return;
                 }
+                if (HexTable.IsFocused)
+                {
+                    InitColorsFromHex(_tempColor.ConvertHexIntoRGB(box.Text));
+                }
             }
+        }
+        private void InitColorsFromHex(bool ifNeddConvertion)
+        {
+            if (!ifNeddConvertion) return;
+            //get new color
+            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb(
+                (byte)_tempColor.R, (byte)_tempColor.G, (byte)_tempColor.B);
+
+            //assign color to show color column 
+            ChosenColorShow.Background = new SolidColorBrush(color);
+
+            //assign color to gradient param
+            //init HSL 
+            _tempColor.RGBtoHSL(color);
+
+            //correct luminance column
+            InitLumCircleHeight((int)(_tempColor.L * 100));
+
+            //init color location
+            InitPositionForColor(color);
+
+            //init rgb or hsl
+            InitColors();
+        }
+        private void HexTable_LostFocus(object sender, RoutedEventArgs e)
+        {
+            const string ifHexFaildStr = "#000000";
+            if (_tempColor.ConvertHexIntoRGB(HexTable.Text)) return;
+            HexTable.Text = ifHexFaildStr;
         }
         private void MyButton_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -328,10 +368,16 @@ namespace PaintWPF
         }
         private void OK_Click(object sender, EventArgs e)
         {
+            if (_pallete.ChosenColor is null) InitChosenColor();
             Close();
+        }
+        private void InitChosenColor()
+        {
+            _pallete.ChosenColor = (SolidColorBrush)ChosenColorShow.Background;
         }
         private void OTMENA_Click(object sender, EventArgs e)
         {
+            _pallete.ChosenColor = null;
             Close();
         }
         public void AddEnterIngBorder(Button button)
@@ -431,14 +477,15 @@ namespace PaintWPF
         private void ValueCanvas_PreViewMouseUp(object sender, MouseEventArgs e)
         {
             //valueDragElem = null;
-            _ifLumValueCanBeChanged = false;
             //ValueCanvas.ReleaseMouseCapture();
         }
         private UIElement specDragEl = null;
         private Point specCircleOffset;
+        private bool _ifCircleCanBeMoved = false;
 
         private void DraggableButton_PreViewMouseDown(object sender, MouseEventArgs e)
         {
+            _ifCircleCanBeMoved = true;
             Button button = sender as Button;
 
             Point buttonPosition = button.TransformToAncestor(SpecCanvas)
@@ -453,9 +500,13 @@ namespace PaintWPF
             specCircleOffset.X -= Canvas.GetLeft(specDragEl);
             //SpecCanvas.CaptureMouse();
         }
-        private void CanvasMain_PreViewMouseMove(object sender, MouseEventArgs e)
+        private void DraggableButton_PreViewMouseUp(object sender, MouseEventArgs e)
         {
-            if (specDragEl == null) return;
+            _ifCircleCanBeMoved = false;
+        }
+        private void SpecCanvas_PreViewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_ifCircleCanBeMoved || specDragEl == null) return;
             _colorPoint = e.GetPosition(sender as IInputElement);
             if (_colorPoint.X < 0)
             {
@@ -495,15 +546,18 @@ namespace PaintWPF
             lum /= 100;
             _tempColor.Luminance = lum;
             System.Windows.Media.Color newColor = _tempColor.HSLtoRGB();
-            HexTable.Text = newColor.ToString();
+
+            //HexTable.Text = newColor.ToString();
+            HexTable.Text = _tempColor.GetHexFromRGB();
+
             ChosenColorShow.Background = new SolidColorBrush(newColor);
 
-            LinearGradientBrush gradientBrush =
-            (LinearGradientBrush)ValueBorder.Background;
-            gradientBrush.GradientStops[0].Color = color;
+            InitStartLuminanceGradientValue(color);
+
             UpdateColorParams(newColor);
         }
-        private void CanvasMain_PreViewMouseUp(object sender, MouseEventArgs e)
+
+        private void SpecCanvas_PreViewMouseUp(object sender, MouseEventArgs e)
         {
             specDragEl = null;
             SpecCanvas.ReleaseMouseCapture();
@@ -540,14 +594,15 @@ namespace PaintWPF
         {
             _chosenColor = color;
             //(int H, int S, int V) HCVParams = ColorConvertor.RGBtoHCV(color);
-
-            System.Windows.Media.Color check = _tempColor.HSLtoRGB();
-
+            InitColors();
+        }
+        private void InitColors()
+        {
             if (ChooseParamTypeBox.SelectedIndex == 0)
             {
-                FirstInfoBox.Text = check.R.ToString();
-                SecondInfoBox.Text = check.G.ToString();
-                ThirdInfoBox.Text = check.B.ToString();
+                FirstInfoBox.Text = _tempColor.R.ToString();
+                SecondInfoBox.Text = _tempColor.G.ToString();
+                ThirdInfoBox.Text = _tempColor.B.ToString();
                 return;
             }
             FirstInfoBox.Text = ((int)(_tempColor.H * 100 * 3.6)).ToString();
@@ -614,7 +669,6 @@ namespace PaintWPF
             if (sender is Button but &&
                 but.Background is SolidColorBrush brush)
             {
-
                 Ellipse outerEllipse = but.Template.FindName("innerEllipse", but) as Ellipse;
                 if (outerEllipse != null)
                 {
@@ -638,22 +692,22 @@ namespace PaintWPF
         {
             CheckParamsForAmountOfDigits(sender as TextBox);
 
-            if(sender is TextBox box && 
+            if (sender is TextBox box &&
                 FirstInfoBox.IsFocused)
             {
-                if(ChooseParamTypeBox.SelectedIndex == 0)//RGB
+                if (ChooseParamTypeBox.SelectedIndex == 0)//RGB
                 {
-                    GetRedFromParamBox(FirstInfoBox);
+                    GetColorFromParamBox(FirstInfoBox);
                 }
                 else//HSL
                 {
                     InitNewHueFromBox();
                     InitColorPosition();
                 }
-
+                HexTable.Text = _tempColor.GetHexFromRGB();
             }
         }
-        private void GetRedFromParamBox(TextBox box)
+        private void GetColorFromParamBox(TextBox box)
         {
             //get inited color
             if (!int.TryParse(box.Text, out int colorValue)) return;
@@ -680,7 +734,7 @@ namespace PaintWPF
         }
         private void InitPositionForColor(System.Windows.Media.Color color)
         {
-            System.Windows.Media.Color tempColor = 
+            System.Windows.Media.Color tempColor =
                 GetColorWithThHighestLuminosity(color);
 
             InitColorPosWithGivenColor(tempColor);
@@ -690,15 +744,15 @@ namespace PaintWPF
         }
         private void InitRgbValueByBox(TextBox box, int value)
         {
-            if(box.Name == "FirstInfoBox")
+            if (box.Name == "FirstInfoBox")
             {
                 _tempColor.R = value;
             }
-            else if(box.Name == "SecondInfoBox")
+            else if (box.Name == "SecondInfoBox")
             {
                 _tempColor.G = value;
             }
-            else if(box.Name == "ThirdInfoBox")
+            else if (box.Name == "ThirdInfoBox")
             {
                 _tempColor.B = value;
             }
@@ -726,13 +780,14 @@ namespace PaintWPF
             {
                 if (ChooseParamTypeBox.SelectedIndex == 0)
                 {
-                    GetRedFromParamBox(SecondInfoBox);
+                    GetColorFromParamBox(SecondInfoBox);
                 }
                 else
                 {
                     InitNewSaturationFromBox();
                     InitColorPosition();
                 }
+                HexTable.Text = _tempColor.GetHexFromRGB();
             }
         }
         private void InitColorPosition()
@@ -777,7 +832,7 @@ namespace PaintWPF
             {
                 if (ChooseParamTypeBox.SelectedIndex == 0)
                 {
-                    GetRedFromParamBox(ThirdInfoBox);
+                    GetColorFromParamBox(ThirdInfoBox);
                 }
                 else
                 {
@@ -786,6 +841,8 @@ namespace PaintWPF
                     ChangeLuminocityInTempColor();
                     InitLumCircleHeight(_pallete.TempL);
                 }
+                HexTable.Text = _tempColor.GetHexFromRGB();
+
             }
         }
         private void InitLuminanceByBoxCorrecting()
@@ -911,6 +968,7 @@ namespace PaintWPF
         private void PalletePanel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _ifLumValueCanBeChanged = false;
+
         }
         private bool _preInputParamCheck = false;
         private void FirstInfoBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -948,8 +1006,37 @@ namespace PaintWPF
             }
             return true;
         }
+        private void SpecCanvas_LeftMouseDown(object sender, MouseEventArgs e)
+        {
+            //get clicked point
+            Point point = e.GetPosition(SpecCanvas);
+            
+            //Init circle position 
+            InitCordInSpec((int)point.Y, (int)point.X);
 
+            //Color on given position
+            System.Windows.Media.Color color = 
+                GetColorAtPosition(coloeSpecter, (int)point.X, (int)point.Y);
 
+            //Init gradient
+            InitStartLuminanceGradientValue(GetColorWithThHighestLuminosity(color));
+
+            //init rgb / hsl 
+            _tempColor.RGBtoHSL(color);
+            _tempColor.L = (double)_pallete.TempL / 100;
+            
+            //Init showColor
+            ChosenColorShow.Background = new SolidColorBrush(_tempColor.HSLtoRGB());
+
+            //Fill boxes params
+            InitColors();
+
+            //init hex 
+            HexTable.Text = _tempColor.GetHexFromRGB();
+
+            //correct luminance column
+            InitLumCircleHeight((int)(_tempColor.L * 100));     
+        }
     }
 }
 
