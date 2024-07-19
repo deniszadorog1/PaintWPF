@@ -86,6 +86,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ImageSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -102,6 +106,9 @@
     </Compile>
     <Compile Include="CustomControls\TextEditor.xaml.cs">
       <DependentUpon>TextEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ImageSettings.xaml.cs">
+      <DependentUpon>ImageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -194,8 +201,8 @@
     <Resource Include="Images\Selection\ChooseAll.png" />
     <Resource Include="Images\Selection\Remove.png" />
     <Resource Include="Images\Selection\RemoveSelection.png" />
-    <Resource Include="Images\Selection\Select.png" />
-    <Resource Include="Images\Selection\SelectForm.png" />
+    <Resource Include="Images\Selection\Rectangle.png" />
+    <Resource Include="Images\Selection\Custom.png" />
     <Resource Include="Images\Selection\Tick.png" />
   </ItemGroup>
   <ItemGroup>

@@ -42,3 +42,5 @@ B:\GitHub\PaintWPF\obj\Debug\CustomControls\TextEditor.baml
 B:\GitHub\PaintWPF\obj\Debug\PaintWPF.csproj.Up2Date
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\LineSizing.g.cs
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\LineSizing.baml
+B:\GitHub\PaintWPF\obj\Debug\ImageSettings.g.cs
+B:\GitHub\PaintWPF\obj\Debug\ImageSettings.baml

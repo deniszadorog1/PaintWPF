@@ -7,8 +7,10 @@
         xmlns:tools="clr-namespace:PaintWPF.Models.Tools"
 
         mc:Ignorable="d"
-        Title="Pallete" Height="660" Width="680" Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp">
-
+        Title="Pallete" 
+        Height="660" MaxHeight="660" MinHeight="600" 
+        Width="680" MaxWidth="680" MinWidth="680" 
+        Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp">
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -159,19 +161,19 @@
 
                                 <!-- Yellow -->
                                 <GradientStop Color="Yellow" Offset="0.33"/>
-                                
+
                                 <!-- Green -->
                                 <GradientStop Color="#06ff05" Offset="0.50"/>
-                                
+
                                 <!-- Cyan -->
                                 <GradientStop Color="#12f9ff" Offset="0.67"/>
-                                
+
                                 <!-- Blue -->
                                 <GradientStop Color="Blue" Offset="0.83"/>
-                                
+
                                 <!-- Magenta -->
                                 <GradientStop Color="#ff06e2" Offset="0.92"/>
-                                
+
                                 <!-- Red -->
                                 <GradientStop Color="Red" Offset="1.00"/>
                             </LinearGradientBrush>
@@ -323,7 +325,7 @@
                         X
                     </Button>
                 </WrapPanel>
-                
+
                 <WrapPanel Name ="FirstParam" Grid.Row="2">
                     <TextBox x:Name="FirstInfoBox" Width="100" Height="35" 
                              TextChanged="FirstParam_TextChanged"

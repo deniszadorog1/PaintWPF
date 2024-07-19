@@ -126,7 +126,7 @@ namespace PaintWPF.CustomControls
             Line.X2 = temp.X;
             Line.Y2 = temp.Y;
         }
-        public Line GetPolyLineObject()
+        public Line GetLineObject()
         {
             for(int i = 0; i < LineCanvas.Children.Count; i++)
             {

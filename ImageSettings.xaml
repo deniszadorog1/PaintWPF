@@ -1,0 +1,143 @@
+﻿<Window x:Class="PaintWPF.ImageSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PaintWPF"
+        mc:Ignorable="d"
+        Title="ImageSettings" 
+        Height="365" MaxHeight="365" MinHeight="365" 
+        Width="400" MaxWidth="400" MinWidth="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Name="Settigns" Height="120"/>
+            <RowDefinition Name ="Counting" Height="100"/>
+            <RowDefinition Name ="Size" Height="60"/>
+            <RowDefinition Name ="Exit" Height="50"/>
+        </Grid.RowDefinitions>
+
+        <Grid Name="SettingsRow" Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Name="ImageAttribsRow" Height="30"/>
+                <RowDefinition Name="FileAttribsRow"/>
+                <RowDefinition Name ="LastSaveRow"/>
+                <RowDefinition Name="FieldWeightRow"/>
+                <RowDefinition Name ="DpiRow"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Свойства Изображения" FontSize="16" Padding="10 5 0 0"/>
+            <Label Grid.Row="1" Content="Атрибуты файла" FontSize="14" VerticalAlignment="Center" Padding="10 0 0 0"/>
+
+
+            <Grid Name="FileSaveRow" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Name="SaveLB"/>
+                    <ColumnDefinition Name ="SaveAttrib"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Name ="LastSaveLB" Grid.Column="0" Content="Последие сохранение" Padding="10 5 0 0"/>
+                <Label Name ="LastSave"  Grid.Column="1" Content="Недоступно" Padding="10 5 0 0"/>
+            </Grid>
+
+            <Grid Name="FileWeightRow" Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Name="WeightLB"/>
+                    <ColumnDefinition Name ="WeightAttrib"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Name ="ImageWeightLB" Grid.Column="0" Content="Размер на диске" Padding="10 5 0 0"/>
+                <Label Name ="ImageWeight" Grid.Column="1" Content="Недоступно" Padding="10 5 0 0"/>
+            </Grid>
+            
+            <Grid Name="FileDpiRow" Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Name="DpiLBCol"/>
+                    <ColumnDefinition Name ="DpiAttribCol"/>
+                </Grid.ColumnDefinitions>
+
+                <Label  Name ="DpiLB" Grid.Column="0" Content="Разрешение" Padding="10 5 0 0"/>
+                <Label Name="Dpi" Grid.Column="1" Content="Недоступно" Padding="10 5 0 0"/>
+            </Grid>
+        </Grid>
+        <!-- Make Line here -->     
+
+
+        <Grid Name="CountingPart" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Name="UnitsTypesLB"/>
+                <RowDefinition Name="Inches"/>
+                <RowDefinition Name="Centimeters"/>
+                <RowDefinition Name="Pixels"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Еденицы измерения" FontSize ="14" Padding="10 5 0 0"/>
+            <RadioButton Name = "InchRadio"
+                         Grid.Row="1" Content="Дюймы" 
+                         VerticalAlignment="Center" Margin="10 0 0 0"
+                         Checked="InchRadio_Checked"/>
+            
+            <RadioButton Name="SantiRadio"
+                         Grid.Row="2" Content="Сантиметры" 
+                         VerticalAlignment="Center" Margin="10 0 0 0"
+                         Checked="SantiRadio_Checked"/>
+            
+            <RadioButton Name="PixelsRadio"
+                         Grid.Row="3" Content="Пиксели" 
+                         VerticalAlignment="Center" Margin="10 0 0 0"
+                         IsChecked="True" Checked="PixelsRadio_Checked"/>
+        </Grid>
+        <!--Make Line here-->
+        
+        <Grid Name = "FieleSizePart" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Name ="NameLB" Height="30"/>
+                <RowDefinition Name ="FieleSize"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Размер изображения" FontSize="14"/>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Name ="WidthCol"/>
+                    <ColumnDefinition Name="HeightCol"/>
+                </Grid.ColumnDefinitions>
+
+                <WrapPanel Grid.Column="0" >
+                    <Label Name="DrawingWidthLB" Content="Ширина:"/>
+                    <Label Name ="DrawingWidth" Content="DrawingCanvasWidth" FontSize="12" 
+                       VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                </WrapPanel>
+
+                <WrapPanel Grid.Column="1" >
+                    <Label Name="DrawingHeightLB" Content="Высота: "/>
+                    <Label Name="DrawingHeight" Content="DrawingCanvasHeight" />
+                </WrapPanel>
+            </Grid>
+        </Grid>
+        <!--Make Line here-->
+
+        <Grid Name="ExitPart" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Name="OK"/>
+                <ColumnDefinition Name ="Cancel"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Name ="ButtonOK" Foreground="White" 
+                    FontSize="10" Content="OK"
+                    Background="Blue" Height="25" Width="150"
+                    VerticalAlignment="Center" HorizontalAlignment="Right"
+                    Margin="0 0 10 0"
+                    Click="ButtonOK_Click"/>
+            <Button Grid.Column="1" 
+                  Name ="ButtonCancel" Foreground="Black" 
+                  FontSize="10" Content="Cancel"
+                  Background="LightGray" Height="25" Width="150"
+                  VerticalAlignment="Center" HorizontalAlignment="Left"
+                  Margin="10 0 0 0"
+                    Click="ButtonCancel_Click"/>
+            
+        </Grid>
+
+    </Grid>
+</Window>

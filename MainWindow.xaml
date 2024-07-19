@@ -10,7 +10,9 @@
 
         
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" MinHeight="700" Width="1100" MinWidth="1100" 
+        Title="MainWindow" 
+        Height="700" MinHeight="700" MaxHeight="700"
+        Width="1100" MinWidth="1100" MaxWidth="1100"
         Background="#eef4f9" MouseMove="Window_MouseMove" 
         MouseLeftButtonUp="Window_MouseLeftButtonUp" 
         MouseLeftButtonDown="Window_MouseLeftButtonDown" 
@@ -343,7 +345,8 @@
 
                         <MenuItem Name = "nineFile" Header="Свойства изображения"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}"
+                                  Click="Settigns_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/ImageSettings.png"/>
                             </MenuItem.Icon>
@@ -593,7 +596,7 @@
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         PreviewMouseDown = "TurnClickedObjInBlue_MouseDown"
                         VerticalAlignment="Bottom" Margin="0 0 5 0">
-                    <Image Source="Images/Pallete/MainPanelBotomIcons/dottedSquare.png"/>
+                    <Image Name="SelectionImg" Source="Images/Pallete/MainPanelBotomIcons/dottedSquare.png"/>
                 </Button>
 
                 <Grid Grid.Row="1" 
@@ -616,18 +619,18 @@
                           Style="{StaticResource SubMenuItem}"   
                           Click="SquareSelection_Click">
                                 <MenuItem.Icon>
-                                    <Image Source="Images/Selection/Select.png"/>
+                                    <Image Source="Images/Selection/Rectangle.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
 
                             <MenuItem Name = "OneSelection"
-                            Header="Произвольная фоорма"
+                            Header="Произвольная форма"
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}" 
                           Click="SquareSelection_Click">
                                 <MenuItem.Icon>
-                                    <Image Source="Images/Selection/SelectForm.png"/>
+                                    <Image Source="Images/Selection/Custom.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
 
