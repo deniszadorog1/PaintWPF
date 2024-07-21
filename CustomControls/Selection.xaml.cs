@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 
 using PaintWPF.Models.Enums;
 using PaintWPF.CustomControls;
+using System.Globalization;
+using PaintWPF.Models.Tools;
 
 namespace PaintWPF.CustomControls
 {
@@ -30,6 +32,8 @@ namespace PaintWPF.CustomControls
         public SelectionSide _selectionSizeToChangeSize;
 
         private Image _figuresImg = null;
+        private AdornerLayer adornerLayer;
+
         public Selection()
         {
             InitializeComponent();
@@ -294,7 +298,7 @@ namespace PaintWPF.CustomControls
         public void ChangeCenterTop(MouseEventArgs e)
         {
             if (!CheckForMousePressing(e)) return;
-            
+
             Point point = e.GetPosition(this.Parent as IInputElement);
             double newHeight = this.Height;
             double offsetY = point.Y - _startPointSelection.Y;
@@ -379,7 +383,7 @@ namespace PaintWPF.CustomControls
             shape.Height = SelectionBorder.Height - 15;
             shape.Width = SelectionBorder.Width - 15;
         }
-        public  Image GetShapeImageObject()
+        public Image GetShapeImageObject()
         {
             for (int i = 0; i < SelectCan.Children.Count; i++)
             {
@@ -396,11 +400,11 @@ namespace PaintWPF.CustomControls
         }
         public Point GetImageLocation()
         {
-            for(int i = 0; i < SelectCan.Children.Count; i++)
+            for (int i = 0; i < SelectCan.Children.Count; i++)
             {
                 if (SelectCan.Children[i] is Image)
                 {
-                    return new Point(Canvas.GetLeft(SelectCan.Children[i]), 
+                    return new Point(Canvas.GetLeft(SelectCan.Children[i]),
                         Canvas.GetTop(SelectCan.Children[i]));
                 }
             }
@@ -408,7 +412,7 @@ namespace PaintWPF.CustomControls
         }
         public void RemoveImagesFromCanvas()
         {
-            for(int i = 0; i < SelectCan.Children.Count; i++)
+            for (int i = 0; i < SelectCan.Children.Count; i++)
             {
                 if (SelectCan.Children[i] is Image)
                 {
@@ -416,5 +420,12 @@ namespace PaintWPF.CustomControls
                 }
             }
         }
+        private void SelectionBorder_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SelectCan.Width = SelectionBorder.Width - 5;
+            SelectCan.Height = SelectionBorder.Height - 5;
+
+        }
+        
     }
 }

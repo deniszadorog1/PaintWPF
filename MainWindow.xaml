@@ -191,7 +191,8 @@
                                 BorderThickness="1">
                             <Grid>
                                 <!--// Icon //-->
-                                <ContentPresenter ContentSource="Icon"
+                                <ContentPresenter Name="SelectionIcon" 
+                                                  ContentSource="Icon"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Center"
                                                   Height="18"
@@ -261,7 +262,7 @@
             <Grid Grid.Row="0" 
                   MouseLeave="MainPabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter">
-                <Menu Background="Transparent" HorizontalAlignment="Center">
+                <Menu  Background="Transparent" HorizontalAlignment="Center">
 
                     <MenuItem  Header="Файлы" 
                         Style="{StaticResource DropDownMenu}">
@@ -320,7 +321,8 @@
 
                         <MenuItem Name = "sixFile" Header="Печать"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}" 
+                                  Click="Print_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Print.png"/>
                             </MenuItem.Icon>
@@ -602,7 +604,7 @@
                 <Grid Grid.Row="1" 
                   MouseLeave="MainPabelBoxes_MouseLeave"
                     MouseEnter="MainPanelBoxes_MouseEnter" >
-                    <Menu Background="Transparent" HorizontalAlignment="Center">
+                    <Menu Name="SelectionMenu" Background="Transparent" HorizontalAlignment="Center">
                         <MenuItem Width="40" Height="25"
                         Style="{StaticResource DropDownMenu}"
                         MouseLeftButtonDown="SelectionMenu_MouseLeftButtonDown" >
@@ -661,9 +663,9 @@
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
-                          Click="SquareSelection_Click">
+                          Click="TransparentSelection_Click">
                                 <MenuItem.Icon>
-                                    <Image Source="Images/Selection/Tick.png"/>
+                                    <Image Name="TransSelectionIcon"/>
                                 </MenuItem.Icon>
                             </MenuItem>
 
@@ -672,7 +674,7 @@
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
-                          Click="SquareSelection_Click">
+                          Click="DeleteSelectionContainment_Click">
                                 <MenuItem.Icon>
                                     <Image Source="Images/Selection/Remove.png"/>
                                 </MenuItem.Icon>
@@ -1132,7 +1134,7 @@
                             Click="PaintColor_Click"/>
                     <Button Name ="SecondColor"
                             Style="{StaticResource RoundButtonStyle}"
-                            Background="White" Margin="10 6 10 0"
+                            Background="#FCFCFC" Margin="10 6 10 0"
                             Height="25" Width="25" 
                             Click="PaintColor_Click"/>
                 </StackPanel>
@@ -1191,7 +1193,7 @@
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
 
                     <Button Style="{StaticResource RoundButtonStyle}" 
-                            Background="#ffffff" Margin="5 5 0 0" 
+                            Background="#FCFCFC" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>

@@ -9,10 +9,11 @@
 
 
     <Border Name ="SelectionBorder" Height="300" Width="300" 
-            BorderBrush="Red" BorderThickness="3">
+            BorderBrush="Red" BorderThickness="3" 
+            SizeChanged="SelectionBorder_SizeChanged" >
         <Canvas Name="SelectCan" Background="Transparent" 
-                Width="{Binding ActualWidth, ElementName=SelectionBorder}" 
-             Height="{Binding ActualHeight, ElementName=SelectionBorder}" MouseLeftButtonDown="SelectCan_MouseLeftButtonDown">
+                Width="300" 
+             Height="300" MouseLeftButtonDown="SelectCan_MouseLeftButtonDown">
 
             <Grid Width="{Binding ActualWidth, ElementName=SelectCan}" 
              Height="{Binding ActualHeight, ElementName=SelectCan}">
@@ -30,27 +31,27 @@
                 <Rectangle Name="RightTop"
                            Height="10" Width="10" 
                            HorizontalAlignment ="Right"
-                           VerticalAlignment="Top" Margin="0 -5 0 0" Fill="White"
+                           VerticalAlignment="Top" Margin="0 -5 -5 0" Fill="White"
                            StrokeThickness="1" Stroke="Black"/>
                 <Rectangle Name="RightCenter"
                            Height="10" Width="10" 
                            HorizontalAlignment ="Right"
-                           VerticalAlignment="Center" Margin="0 0 0 0" Fill="White"
+                           VerticalAlignment="Center" Margin="0 0 -5 0" Fill="White"
                            StrokeThickness="1" Stroke="Black"/>
                 <Rectangle Name="RightBottom"
                            Height="10" Width="10" 
                            HorizontalAlignment ="Right"
-                           VerticalAlignment="Bottom" Margin="0" Fill="White"
+                           VerticalAlignment="Bottom" Margin="-5" Fill="White"
                            StrokeThickness="1" Stroke="Black"/>
                 <Rectangle Name="CenterBottom"
                            Height="10" Width="10" 
                            HorizontalAlignment ="Center"
-                           VerticalAlignment="Bottom" Margin="0 0 0 0" Fill="White"
+                           VerticalAlignment="Bottom" Margin="0 0 0 -5" Fill="White"
                            StrokeThickness="1" Stroke="Black"/>
                 <Rectangle Name="LeftBottom"
                            Height="10" Width="10" 
                            HorizontalAlignment ="Left"
-                           VerticalAlignment="Bottom" Margin="-5 0 0 0" Fill="White"
+                           VerticalAlignment="Bottom" Margin="-5 0 0 -5" Fill="White"
                            StrokeThickness="1" Stroke="Black"/>
                 <Rectangle Name="LeftCenter"
                            Height="10" Width="10" 

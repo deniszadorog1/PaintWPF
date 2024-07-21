@@ -32,6 +32,7 @@ using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Channels;
+using System.Windows.Media.Effects;
 
 
 namespace PaintWPF
@@ -114,6 +115,10 @@ namespace PaintWPF
 
         private List<string> _savedPathes = new List<string>();
         private DateTime? _lastSaveTime = null;
+
+        private Color _whiteColor = Color.FromArgb(255, 255, 255, 255);
+        private Color _transparantColor = Color.FromArgb(0, 0, 0, 0);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -129,6 +134,8 @@ namespace PaintWPF
 
             InitForTextControl();
             InitCustomColorButtons();
+
+            InitTrancperancySelectionImagePath();
         }
         public void InitCustomColorButtons()
         {
@@ -213,6 +220,30 @@ namespace PaintWPF
             _coloredBrushPath = System.IO.Path.Combine(brushPath, "ColoredBrush.png");
             _texturePencilBrushPath = System.IO.Path.Combine(brushPath, "TexturePencilBrush.png");
             _watercolorBrushPath = System.IO.Path.Combine(brushPath, "WatercolorBrush.png");
+        }
+        private Image _tickImg;
+        public void InitTrancperancySelectionImagePath()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            string startdir = dirInfo.Parent.Parent.FullName;
+            string imgPath = System.IO.Path.Combine(startdir, "Images");
+            string selectionPath = System.IO.Path.Combine(imgPath, "Selection");
+            string tickPath = System.IO.Path.Combine(selectionPath, "Tick.png");
+
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(tickPath, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+
+            _tickImg = new Image
+            {
+                Source = bitmap,
+                Width =  TransSelectionIcon.Width,
+                Height = TransSelectionIcon.Width
+            };
+
+            //TransSelectionIcon.Source = _tickImg.Source;
         }
         public void InitTagsForBrushesTypes()
         {
@@ -706,10 +737,25 @@ namespace PaintWPF
         }
         private void RenderCanvasToBitmap()
         {
+            Canvas copyCanvas = new Canvas()
+            {
+                Height = DrawingCanvas.Height,
+                Width = DrawingCanvas.Width,
+                Background = DrawingCanvas.Background
+            };
+            DrawingCanvas.Children.Clear();
+
             double dpi = 96;
-            _renderBitmap = new RenderTargetBitmap((int)DrawingCanvas.ActualWidth,
-                (int)DrawingCanvas.ActualHeight, dpi, dpi, PixelFormats.Pbgra32);
-            _renderBitmap.Render(DrawingCanvas);
+            Size size = new Size(DrawingCanvas.ActualWidth, DrawingCanvas.ActualHeight);
+            _renderBitmap = new RenderTargetBitmap((int)size.Width,
+                (int)size.Height, dpi, dpi, PixelFormats.Pbgra32);
+
+            copyCanvas.Measure(size);
+            copyCanvas.Arrange(new Rect(size));
+
+            _renderBitmap.Render(copyCanvas);
+
+            DrawingCanvas.Background = new ImageBrush(_renderBitmap);
         }
         private void InitDeed()
         {
@@ -1327,10 +1373,18 @@ namespace PaintWPF
 
             CheckForFigurePainting();
 
-            MakeAllActionsNegative();
-
             sprayTimer.Stop();
-            SaveCanvasState();
+
+            SaveInHistory();
+
+            MakeAllActionsNegative();
+        }
+        private void SaveInHistory()
+        {
+            if (!_ifFiguring && !_ifChangingFigureSize && !_ifSelection && _selection is null)
+            {
+                SaveCanvasState();
+            }
         }
         public void FiguringMouseUp()
         {
@@ -1571,9 +1625,11 @@ namespace PaintWPF
 
             return renderTargetBitmap;
         }
-        private const int _selectionSizeCorelation = 15;
+        private const int _selectionSizeCorelation = 0;
         private void MakeSelection()
         {
+            _ifTransparencyIsActivated = false;
+            SetTrtansparentSelectionImage();
             if (_selectionType == SelectionType.Rectangle)
             {
                 MakeRectSelection();
@@ -1610,15 +1666,29 @@ namespace PaintWPF
         private void InitSelectionBgInCustomCanvas()
         {
             Image img = GetRenderOfCustomCanvas(_selectionLine);
-            SwipeWhiteColorWithTranspaentInImage(img);
+            SwipeColorsInImage(img, _whiteColor, _transparantColor);
             SetSelectionCanBgASImage(img);
 
             DeleteAndTrimElements(_selectionLine);
             //DeleteAndTrimElements(start, end);
         }
+        public static Point GetPolylineAbsolutePoint(Polyline polyline, Point point)
+        {
+            // Создаем новую точку относительно начала полилинии
+            Point relativePoint = new Point(point.X, point.Y);
+
+            // Получаем трансформацию относительно Canvas
+            GeneralTransform transform = polyline.TransformToAncestor((Canvas)polyline.Parent);
+            Point absolutePoint = transform.Transform(relativePoint);
+
+
+            return absolutePoint;
+        }
         private void DeleteAndTrimElements(Polyline polyline)
         {
-            // Рассчитываем границы полилинии
+            PointCollection polyAbsolutePoints =
+                GetPolylinePointsRelativeToCanvas(polyline, DrawingCanvas);
+
             double minX = polyline.Points.Min(p => p.X);
             double minY = polyline.Points.Min(p => p.Y);
             double maxX = polyline.Points.Max(p => p.X);
@@ -1639,20 +1709,20 @@ namespace PaintWPF
                 var topLeft = DrawingCanvas.Children[i].TransformToAncestor(DrawingCanvas).Transform(new Point(0, 0));
                 var bottomRight = new Point(topLeft.X + bounds.Width, topLeft.Y + bounds.Height);
 
-/*
-                if (IsPartiallyInsidePolygon(polyline, topLeft, bottomRight))
-                {*/
-                    if (DrawingCanvas.Children[i] is Image image)
-                    {
-                        //Make Image for Bg
-                        var trimmedImages = TrimImageCustom(image, polyline);
+                /*
+                                if (IsPartiallyInsidePolygon(polyline, topLeft, bottomRight))
+                                {*/
+                if (DrawingCanvas.Children[i] is Image image)
+                {
+                    //Make Image for Bg
+                    var trimmedImages = TrimImageCustom(image, polyline, polyAbsolutePoints);
 
-                        if (trimmedImages != null)
-                        {
-                            elementsToAdd.Add(trimmedImages);
-                            elementsToRemove.Add(DrawingCanvas.Children[i]);
-                        }
+                    if (trimmedImages != null)
+                    {
+                        elementsToAdd.Add(trimmedImages);
+                        elementsToRemove.Add(DrawingCanvas.Children[i]);
                     }
+                }
                 //}
             }
 
@@ -1713,50 +1783,37 @@ namespace PaintWPF
 
             return inside;
         }
-        private Image TrimImageCustom(Image originalImage, Polyline polyline)
+        private Image TrimImageCustom(Image originalImage, Polyline polyline, PointCollection absolutePolyPoints)
         {
-            // Убедитесь, что оригинальное изображение не null
-            if (originalImage == null || originalImage.Source == null)
-                return null;
-
-            // Получаем исходное изображение как BitmapSource
             BitmapSource bitmapSource = originalImage.Source as BitmapSource;
 
-            // Преобразуем изображение в формат Pbgra32 для редактирования
             FormatConvertedBitmap convertedBitmap = new FormatConvertedBitmap();
             convertedBitmap.BeginInit();
             convertedBitmap.Source = bitmapSource;
             convertedBitmap.DestinationFormat = PixelFormats.Pbgra32;
             convertedBitmap.EndInit();
 
-            // Создаем WriteableBitmap для редактирования пикселей
             WriteableBitmap writeableBitmap = new WriteableBitmap(convertedBitmap);
 
-            // Получаем размеры изображения
             int width = writeableBitmap.PixelWidth;
             int height = writeableBitmap.PixelHeight;
             int stride = writeableBitmap.BackBufferStride;
 
-            // Создаем массив для хранения пикселей
             byte[] pixels = new byte[height * stride];
 
-            // Копируем пиксели в массив
             writeableBitmap.CopyPixels(pixels, stride, 0);
 
-            // Создаем геометрию полигона
             StreamGeometry geometry = new StreamGeometry();
             using (StreamGeometryContext ctx = geometry.Open())
             {
-                ctx.BeginFigure(polyline.Points[0], true, true);
-                ctx.PolyLineTo(polyline.Points.Skip(1).ToArray(), true, true);
+                ctx.BeginFigure(absolutePolyPoints.First(), true, true);
+                ctx.PolyLineTo(absolutePolyPoints.Skip(1).ToArray(), true, true);
             }
 
             geometry.Freeze();
 
-            // Получаем границы полигона
             Rect bounds = geometry.Bounds;
 
-            // Используем алгоритм сканирующей строки для перекрашивания пикселей внутри полигона
             for (int y = (int)bounds.Top; y < bounds.Bottom; y++)
             {
                 if (y < 0 || y >= height) continue;
@@ -1776,10 +1833,8 @@ namespace PaintWPF
                 }
             }
 
-            // Копируем измененные пиксели обратно в WriteableBitmap
             writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
 
-            // Создаем новое изображение с измененным источником
             Image recoloredImage = new Image
             {
                 Source = writeableBitmap,
@@ -1789,7 +1844,23 @@ namespace PaintWPF
 
             return recoloredImage;
         }
+        public static PointCollection GetPolylinePointsRelativeToCanvas(Polyline polyline, Canvas canvas)
+        {
+            Point absolutPolyPoint =
+                GetPolylineAbsolutePoint(polyline, polyline.Points.First());
 
+            double polylineLeft = absolutPolyPoint.X;
+            double polylineTop = absolutPolyPoint.Y;
+
+            PointCollection absolutePoints = new PointCollection();
+
+            foreach (Point point in polyline.Points)
+            {
+                Point absolutePoint = new Point(point.X + polylineLeft, point.Y + polylineTop);
+                absolutePoints.Add(absolutePoint);
+            }
+            return absolutePoints;
+        }
         private Image GetRenderOfCustomCanvas(Polyline polyline)
         {
             double minX = double.MaxValue;
@@ -1952,6 +2023,7 @@ namespace PaintWPF
             {
                 _selection.IfSelectionIsClicked = false;
                 _selection = null;
+                _selectionLine = null;
                 RemoveSelection();
                 return true;
             }
@@ -1981,8 +2053,8 @@ namespace PaintWPF
             double xLoc = Canvas.GetLeft(shape);
             double yLoc = Canvas.GetTop(shape);
 
-            Canvas.SetLeft(_selection, xLoc - 5);
-            Canvas.SetTop(_selection, yLoc - 5);
+            Canvas.SetLeft(_selection, xLoc);
+            Canvas.SetTop(_selection, yLoc);
 
             DrawingCanvas.Children.Remove(shape);
 
@@ -2071,7 +2143,6 @@ namespace PaintWPF
                 pixels,
                 stride
             );
-
             DrawingCanvas.Children.Clear();
             DrawingCanvas.Background = new ImageBrush(bitmapSource);
         }
@@ -2209,19 +2280,31 @@ namespace PaintWPF
         {
             if (currentIndex > 0)
             {
-                DrawingCanvas.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                DrawingCanvas.Children.Clear();
+                //DrawingCanvas.Children.Clear();
 
                 currentIndex--;
 
                 BitmapSource bitmap = canvasHistory[currentIndex];
 
-                Image image = new Image();
-                image.Source = bitmap;
+                Canvas copyCanvas = new Canvas()
+                {
+                    Height = DrawingCanvas.Height,
+                    Width = DrawingCanvas.Width,
+                    Background = new ImageBrush(bitmap)
+                };
+                double dpi = 96;
+                Size size = new Size(DrawingCanvas.ActualWidth, DrawingCanvas.ActualHeight);
+                _renderBitmap = new RenderTargetBitmap((int)size.Width,
+                    (int)size.Height, dpi, dpi, PixelFormats.Pbgra32);
 
-                Canvas.SetLeft(image, 0);
-                Canvas.SetTop(image, 0);
-                DrawingCanvas.Children.Add(image);
+                copyCanvas.Measure(size);
+                copyCanvas.Arrange(new Rect(size));
+
+                _renderBitmap.Render(copyCanvas);
+
+                DrawingCanvas.Background = new ImageBrush(_renderBitmap);
+
+                // DrawingCanvas.Background = new ImageBrush(bitmap);
             }
             else if (currentIndex == 0)
             {
@@ -2493,11 +2576,6 @@ namespace PaintWPF
         }
         public Image ConvertBackgroundToImage(Canvas canvas)
         {
-            // Убедитесь, что canvas не null
-            if (canvas == null)
-                return null;
-
-            // Создаем RenderTargetBitmap с размерами холста
             RenderTargetBitmap renderTarget = new RenderTargetBitmap(
                 (int)canvas.ActualWidth,
                 (int)canvas.ActualHeight,
@@ -2505,10 +2583,8 @@ namespace PaintWPF
                 96,
                 PixelFormats.Pbgra32);
 
-            // Рендерим холст в RenderTargetBitmap
             renderTarget.Render(canvas);
 
-            // Создаем BitmapImage для использования в элементе Image
             BitmapImage bitmapImage = new BitmapImage();
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -2522,16 +2598,12 @@ namespace PaintWPF
                 bitmapImage.EndInit();
             }
 
-            // Создаем новый элемент Image и устанавливаем его Source
             Image image = new Image()
             {
                 Source = bitmapImage,
-                Height = DrawingCanvas.Height,
-                Width = DrawingCanvas.Width
+                Height = canvas.Height,
+                Width = canvas.Width
             };
-
-            Canvas.SetLeft(image, 0);
-            Canvas.SetTop(image, 0);
 
             image.UpdateLayout();
             var bounds = VisualTreeHelper.GetDescendantBounds(image);
@@ -2886,12 +2958,12 @@ namespace PaintWPF
             /*            image.CaptureMouse();
                         Canvas.SetZIndex(image, 100);*/
 
-            SwipeWhiteColorWithTranspaentInImage(image);
+            SwipeColorsInImage(image, _whiteColor, _transparantColor);
             Canvas.SetLeft(image, 0);
             Canvas.SetTop(image, 0);
             SetSelectionCanBgASImage(image);
         }
-        private Image SwipeWhiteColorWithTranspaentInImage(Image image)
+        private Image SwipeColorsInImage(Image image, Color toBeChanged, Color toChangeOn)
         {
             BitmapSource bitmapSource = image.Source as BitmapSource;
             WriteableBitmap writeableBitmap = new WriteableBitmap(bitmapSource);
@@ -2913,12 +2985,20 @@ namespace PaintWPF
                     byte red = pixels[index + 2];
                     byte alpha = pixels[index + 3];
 
-                    if (red == 255 && green == 255 && blue == 255 && alpha == 255)
+                    if ((IfColorParamisBetweenFivePuncts(red, toChangeOn.R) &&
+                        IfColorParamisBetweenFivePuncts(green, toChangeOn.G) &&
+                        IfColorParamisBetweenFivePuncts(blue, toChangeOn.B) &&
+                        IfColorParamisBetweenFivePuncts(alpha, toChangeOn.A)) ||
+
+                        (red == 255 && green == 255 && blue == 255 && alpha == 255) ||
+
+                        (_ifTransparencyIsActivated && alpha == toBeChanged.A &&
+                        red == toBeChanged.R && green == toBeChanged.G && blue == toBeChanged.B))
                     {
-                        pixels[index] = 0;
-                        pixels[index + 1] = 0;
-                        pixels[index + 2] = 0;
-                        pixels[index + 3] = 0;
+                        pixels[index] = toChangeOn.A;
+                        pixels[index + 1] = toChangeOn.R;
+                        pixels[index + 2] = toChangeOn.G;
+                        pixels[index + 3] = toChangeOn.B;
                     }
                 }
             }
@@ -2926,8 +3006,16 @@ namespace PaintWPF
             writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
 
             image.Source = writeableBitmap;
+
             return image;
         }
+
+        private bool IfColorParamisBetweenFivePuncts(byte color, int colorParam)
+        {
+            int res = Math.Abs(color - colorParam);
+            return res <= 5;
+        }
+
         private void SetSelectionCanBgASImage(Image image)
         {
             ImageSource imageSource = image.Source;
@@ -3031,12 +3119,16 @@ namespace PaintWPF
             }
             if (!(_figureSizing is null) && !_figureSizing.IfSelectionIsClicked)
             {
+                _selectionLine = null;
+                _lineSizeing = null;
                 ClearFigureSizing();
                 UseAuxiliaryCanvasToCollectChildrenInDrawingCanvas();
                 return;
             }
             else if (!(_lineSizeing is null) && !_lineSizeing.IfSelectionIsClicked)
             {
+                _selectionLine = null;
+                _lineSizeing = null;
                 ClearLineSizing();
                 UseAuxiliaryCanvasToCollectChildrenInDrawingCanvas();
                 return;
@@ -3187,6 +3279,8 @@ namespace PaintWPF
         }
         private void SetSelectedItemInDrawingCanvas()
         {
+            if (_selectionType == SelectionType.Rectangle) ChangeRectSelectionCorreation();
+
             Brush backgroundBrush = _selection.SelectCan.Background;
 
             if (backgroundBrush is ImageBrush imageBrush)
@@ -3205,8 +3299,31 @@ namespace PaintWPF
                 DrawingCanvas.Children.Add(image);
             }
         }
+
+        private void ChangeRectSelectionCorreation()
+        {
+            double xLoc = Canvas.GetLeft(_selection);
+            double yLoc = Canvas.GetTop(_selection);
+
+            /* Canvas.SetLeft(_selection, xLoc - 5);
+             Canvas.SetTop(_selection, yLoc + 5);*/
+
+            //_selection.Width += 5;
+            //_selection.Height += 5;
+
+            _selection.SelectCan.Width += 5;
+            _selection.SelectCan.Height += 5;
+
+            _selection.SelectCan.InvalidateMeasure();
+            _selection.SelectCan.InvalidateVisual();
+            _selection.SelectCan.UpdateLayout();
+
+        }
         private void RemoveSelection()
         {
+            _ifTransparencyIsActivated = false;
+            SetTrtansparentSelectionImage();
+
             for (int i = 0; i < DrawingCanvas.Children.Count; i++)
             {
                 if (DrawingCanvas.Children[i] is Selection)
@@ -3446,7 +3563,7 @@ namespace PaintWPF
                 Width = DrawingCanvas.Width,
                 Background = DrawingCanvas.Background
             };
-            List<UIElement> DrawingCanChildren = ReAssginChildrenInAuxiliaryCanvas();
+            List<UIElement> DrawingCanChildren = ReAssginChildrenInAuxiliaryCanvas(DrawingCanvas);
             DrawingCanvas.Children.Clear();
 
             for (int i = 0; i < DrawingCanChildren.Count; i++)
@@ -3480,12 +3597,12 @@ namespace PaintWPF
             DrawingCanvas.Background = imageBrush;
         }
 
-        private List<UIElement> ReAssginChildrenInAuxiliaryCanvas()
+        private List<UIElement> ReAssginChildrenInAuxiliaryCanvas(Canvas canvas)
         {
             List<UIElement> res = new List<UIElement>();
-            for (int i = 0; i < DrawingCanvas.Children.Count; i++)
+            for (int i = 0; i < canvas.Children.Count; i++)
             {
-                res.Add(DrawingCanvas.Children[i]);
+                res.Add(canvas.Children[i]);
             }
             return res;
         }
@@ -3658,7 +3775,7 @@ namespace PaintWPF
             const int SPIF_SENDCHANGE = 2;
             const string path = "B:\\GitHub\\PaintWPF\\toSaveFonts\\font.png";
 
-            Image image = ConvertCanvasToImage(DrawingCanvas);
+            Image image = ConvertCanvasInImage(DrawingCanvas);
             SaveImageToDisk(image.Source, path);
 
             SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINFILE | SPIF_SENDCHANGE);
@@ -3676,18 +3793,6 @@ namespace PaintWPF
 
             return filePath;
         }
-        private Image ConvertCanvasToImage(Canvas canvas)
-        {
-            RenderTargetBitmap bitmap = ConvertCanvasToBitmap(canvas);
-
-            Image image = new Image
-            {
-                Source = bitmap,
-                Width = canvas.Width,
-                Height = canvas.Height
-            };
-            return image;
-        }
 
         private RenderTargetBitmap ConvertCanvasToBitmap(Canvas canvas)
         {
@@ -3701,7 +3806,6 @@ namespace PaintWPF
 
             return renderBitmap;
         }
-
         private void Settigns_Click(object sender, EventArgs e)
         {
             ImageSettings settigns = new ImageSettings(DrawingCanvas,
@@ -3709,6 +3813,89 @@ namespace PaintWPF
             settigns.ShowDialog();
 
         }
+        private Image _trancparImage = null;
+        private bool _ifTransparencyIsActivated;
+        private void TransparentSelection_Click(object sender, EventArgs e)
+        {
+            if (_selection is null &&
+                (_selectionType == SelectionType.Rectangle ||
+                _selectionType == SelectionType.Custom)) return;
+            if (_ifTransparencyIsActivated)
+            {
+                _selection.SelectCan.Background = new ImageBrush()
+                {
+                    ImageSource = _trancparImage.Source
+                };
+                _ifTransparencyIsActivated = false;
+                SetTrtansparentSelectionImage();
+                return;
+            }
+
+            _ifTransparencyIsActivated = true;
+            SetTrtansparentSelectionImage();
+
+            List<UIElement> selectionElems =
+                ReAssginChildrenInAuxiliaryCanvas(_selection.SelectCan);
+            _selection.SelectCan.Children.Clear();
+
+            _trancparImage = ConvertBackgroundToImage(_selection.SelectCan);
+
+            Image redoneBgIMG = SwipeColorsInImage(
+                ConvertBackgroundToImage(_selection.SelectCan),
+              _main.SecondColor.Color, _transparantColor);
+
+            InitElemsInCanvas(_selection.SelectCan, selectionElems);
+
+            _selection.SelectCan.Background = new ImageBrush()
+            {
+                ImageSource = redoneBgIMG.Source
+            };
+        }
+        private void SetTrtansparentSelectionImage()
+        {
+            if (_ifTransparencyIsActivated)
+            {
+                TransSelectionIcon.Source = _tickImg.Source;
+                return;
+            }
+            TransSelectionIcon.Source = null;
+
+        }
+        private void InitElemsInCanvas(Canvas can, List<UIElement> elements)
+        {
+            for (int i = 0; i < elements.Count; i++)
+            {
+                can.Children.Add(elements[i]);
+            }
+        }
+        private void DeleteSelectionContainment_Click(object sender, EventArgs e)
+        {
+            _selection = null;
+            RemoveSelection();
+        }
+        private void Print_Click(object sender, EventArgs e)
+        {
+            PrintDialog printDialog = new PrintDialog();
+
+            Image printImg = ConvertCanvasInImage(DrawingCanvas);
+
+            if (printDialog.ShowDialog() == true)
+            {
+                Size pageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
+
+                Grid grid = new Grid();
+                grid.Width = pageSize.Width;
+                grid.Height = pageSize.Height;
+                grid.Children.Add(printImg);
+
+                printImg.Stretch = Stretch.Uniform;
+                printImg.Width = pageSize.Width;
+                printImg.Height = pageSize.Height;
+
+                printDialog.PrintVisual(grid, "Печать изображения");
+            }
+        }
+
     }
 }
 

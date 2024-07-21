@@ -28,7 +28,7 @@ namespace PaintWPF.Models
             ImagesHistory = new List<Image>();
             PalleteMod = new PalleteModel();
             FirstColor = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            SecondColor = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            SecondColor = new SolidColorBrush(Color.FromRgb(253, 253, 253));
             CanvasStates = new List<Canvas>();
             TempBrushType = BrushType.UsualBrush; 
         }
