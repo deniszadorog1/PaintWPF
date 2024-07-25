@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 B:\GitHub\PaintWPF\App.xaml
-61806354459
+9402449712
 
-22-1442716083
+26223539135
 20-1785971406
-CustomControls\LineSizing.xaml;CustomControls\Selection.xaml;CustomControls\TextEditor.xaml;ImageSettings.xaml;MainWindow.xaml;Pallete.xaml;
+CustomControls\LeftClickSelectionMenu.xaml;CustomControls\LineSizing.xaml;CustomControls\Selection.xaml;CustomControls\SubMenud\RightClickSubMenu.xaml;CustomControls\SubMenud\SubMenuElement.xaml;CustomControls\TextEditor.xaml;ImageSettings.xaml;MainWindow.xaml;Pallete.xaml;
 
 False
 

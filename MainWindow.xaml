@@ -380,7 +380,8 @@
 
                         <MenuItem Name = "zeroChange" Header="Вырезать"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}"
+                          Click="Cut_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/Change/Scissors.png"/>
                             </MenuItem.Icon>
@@ -388,7 +389,8 @@
 
                         <MenuItem Name = "oneChange" Header="Копировать"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}"
+                          Click="Copy_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/Change/Copy.png"/>
                             </MenuItem.Icon>
@@ -396,7 +398,8 @@
 
                         <MenuItem Name = "twoChange" Header="Вставить"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}"
+                          Click="Paste_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/Change/Paste.png"/>
                             </MenuItem.Icon>
@@ -552,10 +555,12 @@
                     ClipToBounds="True"
                 Name = "DrawingCanvas" Background="White"
                 Height="400" Width="1000"
-                MouseDown="Field_MouseDown"
+                MouseLeftButtonDown="Field_MouseDown"
                 MouseMove="Field_MouseMove"
                 MouseUp="Field_MouseUp" 
-                MouseLeave="PaintField_MouseLeave" VerticalAlignment="Center" Margin="-10,0,10,0">
+                MouseLeave="PaintField_MouseLeave" 
+                VerticalAlignment="Center" Margin="0"
+                MouseRightButtonDown="DrawingCanvas_MouseRightButtonDown">
 
 
                 </Canvas>
@@ -652,7 +657,7 @@
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
-                          Click="SquareSelection_Click">
+                          Click="InvalidateSelection_Click">
                                 <MenuItem.Icon>
                                     <Image Source="Images/Selection/RemoveSelection.png"/>
                                 </MenuItem.Icon>

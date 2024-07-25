@@ -970,7 +970,7 @@ namespace PaintWPF
             _ifLumValueCanBeChanged = false;
 
         }
-        private bool _preInputParamCheck = false;
+        //private bool _preInputParamCheck = false;
         private void FirstInfoBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             CheckForZeroPreviewTextInput(FirstInfoBox, e);

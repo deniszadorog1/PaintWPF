@@ -74,11 +74,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CustomControls\LeftClickSelectionMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomControls\LineSizing.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\Selection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\SubMenud\RightClickSubMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\SubMenud\SubMenuElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -98,11 +110,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CustomControls\LeftClickSelectionMenu.xaml.cs">
+      <DependentUpon>LeftClickSelectionMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\LineSizing.xaml.cs">
       <DependentUpon>LineSizing.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\Selection.xaml.cs">
       <DependentUpon>Selection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\SubMenud\RightClickSubMenu.xaml.cs">
+      <DependentUpon>RightClickSubMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\SubMenud\SubMenuElement.xaml.cs">
+      <DependentUpon>SubMenuElement.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\TextEditor.xaml.cs">
       <DependentUpon>TextEditor.xaml</DependentUpon>
@@ -127,6 +148,7 @@
     <Compile Include="Models\Enums\LineSizingRectType.cs" />
     <Compile Include="Models\Enums\SelectionSide.cs" />
     <Compile Include="Models\Enums\SelectionType.cs" />
+    <Compile Include="Models\Enums\SubMenuItems.cs" />
     <Compile Include="Models\MainPaint.cs" />
     <Compile Include="Models\PalleteModel.cs" />
     <Compile Include="Models\Tools\ColorConvertor.cs" />
@@ -284,7 +306,9 @@
     <Resource Include="Images\Brushes\TexturePencilBrush.png" />
     <Resource Include="Images\Brushes\WatercolorBrush.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\ClickMenu\TurnRight.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Text\AlignCenter.png" />
     <Resource Include="Images\Text\AlignLeft.png" />
@@ -293,6 +317,15 @@
     <Resource Include="Images\Text\Crossed.png" />
     <Resource Include="Images\Text\Italics.png" />
     <Resource Include="Images\Text\Underline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ClickMenu\Swap.png" />
+    <Resource Include="Images\ClickMenu\TurnOver.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ClickMenu\FlipHorizontal.png" />
+    <Resource Include="Images\ClickMenu\FlipVertical.png" />
+    <Resource Include="Images\ClickMenu\TurnIn180.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -17,6 +17,8 @@ using PaintWPF.Models.Enums;
 using PaintWPF.CustomControls;
 using System.Globalization;
 using PaintWPF.Models.Tools;
+using System.Configuration;
+
 
 namespace PaintWPF.CustomControls
 {
@@ -26,13 +28,12 @@ namespace PaintWPF.CustomControls
     public partial class Selection : UserControl
     {
         public bool _isDraggingSelection;
-        public bool IfSelectionIsClicked;
+        public bool IfSelectionIsClicked = true;
+        public bool _ifInvertedSelection;
         private Point _startPointSelection;
         private Point _anchorPointSelection;
         public SelectionSide _selectionSizeToChangeSize;
-
         private Image _figuresImg = null;
-        private AdornerLayer adornerLayer;
 
         public Selection()
         {
@@ -107,6 +108,7 @@ namespace PaintWPF.CustomControls
         }
         private void SelectionBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (_ifInvertedSelection) return;
             _isDraggingSelection = true;
             _anchorPointSelection = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
             IfSelectionIsClicked = true;
@@ -422,10 +424,57 @@ namespace PaintWPF.CustomControls
         }
         private void SelectionBorder_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SelectCan.Width = SelectionBorder.Width - 5;
-            SelectCan.Height = SelectionBorder.Height - 5;
-
+            const int _sizeDiffer = 5;
+            if (SelectionBorder.Width - _sizeDiffer <= 0 || SelectionBorder.Height - _sizeDiffer <= 0) return;
+            SelectCan.Width = SelectionBorder.Width - _sizeDiffer;
+            SelectCan.Height = SelectionBorder.Height - _sizeDiffer;
         }
-        
+        public void RemoveSizingSquares()
+        {
+            SizingGrid.Children.Clear();
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.PreviousSize.Width == 0 || e.PreviousSize.Height == 0) return;
+
+            double widthRatio = e.NewSize.Width / e.PreviousSize.Width;
+            double heightRatio = e.NewSize.Height / e.PreviousSize.Height;
+
+            foreach (UIElement child in SelectCan.Children)
+            {           
+                if (child.GetType() != typeof(Grid) &&  child is FrameworkElement element)
+                {
+                    double newWidth = element.Width * widthRatio;
+                    double newHeight = element.Height * heightRatio;
+
+                    // Обновляем размеры элемента
+                    element.Width = newWidth;
+                    element.Height = newHeight;
+
+                    if(child is Selection)
+                    {
+                        ((Selection)child).SelectionBorder.Width = newWidth;
+                        ((Selection)child).SelectionBorder.Height = newHeight;
+                    }
+
+
+                    // Обновляем позицию элемента, если это Canvas
+                    if (Canvas.GetLeft(element) != double.NaN)
+                    {
+                        Canvas.SetLeft(element, Canvas.GetLeft(element) * widthRatio);
+                    }
+
+                    if (Canvas.GetTop(element) != double.NaN)
+                    {
+                        Canvas.SetTop(element, Canvas.GetTop(element) * heightRatio);
+                    }
+                }
+            }
+        }
+        public void ChangeInvertionStatus()
+        {
+            _ifInvertedSelection = !_ifInvertedSelection;
+        }
     }
 }

@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="PaintWPF.CustomControls.LeftClickSelectionMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PaintWPF.CustomControls"
+             mc:Ignorable="d" Width="300" Height="300">
+    <UserControl.Resources>
+        <Storyboard x:Key="Storyboard2">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="listBox" Storyboard.TargetProperty="(FrameworkElement.Height)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="10"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="50"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="100"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="150"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="200"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="250"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="300"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="listBox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="-150"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="-125"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="-100"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-75"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="-50"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="-25"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="UserControl.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource Storyboard2}"/>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid Height="300">
+        <ListBox x:Name="listBox" Width="300" RenderTransformOrigin="0.5,0.5" Height="300" Opacity="0.9" Background="White" >
+            <ListBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ListBox.RenderTransform>
+            <Button Name="Cut" Background="#FFD0D0D0" BorderBrush="White"
+                    Height="30" Width="285" 
+                    HorizontalAlignment="Left" Padding="0"  HorizontalContentAlignment="Left">
+                <WrapPanel  HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Change/Scissors.png" Margin="0"/>
+                    <Label Content="Вырезать" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Label Content="Ctrl + x" FontSize="10" Width="202" HorizontalContentAlignment="Right" Height="25"/>
+                </WrapPanel>
+            </Button>
+            <Button x:Name="Copy" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Change/Copy.png" Margin="0"/>
+                    <Label Content="Копировать" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Label Content="Ctrl + c" FontSize="10" Width="189" HorizontalContentAlignment="Right" Height="25"/>
+                </WrapPanel>
+            </Button>
+            <Button x:Name="Paste" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Change/Paste.png" Margin="0"/>
+                    <Label Content="Вставить" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Label Content="Ctrl + v" FontSize="10" Width="206" HorizontalContentAlignment="Right" Height="25"/>
+                </WrapPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name="ChooseAll" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Selection/ChooseAll.png" Margin="0"/>
+                    <Label Content="Выбрать все" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Label Content="Ctrl + f" FontSize="10" Width="186" HorizontalContentAlignment="Right" Height="25"/>
+                </WrapPanel>
+            </Button>
+            <Button x:Name="InvertSelection" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Selection/RemoveSelection.png" Margin="0"/>
+                    <Label Content="Обратить выдиление" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                </WrapPanel>
+            </Button>
+            <Button x:Name="Delete" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Selection/Remove.png" Margin="0"/>
+                    <Label Content="Удалить" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Label Content="Delete" FontSize="10" Width="211" HorizontalContentAlignment="Right" Height="25"/>
+                </WrapPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name="Swap" Background="#FFD0D0D0" 
+                    BorderBrush="White" Height="30" 
+                    Width="285" Padding="0" 
+                    HorizontalContentAlignment="Left" 
+                    Click="Swap_Click"
+                    MouseLeave="SubMenu_MouseLeave">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" 
+                           Source="/Images/ClickMenu/Swap.png" Margin="0"/>
+                    <Label Content="Перевернуть" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Image Height="20" Width="183" Source="/Images/ClickMenu/TurnRight.png" 
+                           HorizontalAlignment="Right" />
+                </WrapPanel>
+            </Button>
+            <Button x:Name="ToTurn" Background="#FFD0D0D0" 
+                    BorderBrush="White" Height="30" Width="285" 
+                    Padding="0" HorizontalContentAlignment="Left" 
+                    Click="ToTurn_Click" 
+                    MouseLeave="SubMenu_MouseLeave">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" 
+                           Source="/Images/ClickMenu/TurnOver.png" Margin="0"/>
+                    <Label Content="Повернуть" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Image Height="20" Width="196" Source="/Images/ClickMenu/TurnRight.png" 
+                           HorizontalAlignment="Right"/>
+                </WrapPanel>
+            </Button>
+        </ListBox>
+    </Grid>
+</UserControl>
