@@ -368,15 +368,13 @@ namespace PaintWPF.CustomControls
         }
         private void InitShapeFigure()
         {
-            if (_figuresImg is null) return;
-
-            SelectCan.Children.Add(_figuresImg);
+            SelectCan.Background = new ImageBrush()
+            {
+                ImageSource = _figuresImg.Source
+            };
 
             SelectionBorder.Height = _figuresImg.Height + 15;
             SelectionBorder.Width = _figuresImg.Width + 15;
-
-            Canvas.SetLeft(_figuresImg, 5);
-            Canvas.SetTop(_figuresImg, 5);
         }
         private void ReinitShapeSize()
         {
@@ -429,9 +427,14 @@ namespace PaintWPF.CustomControls
             SelectCan.Width = SelectionBorder.Width - _sizeDiffer;
             SelectCan.Height = SelectionBorder.Height - _sizeDiffer;
         }
-        public void RemoveSizingSquares()
+        public void RemoveSizingGrid()
         {
-            SizingGrid.Children.Clear();
+            SelectCan.Children.Remove(SizingGrid);
+            //SizingGrid.Children.Clear();
+        }
+        public void AddSizingGrid()
+        {
+            SelectCan.Children.Add(SizingGrid);
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)

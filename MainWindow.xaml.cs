@@ -39,6 +39,7 @@ using Xceed.Wpf.AvalonDock.Controls;
 using PaintWPF.CustomControls.SubMenu;
 using Xceed.Wpf.Toolkit.PropertyGrid.Converters;
 using Xceed.Wpf.AvalonDock.Layout;
+using System.CodeDom;
 
 
 namespace PaintWPF
@@ -105,7 +106,7 @@ namespace PaintWPF
         private string _texturePencilBrushPath;
         private string _watercolorBrushPath;
         private Polyline _tempBrushLine;
-        Selection _figureSizing = null;
+        //Selection _selection = null;
         LineSizing _lineSizeing = null;
 
         private TextEditor _text = null;
@@ -447,6 +448,8 @@ namespace PaintWPF
         }
         private void Tool_MouseClick(object sender, EventArgs e)
         {
+            RemoveRightClickMenus();
+            FreeSquareSelection();
             if (sender is Button but)
             {
                 ClearDynamicValues(brushClicked: but.Name == "Pen" || but.Name == "Erazer",
@@ -806,6 +809,8 @@ namespace PaintWPF
         }
         private void MakeAllActionsNegative()
         {
+            //RemoveRightClickMenus();
+
             _ifSelection = false;
             _ifDrawing = false;
             _ifErazing = false;
@@ -1109,7 +1114,7 @@ namespace PaintWPF
                         {
                             PaintFigures(e);
                         }*/
-            else if (!(_figureSizing is null) && _ifChangingFigureSize)
+            else if (!(_selection is null) && _ifChangingFigureSize)
             {
                 _firstSelectionEnd = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
             }
@@ -1375,13 +1380,13 @@ namespace PaintWPF
             if (_ifSelection && !IfSelectionIsMaken) MakeSelection();
             if (_ifFiguring) FiguringMouseUp();
 
-            if (_ifDrawing) ConvertPaintingInImage();
+            if (_ifDrawing || _ifErazing) ConvertPaintingInImage();
 
             CheckForFigurePainting();
 
             sprayTimer.Stop();
 
-            if (!IfDrawingCanvasContainsRightClickMenus())
+            if (!IfDrawingCanvasContainsRightClickMenus() /*&& _selection is null*/)
             {
                 SaveInHistory();
             }
@@ -1389,7 +1394,9 @@ namespace PaintWPF
         }
         private void SaveInHistory()
         {
-            if (!_ifFiguring && !_ifChangingFigureSize && !_ifSelection && _selection is null)
+            if (!_ifFiguring &&
+                !_ifChangingFigureSize &&
+                !_ifSelection && _selection is null)
             {
                 SaveCanvasState();
             }
@@ -1486,8 +1493,8 @@ namespace PaintWPF
 
                 Point canvasPosition = path.TransformToAncestor(DrawingCanvas).Transform(pathStartPoint);
 
-                Canvas.SetLeft(_figureSizing, canvasPosition.X);
-                Canvas.SetTop(_figureSizing, canvasPosition.Y);
+                Canvas.SetLeft(_selection, canvasPosition.X);
+                Canvas.SetTop(_selection, canvasPosition.Y);
             }
         }
         public void CalculatePolylineSize(Shape shape)
@@ -1554,15 +1561,15 @@ namespace PaintWPF
             }
             else
             {
-                _figureSizing = new Selection(shapeImg);
+                _selection = new Selection(shapeImg);
 
-                _figureSizing.Height = _figureSizing.SelectionBorder.Height;
-                _figureSizing.Width = _figureSizing.SelectionBorder.Width;
+                _selection.Height = _selection.SelectionBorder.Height;
+                _selection.Width = _selection.SelectionBorder.Width;
 
-                InitLocationForFigure(_figureSizing);
+                InitLocationForFigure(_selection);
 
                 DrawingCanvas.Children.RemoveAt(DrawingCanvas.Children.Count - 1);
-                DrawingCanvas.Children.Add(_figureSizing);
+                DrawingCanvas.Children.Add(_selection);
             }
             _type = ActionType.ChangingFigureSize;
         }
@@ -1600,8 +1607,8 @@ namespace PaintWPF
                 _figType != FigureTypes.Curve &&
                 _figType != FigureTypes.Line)
             {
-                Canvas.SetTop(_figureSizing, Canvas.GetTop(DrawingCanvas.Children[DrawingCanvas.Children.Count - 1]));
-                Canvas.SetLeft(_figureSizing, Canvas.GetLeft(DrawingCanvas.Children[DrawingCanvas.Children.Count - 1]));
+                Canvas.SetTop(_selection, Canvas.GetTop(DrawingCanvas.Children[DrawingCanvas.Children.Count - 1]));
+                Canvas.SetLeft(_selection, Canvas.GetLeft(DrawingCanvas.Children[DrawingCanvas.Children.Count - 1]));
                 return;
             }
             GetBoundingBox(control);
@@ -2292,31 +2299,12 @@ namespace PaintWPF
         {
             if (currentIndex > 0)
             {
-                //DrawingCanvas.Children.Clear();
-
                 currentIndex--;
-
-                BitmapSource bitmap = canvasHistory[currentIndex];
-
-                Canvas copyCanvas = new Canvas()
+                Image img = _canvasHistory[currentIndex];
+                DrawingCanvas.Background = new ImageBrush()
                 {
-                    Height = DrawingCanvas.Height,
-                    Width = DrawingCanvas.Width,
-                    Background = new ImageBrush(bitmap)
+                    ImageSource = img.Source
                 };
-                double dpi = 96;
-                Size size = new Size(DrawingCanvas.ActualWidth, DrawingCanvas.ActualHeight);
-                _renderBitmap = new RenderTargetBitmap((int)size.Width,
-                    (int)size.Height, dpi, dpi, PixelFormats.Pbgra32);
-
-                copyCanvas.Measure(size);
-                copyCanvas.Arrange(new Rect(size));
-
-                _renderBitmap.Render(copyCanvas);
-
-                DrawingCanvas.Background = new ImageBrush(_renderBitmap);
-
-                // DrawingCanvas.Background = new ImageBrush(bitmap);
             }
             else if (currentIndex == 0)
             {
@@ -2327,42 +2315,47 @@ namespace PaintWPF
         }
         private void NextCanvas_Click(object sender, EventArgs e)
         {
-            if (currentIndex < canvasHistory.Count - 1)
+            if (currentIndex < _canvasHistory.Count - 1)
             {
                 DrawingCanvas.Children.Clear();
 
                 currentIndex++;
-                BitmapSource bitmap = canvasHistory[currentIndex];
-                Image image = new Image();
-                image.Source = bitmap;
-                DrawingCanvas.Children.Add(image);
+                Image img = _canvasHistory[currentIndex];
+
+                DrawingCanvas.Background = new ImageBrush()
+                {
+                    ImageSource = img.Source
+                };
+
+                /*                Image image = new Image();
+                                image.Source = bitmap;
+                                DrawingCanvas.Children.Add(image);*/
             }
 
         }
-        private List<BitmapSource> canvasHistory = new List<BitmapSource>();
+        private List<Image> _canvasHistory = new List<Image>();
         private int currentIndex = -1;
 
         public void SaveCanvasState()
         {
-            Size size = new Size(DrawingCanvas.ActualWidth, DrawingCanvas.ActualHeight);
+            CorrectHitory();
+            DrawingCanvas.Children.Clear();
+            Image img = ConvertCanvasInImage(DrawingCanvas);
+            _canvasHistory.Add(img);
 
-            DrawingCanvas.Measure(size);
-            DrawingCanvas.Arrange(new Rect(size));
-
-            RenderTargetBitmap rtb = new RenderTargetBitmap(
-                (int)size.Width,
-                (int)size.Height,
-                96d, 96d, PixelFormats.Pbgra32);
-            rtb.Render(DrawingCanvas);
-            BitmapSource bitmap = BitmapFrame.Create(rtb);
-
-            if (currentIndex < canvasHistory.Count - 1)
+            currentIndex = _canvasHistory.Count - 1;
+        }
+        private void CorrectHitory()
+        {
+            List<Image> res = new List<Image>();
+            for (int i = 0; i < _canvasHistory.Count; i++)
             {
-                canvasHistory.RemoveRange(currentIndex + 1, canvasHistory.Count - currentIndex - 1);
+                if (currentIndex >= i)
+                {
+                    res.Add(_canvasHistory[i]);
+                }
             }
-            canvasHistory.Add(bitmap);
-
-            currentIndex++;
+            _canvasHistory = res;
         }
         private void Figure_Click(object sender, EventArgs e)
         {
@@ -2542,6 +2535,7 @@ namespace PaintWPF
         }
         private Point _firstSelectionStart;
         private Point _firstSelectionEnd;
+
         private void InitSelectedBgInRectCanvas(Rectangle rect, Selection selection, Canvas selParentCanvas)
         {
             if (!(selection.SelectCan.Background is ImageBrush))
@@ -2549,37 +2543,24 @@ namespace PaintWPF
                 RenderTargetBitmap copy = GetRenderedCopy(selection, selParentCanvas, _firstSelectionStart, _firstSelectionEnd);
                 InsertBitmapToCanvas(copy, selection);
             }
+
             Point start = new Point(Canvas.GetLeft(rect), Canvas.GetTop(rect));
             Point end = new Point(start.X + rect.Width, start.Y + rect.Height);
 
+            //selParentCanvas.Background = new SolidColorBrush(Colors.White);
             if (_selectionType == SelectionType.All)
             {
-                selParentCanvas.Children.Clear();
+                //selParentCanvas.Children.Clear();
                 selParentCanvas.Background = new SolidColorBrush(Colors.White);
+                selParentCanvas.Children.Add(selection);
             }
+
             //Get Bg Image
             //Paint bg in all white
             //add image in children
             //Init got image as bg (delete from children)
-            //AddBgImageInChildren();
-            DeleteAndTrimElements(start, end, selection, selParentCanvas);
 
-            //ClearCanvasFromImages(DrawingCanvas);
-        }
-        private void ClearCanvasFromImages(Canvas canvas)
-        {
-            for (int i = 0; i < canvas.Children.Count; i++)
-            {
-                if (canvas.Children[i] is Image)
-                {
-                    canvas.Children.RemoveAt(i);
-                    i--;
-                    if (i < 0)
-                    {
-                        i = 0;
-                    }
-                }
-            }
+            DeleteAndTrimElements(start, end, selection, selParentCanvas);
         }
         private void AddBgImageInChildren(Canvas canvas)
         {
@@ -2610,6 +2591,7 @@ namespace PaintWPF
                 96,
                 PixelFormats.Pbgra32);
 
+            
             renderTarget.Render(canvas);
 
             BitmapImage bitmapImage = new BitmapImage();
@@ -2635,10 +2617,12 @@ namespace PaintWPF
             image.UpdateLayout();
             var bounds = VisualTreeHelper.GetDescendantBounds(image);
 
+
             return image;
         }
         private void DeleteAndTrimElements(Point point1, Point point2, Selection selection, Canvas parentCanvas)
         {
+
             double minX = Math.Min(point1.X, point2.X);
             double minY = Math.Min(point1.Y, point2.Y);
             double maxX = Math.Max(point1.X, point2.X);
@@ -2696,7 +2680,7 @@ namespace PaintWPF
             }
             for (int i = 0; i < elementsToRemove.Count; i++)
             {
-                DrawingCanvas.Children.Remove(elementsToRemove[i]); ;
+                DrawingCanvas.Children.Remove(elementsToRemove[i]);
             }
             for (int i = 0; i < elementsToAdd.Count; i++)
             {
@@ -2991,12 +2975,6 @@ namespace PaintWPF
         private RenderTargetBitmap GetRenderedCopy(Selection selection, Canvas canvas,
             Point start, Point end)
         {
-            //selection.SelectionBorder.BorderBrush = new SolidColorBrush(Colors.Blue);
-            //selection.SelectionBorder.BorderThickness = new Thickness(1);
-            //List<Selection> canSelections = GetSelectionsFromCanvas(selection.SelectCan);
-            //RemoveSelectionListFromCanvas(canvas, canSelections);
-
-
             var renderTargetBitmap = new RenderTargetBitmap(
                 (int)selection.Width,
                 (int)selection.Height,
@@ -3020,7 +2998,6 @@ namespace PaintWPF
             }
             renderTargetBitmap.Render(drawingVisual);
 
-            //InitSelectionsInCanvas(_selection.SelectCan, canSelections);
             return renderTargetBitmap;
         }
         private List<Selection> GetSelectionsFromCanvas(Canvas canvas)
@@ -3057,11 +3034,11 @@ namespace PaintWPF
             {
                 _selection.ChangeSizeForSelection(e);
             }
-            else if (!(_figureSizing is null) && _ifChangingFigureSize &&
+            else if (!(_selection is null) && _ifChangingFigureSize &&
                 e.LeftButton == MouseButtonState.Pressed)
             {
-                _figureSizing._isDraggingSelection = true;
-                _figureSizing.ChangeSizeForSelection(e);
+                _selection._isDraggingSelection = true;
+                _selection.ChangeSizeForSelection(e);
             }
             else if (!(_lineSizeing is null) &&
                 e.LeftButton == MouseButtonState.Pressed)
@@ -3090,11 +3067,11 @@ namespace PaintWPF
                 _changedSizeText.IfSelectionIsClicked = false;
                 _changedSizeText._selectionSizeToChangeSize = SelectionSide.Nothing;
             }
-            else if (!(_figureSizing is null))
+            else if (!(_selection is null))
             {
-                _figureSizing._isDraggingSelection = false;
-                _figureSizing.IfSelectionIsClicked = false;
-                _figureSizing._selectionSizeToChangeSize = SelectionSide.Nothing;
+                _selection._isDraggingSelection = false;
+                _selection.IfSelectionIsClicked = false;
+                _selection._selectionSizeToChangeSize = SelectionSide.Nothing;
             }
             else if (!(_lineSizeing is null))
             {
@@ -3111,7 +3088,7 @@ namespace PaintWPF
                 FreeSquareSelection();
                 return;
             }
-            if (!(_figureSizing is null) && !_figureSizing.IfSelectionIsClicked)
+            if (!(_selection is null) && !_selection.IfSelectionIsClicked)
             {
                 _selectionLine = null;
                 _lineSizeing = null;
@@ -3135,12 +3112,49 @@ namespace PaintWPF
         }
         private void FreeSquareSelection()
         {
+            if (_selection is null) return;
+
+  /*          Image asd = ConvertCanvasInImage(_selection.SelectCan);
+
+            DrawingCanvas.Children.Add(asd);
+
+            Image res = ConvertCanvasInImage(DrawingCanvas);
+
+            DrawingCanvas.Background = new ImageBrush()
+            {
+                ImageSource = res.Source
+            };
+            return;*/
+
+
             SetSelectedItemInDrawingCanvas();
-            _selection = null;
 
             RemoveSelection();
 
-            UseAuxiliaryCanvasToCollectChildrenInDrawingCanvas();
+            _selection = null;
+
+            Image img = ConvertCanvasInImage(DrawingCanvas);
+
+            DrawingCanvas.Background = new ImageBrush()
+            {
+                ImageSource = img.Source
+            };
+
+            /*      Image asd = ConvertBackgroundToImage(DrawingCanvas);
+
+                  DrawingCanvas.Background = new ImageBrush()
+                  {
+                      ImageSource = asd.Source
+                  };*/
+            DrawingCanvas.Children.Clear();
+
+            img = ConvertCanvasInImage(DrawingCanvas);
+
+            DrawingCanvas.Background = new ImageBrush()
+            {
+                ImageSource = img.Source
+            };
+
         }
         private void CheckForTextSizeChanging()
         {
@@ -3156,10 +3170,12 @@ namespace PaintWPF
         }
         private void ClearFigureSizing()
         {
-            if (!(_figureSizing is null))
+            if (!(_selection is null))
             {
+                //FreeSquareSelection();
+
                 InitSizedFigureIntoCanvas();
-                _figureSizing = null;
+                _selection = null;
                 _type = ActionType.Figuring;
                 _figToPaint = null;
                 RemoveSelection();
@@ -3221,6 +3237,8 @@ namespace PaintWPF
         }
         private Image ConvertCanvasInImage(Canvas canvas)
         {
+            //((Selection)_selection).RemoveSizingSquares();
+
             if (canvas.Width <= 1 || canvas.Height <= 1) return new Image();
             RenderTargetBitmap renderBitmap = ConvertCanvasToBitmap(canvas);
 
@@ -3231,6 +3249,7 @@ namespace PaintWPF
                 Height = canvas.Height,
 
             };
+            //((Selection)_selection).AddSizingGrid();
             return image;
         }
         private Canvas CreateCanvasWithLine(Line line)
@@ -3272,15 +3291,15 @@ namespace PaintWPF
         }
         private void InitSizedFigureIntoCanvas()
         {
-            Image image = _figureSizing.GetShapeImageObject();
+            Image image = _selection.GetShapeImageObject();
 
-            Point imgLoc = _figureSizing.GetImageLocation();
+            Point imgLoc = _selection.GetImageLocation();
             if (imgLoc.X == -1 && imgLoc.Y == -1) return;
-            _figureSizing.RemoveImagesFromCanvas();
+            _selection.RemoveImagesFromCanvas();
 
             DrawingCanvas.Children.Add(image);
-            Canvas.SetLeft(image, Canvas.GetLeft(_figureSizing) + imgLoc.X);
-            Canvas.SetTop(image, Canvas.GetTop(_figureSizing) + imgLoc.Y);
+            Canvas.SetLeft(image, Canvas.GetLeft(_selection) + imgLoc.X);
+            Canvas.SetTop(image, Canvas.GetTop(_selection) + imgLoc.Y);
         }
         private void SetSelectedItemInDrawingCanvas()
         {
@@ -3292,15 +3311,20 @@ namespace PaintWPF
             {
                 ImageSource imageSource = imageBrush.ImageSource;
 
+                Image check =  ConvertCanvasInImage(_selection.SelectCan);
                 Image image = new Image
                 {
-                    Source = imageSource,
-                    Width = _selection.SelectCan.ActualWidth,
-                    Height = _selection.SelectCan.ActualHeight
+                    Source = check.Source,
+                    //Width = _selection.SelectCan.ActualWidth,
+                   // Height = _selection.SelectCan.ActualHeight
                 };
 
                 Canvas.SetLeft(image, Canvas.GetLeft(_selection));
                 Canvas.SetTop(image, Canvas.GetTop(_selection));
+
+                double x = Canvas.GetLeft(image);
+                double y = Canvas.GetTop(image);
+
                 DrawingCanvas.Children.Add(image);
             }
         }
@@ -3662,20 +3686,41 @@ namespace PaintWPF
         }
         private void ChooseAllSelection_MouseLeftButtonDown(object sender, EventArgs e)
         {
+            RemoveRightClickMenus();
             if (!(_selection is null))
             {
-                _selectionType = SelectionType.Rectangle;
                 FreeSquareSelection();
+                ReinitSelectionInWholeDrawingCanvas();
+
+                if (!(_selection.SelectCan.Background is ImageBrush))
+                {
+                    Image canBG = ConvertBackgroundToImage(DrawingCanvas);
+
+                    _selection.SelectCan.Background = new ImageBrush()
+                    {
+                        ImageSource = canBG.Source
+                    };
+
+                    /*RenderTargetBitmap copy = GetRenderedCopy(_selection, DrawingCanvas, _firstSelectionStart, _firstSelectionEnd);
+                    InsertBitmapToCanvas(copy, _selection);*/
+                }
+
+                DrawingCanvas.Background = new SolidColorBrush(Colors.White);
+                DrawingCanvas.Children.Add(_selection);
+                return;
             }
+
             _selectionType = SelectionType.All;
 
             SelectAllDrawingSelection();
         }
         private void SelectAllDrawingSelection()
         {
-            RemoveRightClickMenus();
+            //RemoveRightClickMenus();
 
             ReinitSelectionInWholeDrawingCanvas();
+
+
             //init every item in _slection
             //Delter them from drawing canvas
             InitSelectedBgInRectCanvas(_selectionRect, _selection, DrawingCanvas);
@@ -3704,6 +3749,7 @@ namespace PaintWPF
         }
         private void SelectionMenu_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            if (!(_selection is null)) FreeSquareSelection();
             EndWithPolygonFigures();
             ClearFigureSizingInClicks();
         }
@@ -3847,6 +3893,8 @@ namespace PaintWPF
         }
         private void DeleteSelectionContainment_Click(object sender, EventArgs e)
         {
+            RemoveRightClickMenus();
+            _selection = null;
             _selection = null;
             RemoveSelection();
         }
@@ -3882,7 +3930,7 @@ namespace PaintWPF
             if (copy is null) return;
 
             //Delete squares in temp selection
-            copy.RemoveSizingSquares();
+            copy.RemoveSizingGrid();
 
             //Init new Selection(all drawing canvas)
             InintNewInvertedSelection();
@@ -4134,8 +4182,20 @@ namespace PaintWPF
         LeftClickSelectionMenu _clickMenu;
         private void DrawingCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.LeftButton == MouseButtonState.Pressed ||
+                (_type != ActionType.Selection &&
+                _type != ActionType.ChangingFigureSize &&
+               _selectionType != SelectionType.All))
+            {
+                Field_MouseDown(sender, e);
+                return;
+            }
+            if (_type == ActionType.ChangingFigureSize)
+            {
+                //FigureSizingSelectionCorreclation();
+                //return;
+            }
 
-            if (e.LeftButton == MouseButtonState.Pressed) return;
             if (!(_clickMenu is null)) _clickMenu.RemoveSubMenu();
 
             _clickMenu = new LeftClickSelectionMenu(DrawingCanvas);
@@ -4163,6 +4223,29 @@ namespace PaintWPF
 
             RemoveClickMenuFromDrawingCanvas();
             DrawingCanvas.Children.Add(_clickMenu);
+        }
+        private void FigureSizingSelectionCorreclation()
+        {
+            Image img = ConvertCanvasInImage(_selection.SelectCan);
+
+            _selection = new Selection()
+            {
+                Height = _selection.SelectCan.ActualHeight,
+                Width = _selection.SelectCan.ActualWidth,
+            };
+            _selection.SelectCan.Background = new ImageBrush()
+            {
+                ImageSource = img.Source
+            };
+
+            Canvas.SetLeft(_selection, Canvas.GetLeft(_selection));
+            Canvas.SetTop(_selection, Canvas.GetTop(_selection));
+
+            DrawingCanvas.Children.Remove(_selection);
+            DrawingCanvas.Children.Add(_selection);
+
+            _type = ActionType.Selection;
+            _selection = null;
         }
         private void InitEventsForRightClickMenu()
         {
@@ -4250,9 +4333,15 @@ namespace PaintWPF
         }
         private (Image, Canvas) GetImageForSpining()
         {
-            return _selection is null ? 
-                (ConvertBackgroundToImage(DrawingCanvas), DrawingCanvas) : 
-                (ConvertBackgroundToImage(_selection.SelectCan), _selection.SelectCan);
+            if (_selection is null)
+            {
+                return (ConvertBackgroundToImage(DrawingCanvas), DrawingCanvas);
+        
+            }
+            _selection.RemoveSizingGrid();
+            (Image img, Canvas can) res = (ConvertBackgroundToImage(_selection.SelectCan), _selection.SelectCan);
+            _selection.AddSizingGrid();
+            return res;
         }
         public void FlipImage(Image originalImage, bool flipHorizontally, Canvas can)
         {
@@ -4260,7 +4349,7 @@ namespace PaintWPF
             ScaleTransform flipTransform = new ScaleTransform();
             if (flipHorizontally)
             {
-                flipTransform.ScaleX = -1; 
+                flipTransform.ScaleX = -1;
             }
             else
             {
@@ -4350,10 +4439,10 @@ namespace PaintWPF
                 if (DrawingCanvas.Children[i] is LeftClickSelectionMenu ||
                     DrawingCanvas.Children[i] is RightClickSubMenu)
                 {
-                    return false;
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
         private void RemoveSubMenu()
         {
@@ -4385,11 +4474,9 @@ namespace PaintWPF
         {
             RemoveRightClickMenus();
             if (_buffer is null) return;
-
             if (!(_selection is null)) FreeSquareSelection();
 
             _selection = _buffer;
-//            _selectionType = SelectionType.Rectangle;
             Canvas.SetLeft(_selection, 0);
             Canvas.SetTop(_selection, 0);
 
