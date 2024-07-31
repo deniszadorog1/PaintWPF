@@ -7,23 +7,58 @@
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\mainwindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:mainwindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bbcaeda42a4277be050ae54ec6d80f38ea9040eb82fd3444cb829003b3752032\\Canvas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\85b5eee06fd16f9c2c44edf93badaab6c027b8ebfa20c9044da344eb9c9a2201\\UIElementCollection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\selection.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\selection.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\selection.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\selection.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\selection.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\selection.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\de77ce3deb6b4ce2fccf1325cdd04d12bf8c9c50a53c508e67558e9c507e333b\\RenderTargetBitmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bee32a35391199f727aef92e1e2cd839d85b61da00b3cd23c8658d86913d71a9\\FrugalStructList.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\leftclickselectionmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\leftclickselectionmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\submenud\\submenuelement.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\submenud\\submenuelement.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\submenud\\rightclicksubmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\submenud\\rightclicksubmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:1:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:1:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\palletemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\palletemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\submenud\\rightclicksubmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\submenud\\rightclicksubmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\005bfd91a58dbd9694afdffe647972d9d9d17cfe6a8abe8516bb969993a64148\\Double.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -32,28 +67,8 @@
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\cb9a5e10a7b2eaa7b4c1c54e54076158a4d8c7d551dadc7cef9b4e7619ec09a8\\Baml2006Reader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\selection.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\selection.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\imagesettings.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:imagesettings.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\submenud\\submenuelement.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\submenud\\submenuelement.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\submenud\\rightclicksubmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\submenud\\rightclicksubmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\submenud\\rightclicksubmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\submenud\\rightclicksubmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\customcontrols\\leftclickselectionmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:customcontrols\\leftclickselectionmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu\\RightClickSubMenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -119,20 +134,7 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:obj\\Debug\\CustomControls\\Selection.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bee32a35391199f727aef92e1e2cd839d85b61da00b3cd23c8658d86913d71a9\\FrugalStructList.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:1:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:1:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:2:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|b:\\github\\paintwpf\\models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:2:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|B:\\GitHub\\PaintWPF\\models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:2:0:{AAF3E025-EA4E-43BE-9883-DA4D9DBCE17D}|PaintWPF.csproj|solutionrelative:models\\enums\\brushtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -155,7 +157,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
@@ -165,10 +167,119 @@
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
               "ToolTip": "B:\\GitHub\\PaintWPF\\MainWindow.xaml.cs",
               "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AQIAAFQFAAAAAAAAAAAowGYFAAAoAAAA",
+              "ViewState": "AQIAADgMAAAAAAAAAAAiwEoMAAAOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-17T16:25:19.005Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "RightClickSubMenu.xaml",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\RightClickSubMenu.xaml",
+              "RelativeDocumentMoniker": "CustomControls\\SubMenud\\RightClickSubMenu.xaml",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\RightClickSubMenu.xaml",
+              "RelativeToolTip": "CustomControls\\SubMenud\\RightClickSubMenu.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-07-24T23:41:06.483Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "BrushType.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\BrushType.cs",
+              "RelativeDocumentMoniker": "Models\\Enums\\BrushType.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\Enums\\BrushType.cs",
+              "RelativeToolTip": "Models\\Enums\\BrushType.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-24T11:20:15.416Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "FrugalStructList.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bee32a35391199f727aef92e1e2cd839d85b61da00b3cd23c8658d86913d71a9\\FrugalStructList.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bee32a35391199f727aef92e1e2cd839d85b61da00b3cd23c8658d86913d71a9\\FrugalStructList.cs",
+              "ViewState": "AQIAACsAAAAAAAAAAAAowD0AAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-16T22:40:36.808Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "VisualCollection.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs",
+              "ViewState": "AQIAAL8AAAAAAAAAAAAewNAAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-28T10:24:57.108Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "RenderTargetBitmap.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\de77ce3deb6b4ce2fccf1325cdd04d12bf8c9c50a53c508e67558e9c507e333b\\RenderTargetBitmap.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\de77ce3deb6b4ce2fccf1325cdd04d12bf8c9c50a53c508e67558e9c507e333b\\RenderTargetBitmap.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
+              "ViewState": "AQIAABwAAAAAAAAAAAAAwCsAAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-29T08:34:17.74Z",
+              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Selection.xaml.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
+              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
+              "RelativeToolTip": "CustomControls\\Selection.xaml.cs",
+              "ViewState": "AQIAAI8BAAAAAAAAAAAAAKUBAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-01T22:27:52.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DependencyObject.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs",
+              "ViewState": "AQIAAAsDAAAAAAAAAAAewBwDAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-23T14:49:55.768Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Selection.xaml",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
+              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
+              "RelativeToolTip": "CustomControls\\Selection.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-07-22T08:26:48.871Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Canvas.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bbcaeda42a4277be050ae54ec6d80f38ea9040eb82fd3444cb829003b3752032\\Canvas.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bbcaeda42a4277be050ae54ec6d80f38ea9040eb82fd3444cb829003b3752032\\Canvas.cs",
+              "ViewState": "AQIAAE0AAAAAAAAAAAAewGIAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-27T20:22:05.741Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UIElementCollection.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\85b5eee06fd16f9c2c44edf93badaab6c027b8ebfa20c9044da344eb9c9a2201\\UIElementCollection.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\85b5eee06fd16f9c2c44edf93badaab6c027b8ebfa20c9044da344eb9c9a2201\\UIElementCollection.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
+              "ViewState": "AQIAAP0BAAAAAAAAAAAewA4CAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-31T13:34:24.042Z",
+              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
             },
             {
               "$type": "Document",
@@ -179,56 +290,7 @@
               "ToolTip": "B:\\GitHub\\PaintWPF\\MainWindow.xaml",
               "RelativeToolTip": "MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-06-17T15:31:58.259Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "SubMenuElement.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\SubMenuElement.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\SubMenud\\SubMenuElement.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\SubMenuElement.xaml",
-              "RelativeToolTip": "CustomControls\\SubMenud\\SubMenuElement.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-24T23:41:05.325Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "packages.config",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\packages.config",
-              "RelativeDocumentMoniker": "packages.config",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\packages.config",
-              "RelativeToolTip": "packages.config",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2024-07-25T13:55:48.202Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "ImageSettings.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\ImageSettings.xaml",
-              "RelativeDocumentMoniker": "ImageSettings.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\ImageSettings.xaml",
-              "RelativeToolTip": "ImageSettings.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-24T11:27:23.456Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Double.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\005bfd91a58dbd9694afdffe647972d9d9d17cfe6a8abe8516bb969993a64148\\Double.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\005bfd91a58dbd9694afdffe647972d9d9d17cfe6a8abe8516bb969993a64148\\Double.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAAFEAAAAAAAAAAAAAwGAAAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-26T17:34:13.813Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
+              "WhenOpened": "2024-06-17T15:31:58.259Z"
             },
             {
               "$type": "Document",
@@ -240,48 +302,76 @@
               "RelativeToolTip": "CustomControls\\SubMenud\\RightClickSubMenu.xaml.cs",
               "ViewState": "AQIAABgAAAAAAAAAAAAcwBoAAAAPAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-25T09:04:22.168Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-25T09:04:22.168Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Selection.xaml.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
-              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml.cs",
-              "RelativeToolTip": "CustomControls\\Selection.xaml.cs",
-              "ViewState": "AQIAAKABAAAAAAAAAAAowLABAAAOAAAA",
+              "DocumentIndex": 11,
+              "Title": "SubMenuElement.xaml",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\SubMenuElement.xaml",
+              "RelativeDocumentMoniker": "CustomControls\\SubMenud\\SubMenuElement.xaml",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\SubMenuElement.xaml",
+              "RelativeToolTip": "CustomControls\\SubMenud\\SubMenuElement.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-07-24T23:41:05.325Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "PalleteModel.cs",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\PalleteModel.cs",
+              "RelativeDocumentMoniker": "Models\\PalleteModel.cs",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\PalleteModel.cs",
+              "RelativeToolTip": "Models\\PalleteModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-01T22:27:52.001Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-27T20:10:20.592Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
+              "Title": "LeftClickSelectionMenu.xaml",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\LeftClickSelectionMenu.xaml",
+              "RelativeDocumentMoniker": "CustomControls\\LeftClickSelectionMenu.xaml",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\LeftClickSelectionMenu.xaml",
+              "RelativeToolTip": "CustomControls\\LeftClickSelectionMenu.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-07-24T11:20:10.546Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
               "Title": "Baml2006Reader.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\cb9a5e10a7b2eaa7b4c1c54e54076158a4d8c7d551dadc7cef9b4e7619ec09a8\\Baml2006Reader.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\cb9a5e10a7b2eaa7b4c1c54e54076158a4d8c7d551dadc7cef9b4e7619ec09a8\\Baml2006Reader.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\cb9a5e10a7b2eaa7b4c1c54e54076158a4d8c7d551dadc7cef9b4e7619ec09a8\\Baml2006Reader.cs",
               "ViewState": "AQIAAC4FAAAAAAAAAAAswEQFAAACAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-26T17:07:27.835Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
+              "WhenOpened": "2024-07-26T17:07:27.835Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Selection.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\Selection.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\Selection.xaml",
-              "RelativeToolTip": "CustomControls\\Selection.xaml",
+              "DocumentIndex": 16,
+              "Title": "Double.cs",
+              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\005bfd91a58dbd9694afdffe647972d9d9d17cfe6a8abe8516bb969993a64148\\Double.cs",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\005bfd91a58dbd9694afdffe647972d9d9d17cfe6a8abe8516bb969993a64148\\Double.cs",
+              "ViewState": "AQIAAFEAAAAAAAAAAAAAwGAAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-26T17:34:13.813Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ImageSettings.xaml",
+              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\ImageSettings.xaml",
+              "RelativeDocumentMoniker": "ImageSettings.xaml",
+              "ToolTip": "B:\\GitHub\\PaintWPF\\ImageSettings.xaml",
+              "RelativeToolTip": "ImageSettings.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-22T08:26:48.871Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-24T11:27:23.456Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 20,
               "Title": "Pallete.xaml.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Pallete.xaml.cs",
               "RelativeDocumentMoniker": "Pallete.xaml.cs",
@@ -294,31 +384,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "RightClickSubMenu.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\RightClickSubMenu.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\SubMenud\\RightClickSubMenu.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenud\\RightClickSubMenu.xaml",
-              "RelativeToolTip": "CustomControls\\SubMenud\\RightClickSubMenu.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-24T23:41:06.483Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "LeftClickSelectionMenu.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\LeftClickSelectionMenu.xaml",
-              "RelativeDocumentMoniker": "CustomControls\\LeftClickSelectionMenu.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\LeftClickSelectionMenu.xaml",
-              "RelativeToolTip": "CustomControls\\LeftClickSelectionMenu.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-24T11:20:10.546Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 19,
               "Title": "RightClickSubMenu.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu\\RightClickSubMenu.xaml",
               "RelativeDocumentMoniker": "CustomControls\\SubMenu\\RightClickSubMenu.xaml",
@@ -329,18 +395,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "UIElementCollection.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\85b5eee06fd16f9c2c44edf93badaab6c027b8ebfa20c9044da344eb9c9a2201\\UIElementCollection.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\85b5eee06fd16f9c2c44edf93badaab6c027b8ebfa20c9044da344eb9c9a2201\\UIElementCollection.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAAMAAAAAAAAAAAAAAwM8AAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-26T12:54:09.455Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 23,
               "Title": "ColorParams.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\ColorParams.cs",
               "RelativeDocumentMoniker": "Models\\ColorParams.cs",
@@ -352,19 +407,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 22,
               "Title": "Pallete.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Pallete.xaml",
               "RelativeDocumentMoniker": "Pallete.xaml",
               "ToolTip": "B:\\GitHub\\PaintWPF\\Pallete.xaml",
               "RelativeToolTip": "Pallete.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-25T13:36:13.09Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-25T13:36:13.09Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 25,
               "Title": "SubMenuItems.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\SubMenuItems.cs",
               "RelativeDocumentMoniker": "Models\\Enums\\SubMenuItems.cs",
@@ -376,31 +430,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 21,
               "Title": "LineSizing.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\LineSizing.xaml",
               "RelativeDocumentMoniker": "CustomControls\\LineSizing.xaml",
               "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\LineSizing.xaml",
               "RelativeToolTip": "CustomControls\\LineSizing.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-24T11:19:46.202Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-24T11:19:46.202Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 24,
               "Title": "TextEditor.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\TextEditor.xaml",
               "RelativeDocumentMoniker": "CustomControls\\TextEditor.xaml",
               "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\TextEditor.xaml",
               "RelativeToolTip": "CustomControls\\TextEditor.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-24T11:19:40.676Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-24T11:19:40.676Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 28,
               "Title": "SubMenuElement.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenuItem\\SubMenuElement.xaml",
               "RelativeDocumentMoniker": "CustomControls\\SubMenuItem\\SubMenuElement.xaml",
@@ -411,7 +463,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "RightClickSubMenu.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenuItem\\RightClickSubMenu.xaml",
               "RelativeDocumentMoniker": "CustomControls\\SubMenuItem\\RightClickSubMenu.xaml",
@@ -422,31 +474,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 26,
               "Title": "SubMenu.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu.xaml",
               "RelativeDocumentMoniker": "CustomControls\\SubMenu.xaml",
               "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu.xaml",
               "RelativeToolTip": "CustomControls\\SubMenu.xaml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2024-07-24T20:29:47.403Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "RightClickSubMenu.xaml.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenuItem\\RightClickSubMenu.xaml.cs",
               "RelativeDocumentMoniker": "CustomControls\\SubMenuItem\\RightClickSubMenu.xaml.cs",
               "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenuItem\\RightClickSubMenu.xaml.cs",
               "RelativeToolTip": "CustomControls\\SubMenuItem\\RightClickSubMenu.xaml.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-24T23:39:00.225Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 29,
               "Title": "RightClickSubMenu.xaml.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu\\RightClickSubMenu.xaml.cs",
               "RelativeDocumentMoniker": "CustomControls\\SubMenu\\RightClickSubMenu.xaml.cs",
@@ -457,7 +507,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "SubMenuElement.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu\\SubMenuElement.xaml",
               "RelativeDocumentMoniker": "CustomControls\\SubMenu\\SubMenuElement.xaml",
@@ -468,19 +518,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 27,
               "Title": "SubMenu.xaml.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu.xaml.cs",
               "RelativeDocumentMoniker": "CustomControls\\SubMenu.xaml.cs",
               "ToolTip": "B:\\GitHub\\PaintWPF\\CustomControls\\SubMenu.xaml.cs",
               "RelativeToolTip": "CustomControls\\SubMenu.xaml.cs",
-              "ViewState": "AQIAAAIAAAAAAAAAAAAMwBQAAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-24T23:38:12.195Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 35,
               "Title": "BrushType.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\BrushType.cs",
               "RelativeDocumentMoniker": "Models\\Enums\\BrushType.cs",
@@ -492,7 +541,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 32,
               "Title": "LineSizingRectType.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\LineSizingRectType.cs",
               "RelativeDocumentMoniker": "Models\\Enums\\LineSizingRectType.cs",
@@ -504,7 +553,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 31,
               "Title": "MainPaint.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\MainPaint.cs",
               "RelativeDocumentMoniker": "Models\\MainPaint.cs",
@@ -516,64 +565,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "BrushType.cs",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\Models\\Enums\\BrushType.cs",
-              "RelativeDocumentMoniker": "Models\\Enums\\BrushType.cs",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\Models\\Enums\\BrushType.cs",
-              "RelativeToolTip": "Models\\Enums\\BrushType.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-24T11:20:15.416Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 30,
               "Title": "App.xaml",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\App.xaml",
               "RelativeDocumentMoniker": "App.xaml",
               "ToolTip": "B:\\GitHub\\PaintWPF\\App.xaml",
               "RelativeToolTip": "App.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-24T11:36:28.183Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-24T11:36:28.183Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 33,
               "Title": "RoutedEventHandlerInfo.cs",
               "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\b1bc3269c22cf0ee664b1098ed6a7af65b347c37362767af44f5650b6b77c7ce\\RoutedEventHandlerInfo.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\b1bc3269c22cf0ee664b1098ed6a7af65b347c37362767af44f5650b6b77c7ce\\RoutedEventHandlerInfo.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
+              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\b1bc3269c22cf0ee664b1098ed6a7af65b347c37362767af44f5650b6b77c7ce\\RoutedEventHandlerInfo.cs",
               "ViewState": "AQIAABIAAAAAAAAAAAAAwCEAAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-23T14:56:38.624Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
+              "WhenOpened": "2024-07-23T14:56:38.624Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "DependencyObject.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\6e8b2a0b37ceb13acabedaf2aa459a374b50235b424ae7a4c46047edc4111e45\\DependencyObject.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAAA0DAAAAAAAAAAAAwBwDAAAGAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-23T14:49:55.768Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "VisualCollection.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\ce426bfce2f223696a7598a351b92a122a817906ee729db079f9f7f051b5cda0\\VisualCollection.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAAGcBAAAAAAAAAAAAwHYBAAADAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-23T09:35:56.002Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 34,
               "Title": "Selection.g.i.cs",
               "DocumentMoniker": "B:\\GitHub\\PaintWPF\\obj\\Debug\\CustomControls\\Selection.g.i.cs",
               "RelativeDocumentMoniker": "obj\\Debug\\CustomControls\\Selection.g.i.cs",
@@ -582,51 +595,6 @@
               "ViewState": "AQIAAJwAAAAAAAAAAAAlwKwAAABgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-23T14:50:33.569Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "FrugalStructList.cs",
-              "DocumentMoniker": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bee32a35391199f727aef92e1e2cd839d85b61da00b3cd23c8658d86913d71a9\\FrugalStructList.cs",
-              "ToolTip": "C:\\Users\\denis\\AppData\\Local\\Temp\\.vsdbgsrc\\bee32a35391199f727aef92e1e2cd839d85b61da00b3cd23c8658d86913d71a9\\FrugalStructList.cs [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]",
-              "ViewState": "AQIAAC4AAAAAAAAAAAAAwD0AAAADAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-16T22:40:36.808Z",
-              "EditorCaption": " [\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u0435\u043D\u0438\u0435]"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "d9b49448-2538-4e80-98bc-31ceb796d51e",
-        "Display": 0,
-        "X": 1,
-        "Y": 76,
-        "Width": 800,
-        "Height": 600,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "B:\\GitHub\\PaintWPF\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "MainWindow.xaml",
-              "ToolTip": "B:\\GitHub\\PaintWPF\\MainWindow.xaml",
-              "RelativeToolTip": "MainWindow.xaml",
-              "ViewState": "AQIAAEsCAAAAAAAAAAAwwGQCAAAhAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-26T22:47:23.81Z",
-              "EditorCaption": ""
             }
           ]
         }

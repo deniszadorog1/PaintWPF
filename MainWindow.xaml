@@ -609,7 +609,8 @@
                 <Grid Grid.Row="1" 
                   MouseLeave="MainPabelBoxes_MouseLeave"
                     MouseEnter="MainPanelBoxes_MouseEnter" >
-                    <Menu Name="SelectionMenu" Background="Transparent" HorizontalAlignment="Center">
+                    <Menu Name="SelectionMenu" Background="Transparent"
+                          HorizontalAlignment="Center">
                         <MenuItem Width="40" Height="25"
                         Style="{StaticResource DropDownMenu}"
                         MouseLeftButtonDown="SelectionMenu_MouseLeftButtonDown" >
@@ -657,7 +658,7 @@
                           Height="30"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
-                          Click="InvalidateSelection_Click">
+                          Click="InvertSelection_Click">
                                 <MenuItem.Icon>
                                     <Image Source="Images/Selection/RemoveSelection.png"/>
                                 </MenuItem.Icon>

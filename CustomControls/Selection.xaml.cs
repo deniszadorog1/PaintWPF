@@ -116,7 +116,7 @@ namespace PaintWPF.CustomControls
         }
         private void SelectionBorder_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDraggingSelection)
+            if (_isDraggingSelection && SelectCan.Children.Contains(SizingGrid))
             {
                 if (ChangeSizeForSelection(e)) return;
                 Point currentPoint = e.GetPosition(this.Parent as IInputElement);

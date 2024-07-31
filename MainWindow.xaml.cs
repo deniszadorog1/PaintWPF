@@ -40,6 +40,8 @@ using PaintWPF.CustomControls.SubMenu;
 using Xceed.Wpf.Toolkit.PropertyGrid.Converters;
 using Xceed.Wpf.AvalonDock.Layout;
 using System.CodeDom;
+using System.ComponentModel.Design;
+using System.Threading;
 
 
 namespace PaintWPF
@@ -535,6 +537,8 @@ namespace PaintWPF
             }
             previousPoint = e.GetPosition(DrawingCanvas);
             InitDeed();
+
+            Console.WriteLine(_type);
 
             if (_ifTexting)
             {
@@ -1645,7 +1649,8 @@ namespace PaintWPF
         {
             _ifTransparencyIsActivated = false;
             SetTrtansparentSelectionImage();
-            if (_selectionType == SelectionType.Rectangle)
+            if (_selectionType == SelectionType.Rectangle ||
+                _selectionType == SelectionType.Invert)
             {
                 MakeRectSelection(_selectionRect, ref _selection, DrawingCanvas);
             }
@@ -2026,10 +2031,13 @@ namespace PaintWPF
         private void MakeRectSelection(Rectangle rect, ref Selection selection, Canvas selParentCan)
         {
             CreateSelection(rect, ref selection, selParentCan);
+
             IfSelectionIsMaken = true;
 
             if (!(_selection is null) && selection == _selection &&
                 IfSelectionSizeIsZero()) return;
+
+            //return;
 
             InitSelectedBgInRectCanvas(rect, selection, selParentCan);
         }
@@ -2538,6 +2546,19 @@ namespace PaintWPF
 
         private void InitSelectedBgInRectCanvas(Rectangle rect, Selection selection, Canvas selParentCanvas)
         {
+            if (_selectionType == SelectionType.Invert)
+            {
+                for (int i = 0; i < selParentCanvas.Children.Count; i++)
+                {
+                    string type = selParentCanvas.Children.GetType().ToString();
+                }
+                if (selParentCanvas == DrawingCanvas)
+                {
+                    DrawingCanvas.Children.Remove(selection);
+                    Console.WriteLine(DrawingCanvas.Name);
+                }
+            }
+
             if (!(selection.SelectCan.Background is ImageBrush))
             {
                 RenderTargetBitmap copy = GetRenderedCopy(selection, selParentCanvas, _firstSelectionStart, _firstSelectionEnd);
@@ -2553,6 +2574,9 @@ namespace PaintWPF
                 //selParentCanvas.Children.Clear();
                 selParentCanvas.Background = new SolidColorBrush(Colors.White);
                 selParentCanvas.Children.Add(selection);
+
+                return;
+
             }
 
             //Get Bg Image
@@ -2561,12 +2585,14 @@ namespace PaintWPF
             //Init got image as bg (delete from children)
 
             DeleteAndTrimElements(start, end, selection, selParentCanvas);
+
         }
         private void AddBgImageInChildren(Canvas canvas)
         {
-            List<UIElement> canvasElements = ReAssginChildrenInAuxiliaryCanvas(canvas);
+            //List<UIElement> canvasElements = ReAssginChildrenInAuxiliaryCanvas(canvas);
             Canvas can = GetAuxiliaryCanvas(canvas);
-            //can.Children.Clear();
+
+            //if (_selectionType == SelectionType.Invert) can.Children.Clear();
 
             Image img = ConvertCanvasInImage(can);
 
@@ -2591,7 +2617,7 @@ namespace PaintWPF
                 96,
                 PixelFormats.Pbgra32);
 
-            
+
             renderTarget.Render(canvas);
 
             BitmapImage bitmapImage = new BitmapImage();
@@ -2622,7 +2648,6 @@ namespace PaintWPF
         }
         private void DeleteAndTrimElements(Point point1, Point point2, Selection selection, Canvas parentCanvas)
         {
-
             double minX = Math.Min(point1.X, point2.X);
             double minY = Math.Min(point1.Y, point2.Y);
             double maxX = Math.Max(point1.X, point2.X);
@@ -3086,6 +3111,10 @@ namespace PaintWPF
             if (!(_selection is null) && !_selection.IfSelectionIsClicked)
             {
                 FreeSquareSelection();
+                Console.WriteLine(_type);
+                if (_type == ActionType.ChangingFigureSize)
+                    _type = ActionType.Figuring;
+
                 return;
             }
             if (!(_selection is null) && !_selection.IfSelectionIsClicked)
@@ -3114,21 +3143,13 @@ namespace PaintWPF
         {
             if (_selection is null) return;
 
-  /*          Image asd = ConvertCanvasInImage(_selection.SelectCan);
-
-            DrawingCanvas.Children.Add(asd);
-
-            Image res = ConvertCanvasInImage(DrawingCanvas);
-
-            DrawingCanvas.Background = new ImageBrush()
-            {
-                ImageSource = res.Source
-            };
-            return;*/
-
+            if (_selectionType == SelectionType.Invert)
+            { 
+                _selectionType = SelectionType.Rectangle;
+                CopmbineAllInvertation();
+            }
 
             SetSelectedItemInDrawingCanvas();
-
             RemoveSelection();
 
             _selection = null;
@@ -3139,13 +3160,6 @@ namespace PaintWPF
             {
                 ImageSource = img.Source
             };
-
-            /*      Image asd = ConvertBackgroundToImage(DrawingCanvas);
-
-                  DrawingCanvas.Background = new ImageBrush()
-                  {
-                      ImageSource = asd.Source
-                  };*/
             DrawingCanvas.Children.Clear();
 
             img = ConvertCanvasInImage(DrawingCanvas);
@@ -3154,7 +3168,74 @@ namespace PaintWPF
             {
                 ImageSource = img.Source
             };
+        }
+        private void CopmbineAllInvertation()
+        {
+            //Get the deepest selection
+            Selection deepestSelection = null;
+            GetTheDeapestSelection(DrawingCanvas, ref deepestSelection);
 
+            PutEverySelectionInDeepInOne(deepestSelection, null);
+
+            _selection = GetHighestSelection();
+        }
+        private void PutEverySelectionInDeepInOne(Selection selection, Selection child)//From the Deepest
+        {
+            if (selection is null) return;
+            
+            //Get location
+            Point selPoint = new Point(Canvas.GetLeft(selection), Canvas.GetTop(selection));
+
+            //Remove child
+            if (!(child is null)) selection.SelectCan.Children.Remove(child);
+
+            //Init tempSel BG       
+            //Get Bg Image
+            Image selBg = ConvertCanvasInImage(selection.SelectCan);
+
+            //Set loc for selBg
+            Canvas.SetLeft(selBg, selPoint.X);
+            Canvas.SetTop(selBg, selPoint.Y);
+
+            selection.Background = new ImageBrush()
+            {
+                ImageSource = selBg.Source
+            };
+            selection.SelectCan.Children.Clear();
+
+            Selection parentSelectio = null;
+            if(selection.Parent != DrawingCanvas)
+            {
+                parentSelectio =
+                    GetSeelctionsSelectionParent((Canvas)selection.Parent);
+                parentSelectio.SelectCan.Children.Add(selBg);
+            }
+
+            PutEverySelectionInDeepInOne(parentSelectio, selection);
+        }
+        private void GetParentSelection(Selection tempSelection, Selection highest)
+        {
+            _selection = tempSelection;
+            if (tempSelection.Parent == DrawingCanvas)
+            {
+                FreeSquareSelection();
+                return;
+            }
+
+            DrawingCanvas.Children.Remove(highest);
+
+            Canvas parentCan = (Canvas)tempSelection.Parent;
+            Border parentBorder = (Border)parentCan.Parent;
+            Selection parentSel = (Selection)parentBorder.Parent;
+
+            parentSel.SelectCan.Children.Remove(_selection);
+            DrawingCanvas.Children.Add(_selection);
+
+            FreeSquareSelection();
+
+            DrawingCanvas.Children.Add(highest);
+
+            GetParentSelection(parentSel, highest);
         }
         private void CheckForTextSizeChanging()
         {
@@ -3311,12 +3392,14 @@ namespace PaintWPF
             {
                 ImageSource imageSource = imageBrush.ImageSource;
 
-                Image check =  ConvertCanvasInImage(_selection.SelectCan);
+                _selection.RemoveSizingGrid();
+                Image check = ConvertCanvasInImage(_selection.SelectCan);
+                _selection.AddSizingGrid();
                 Image image = new Image
                 {
                     Source = check.Source,
                     //Width = _selection.SelectCan.ActualWidth,
-                   // Height = _selection.SelectCan.ActualHeight
+                    // Height = _selection.SelectCan.ActualHeight
                 };
 
                 Canvas.SetLeft(image, Canvas.GetLeft(_selection));
@@ -3711,7 +3794,6 @@ namespace PaintWPF
             }
 
             _selectionType = SelectionType.All;
-
             SelectAllDrawingSelection();
         }
         private void SelectAllDrawingSelection()
@@ -3720,10 +3802,25 @@ namespace PaintWPF
 
             ReinitSelectionInWholeDrawingCanvas();
 
+            Image BG = ConvertCanvasInImage(DrawingCanvas);
+
+            //selParentCanvas.Children.Clear();
+            DrawingCanvas.Background = new SolidColorBrush(Colors.White);
+            DrawingCanvas.Children.Add(_selection);
+
+            _selection.SelectCan.Background = new ImageBrush()
+            {
+                ImageSource = BG.Source
+            };
+
+
 
             //init every item in _slection
             //Delter them from drawing canvas
-            InitSelectedBgInRectCanvas(_selectionRect, _selection, DrawingCanvas);
+            //InitSelectedBgInRectCanvas(_selectionRect, _selection, DrawingCanvas);
+
+            //_selection.Background = new SolidColorBrush(Colors.Yellow);
+            //SelectCan.Children.Clear();
         }
         private void ReinitSelectionInWholeDrawingCanvas()
         {
@@ -3749,9 +3846,13 @@ namespace PaintWPF
         }
         private void SelectionMenu_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-            if (!(_selection is null)) FreeSquareSelection();
+            //if (!(_selection is null)) FreeSquareSelection();
             EndWithPolygonFigures();
-            ClearFigureSizingInClicks();
+
+            if (_type == ActionType.Figuring)
+            {
+                ClearFigureSizingInClicks();
+            }
         }
 
         private void TurnClickedObjInBlue_MouseDown(object sender, MouseEventArgs e)
@@ -3766,7 +3867,7 @@ namespace PaintWPF
                 }
                 else
                 {
-                    _type = ActionType.Selection;
+                    //_type = ActionType.Selection;
                 }
             }
         }
@@ -3920,26 +4021,782 @@ namespace PaintWPF
                 printDialog.PrintVisual(grid, "Печать изображения");
             }
         }
-        private void InvalidateSelection_Click(object sender, EventArgs e)
+        private int _deepCounter = 0;
+        private readonly List<string> _names = new List<string>()
         {
-            Selection copy = _selection;
-            copy.ChangeInvertionStatus();
-            _selection = null;
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "ten"
+        };
 
-            //MakeCopyOfSelection();
-            if (copy is null) return;
+        private void InvertSelection_Click(object sender, EventArgs e)
+        {
+            RemoveRightClickMenus();
+            if (_selection is null) return;
+            _selectionType = SelectionType.Invert;
 
-            //Delete squares in temp selection
-            copy.RemoveSizingGrid();
+            //TESTFreeingInvertSelection();
 
-            //Init new Selection(all drawing canvas)
-            InintNewInvertedSelection();
+            //Selection in selection in selection...
+            Selection highestBeforAllSell = GetHighestSelection();
 
-            //_selection.SelectCan.Children.Add(copy);
+            if (_deepCounter == _names.Count) _deepCounter = 0;
+            string name = _names[_deepCounter];
+            highestBeforAllSell.Name = name;
+            _deepCounter++;
 
-            //i % 2 == 0 ? selection in list is selecting 
-            MakeEverySecondSelecting(DrawingCanvas);
-            return;
+            //CheckSelectionsParams(DrawingCanvas);
+
+            //go FROM the Deapest selection (get deapest selection)
+            Selection deepestSelection = null;
+            GetTheDeapestSelection(DrawingCanvas, ref deepestSelection);
+
+            //Clear all selection (put their BGs in drawingCanvas)
+            FreeAllSelectionsInInvarstionSelection(highestBeforAllSell);
+
+            //return;// FIRST CHECKPOINT 
+
+            //Init bg in every of them (!again! from deapest)
+            InitBGForSelectionFromDeapest(deepestSelection, highestBeforAllSell, 0);
+
+            Console.WriteLine(highestBeforAllSell.Name);
+            Console.WriteLine(deepestSelection.Name);
+
+
+            //return;//SECOND CHECKPOINT
+            //Get All drawingCanvas Children
+            List<UIElement> drawCanvasElems = ReAssginChildrenInAuxiliaryCanvas(DrawingCanvas);
+            //clear selections
+            DrawingCanvas.Children.Clear();
+            //Add all Selection
+
+            Console.WriteLine(DrawingCanvas.Children);
+            Console.WriteLine(highestBeforAllSell.SelectCan.Children);
+
+            _selectionType = SelectionType.All;
+            SelectAllDrawingSelection();
+            _selectionType = SelectionType.Invert;
+
+            //Add all DrawingSelection Children To new all Selection
+            InitElementsInCanvas(_selection.SelectCan, drawCanvasElems);
+
+            //remove selection grid for all children selections()
+            RemoveSelectionGridInDeep(_selection, 0);
+
+            // Add selection int new all Selection
+            //_selection.SelectCan.Children.Add(highestBeforAllSell);
+
+            //DrawingCanvas.Background = new SolidColorBrush(Colors.White);
+            //return; //THIRD CHECKPOINT 
+
+            //CheckAllChildren(DrawingCanvas);
+
+            //Make invertation
+            //From all selection. Free every second selection(set selections bg in DrawingImage)
+
+            MakeInvertSelection(DrawingCanvas);
+
+            //clear highest
+
+            /*           Selection highest = GetHighestSelection();
+                       highest.Background = new SolidColorBrush(Colors.Transparent);
+                       highest.SelectCan.Background = new SolidColorBrush(Colors.Transparent);*/
+
+            //Set highest Sekection in SystemSelection
+            SetHighestSelectionInSysetemSelection();
+
+            //Remove Sizing grids
+            RemoveSelectionGridInDeep(highestBeforAllSell, 0);
+
+            /*            int check = 0;
+                        int asd = CountSelectionsInDeep(DrawingCanvas, ref check);
+                        if (asd > 3)
+                        {
+                            CheckStartDeepSelections(0, asd - 3 , _selection);
+                        }*/
+        }
+        private void UpdateCanvasBG(Canvas can)
+        {
+            Image canBG = ConvertCanvasInImage(can);
+
+            can.Background = new ImageBrush()
+            {
+
+            };
+
+        }
+        private void CheckAllChildren(Canvas canvas)
+        {
+            for (int i = 0; i < canvas.Children.Count; i++)
+            {
+                if (canvas.Children[i].GetType() == typeof(Selection))
+                {
+                    Console.WriteLine(((Selection)canvas.Children[i]).Name);
+                    CheckAllChildren(((Selection)canvas.Children[i]).SelectCan);
+                }
+            }
+        }
+        private void TESTFreeingInvertSelection()
+        {
+            DrawingCanvas.Children.Clear();
+
+            _selection = InitSelection(990, 390, new Point(10, 10), Colors.Orange, "highest", Colors.Green);
+            Selection middle = InitSelection(600, 300, new Point(50, 50), Colors.Red, "middle", Colors.Purple);
+            Selection low = InitSelection(150, 150, new Point(50, 50), Colors.Yellow, "low", Colors.Blue);
+            Selection lowest = InitSelection(100, 100, new Point(40, 40), Colors.LightGreen, "lowest", Colors.DarkGreen);
+
+            _selection.SelectCan.Children.Add(middle);
+            middle.SelectCan.Children.Add(low);
+            low.SelectCan.Children.Add(lowest);
+
+            DrawingCanvas.Children.Add(_selection);
+            //_selection = highest;
+
+
+            middle.RemoveSizingGrid();
+            low.RemoveSizingGrid();
+            lowest.RemoveSizingGrid();
+
+
+            // RemoveSelectionGridInDeep(_selection, -200);
+
+        }
+        private Selection InitSelection(double width, double height, Point loc, Color color, string name, Color borderBrush)
+        {
+            Selection res = new Selection()
+            {
+                Width = width,
+                Height = height,
+                Name = name
+            };
+
+            res.SelectCan.Width = width;
+            res.SelectCan.Height = height;
+
+            res.SelectionBorder.Width = width;
+            res.SelectionBorder.Height = height;
+
+
+
+            res.SelectionBorder.BorderBrush = new SolidColorBrush(borderBrush);
+
+            res.SelectCan.Background = new SolidColorBrush(color);
+            Canvas.SetLeft(res, loc.X);
+            Canvas.SetTop(res, loc.Y);
+            return res;
+        }
+
+        private void FreeAllSelectionsInInvarstionSelection(Selection selection)
+        {
+            if (selection is null) return;
+
+            Console.WriteLine(selection.Name);
+
+            //Get selection point
+            //Point selectionPoint = GetPointOfSelection(selection);
+
+            Point tempSelPoint = new Point(Canvas.GetLeft(selection), Canvas.GetTop(selection));
+
+            (Point selectionPoint, int corelCounter) = GetSelectionPointComporatedToDrawingCanvas(selection, new Point(0, 0), 0);
+            selectionPoint = CorrelateGotPoint(selectionPoint, corelCounter);// new Point(selectionPoint.X + 3 * corelCounter, selectionPoint.Y + 3 * corelCounter);
+
+            //selectionPoint = new Point(selectionPoint.X + 5, selectionPoint.Y + 5);
+
+            //remove children
+            List<UIElement> elems = ReAssginChildrenInAuxiliaryCanvas(selection.SelectCan);
+            selection.SelectCan.Children.Clear();
+
+            //Convert selection can in image
+            Image bgImage = ConvertCanvasInImage(selection.SelectCan);
+
+            //Change color for temp selection
+            selection.SelectCan.Background = new SolidColorBrush(Colors.Transparent);
+
+            //Init image in drawingCanvas
+            Canvas.SetLeft(bgImage, selectionPoint.X);
+            Canvas.SetTop(bgImage, selectionPoint.Y);
+
+
+            //Get All selections in darwingCanvas + delete them
+            List<UIElement> sels = ReAssginChildrenInAuxiliaryCanvas(DrawingCanvas);
+            DrawingCanvas.Children.Clear();
+
+
+            //Add image to DrawingCanvas
+            DrawingCanvas.Children.Add(bgImage);
+
+            //convert canvas  in image + set it as DrawingCanvas background
+            Image newDrawingCanBg = ConvertCanvasInImage(DrawingCanvas);
+            DrawingCanvas.Background = new ImageBrush()
+            {
+                ImageSource = newDrawingCanBg.Source
+            };
+            DrawingCanvas.Children.Clear();
+
+            //return;
+
+            //InitAllSelectionsInCanvas(sels, DrawingCanvas);
+            InitElementsInCanvas(DrawingCanvas, sels);
+
+            //Return elems in temp canvas
+            InitElementsInCanvas(selection.SelectCan, elems);
+
+            //selection.SelectCan.Background = new SolidColorBrush(Colors.White);
+            //selection.Background = new SolidColorBrush(Colors.White);
+            if (selection.Name == "one1")
+            {
+                selection.SelectCan.Children.Clear();
+                selection.SelectCan.Background = new SolidColorBrush(Colors.White);
+                ((Canvas)selection.Parent).Children.Remove(selection);
+            }
+
+            Selection childSelection = GetSelectionFromCanvas(selection.SelectCan);
+
+            FreeAllSelectionsInInvarstionSelection(childSelection);
+        }
+        private Point CorrelateGotPoint(Point point, int corelCounter)
+        {
+            return new Point(point.X + 3 * corelCounter, point.Y + 3 * corelCounter);
+        }
+        private (Point, int) GetSelectionPointComporatedToDrawingCanvas(UIElement element, Point tempRes, int corelationCounter)
+        {
+            if (element == DrawingCanvas)
+            {
+                return (tempRes, corelationCounter);
+            }
+            else if ((element.GetType() == typeof(Selection) &&
+                ((Selection)element).Parent == DrawingCanvas))
+            {
+                return (new Point(Canvas.GetLeft((Selection)element) + tempRes.X, Canvas.GetTop((Selection)element) + tempRes.Y), corelationCounter);
+            }
+
+            //get selection 
+            Selection sel = null;
+            if (element.GetType() == typeof(Selection))
+            {
+                Console.WriteLine(((Selection)element).Name);
+
+                sel = GetSeelctionsSelectionParent((Canvas)((Selection)element).Parent);
+
+                Console.WriteLine(sel.Name);
+            }
+            Selection selElem = element as Selection;
+            //get selection position
+
+            Point tempSelPoint = new Point(Canvas.GetLeft(selElem), Canvas.GetTop(selElem));
+
+            corelationCounter++;
+            (tempRes, corelationCounter) = GetSelectionPointComporatedToDrawingCanvas(sel, tempRes, corelationCounter);
+
+            return (new Point(tempSelPoint.X + tempRes.X, tempSelPoint.Y + tempRes.Y), corelationCounter);
+        }
+
+        private void InitAllSelectionsInCanvas(List<Selection> sels, Canvas can)
+        {
+            for (int i = 0; i < sels.Count; i++)
+            {
+                can.Children.Add(sels[i]);
+            }
+        }
+        private List<Selection> GetAllSelectionsInCanvas(Canvas can)
+        {
+            List<Selection> res = new List<Selection>();
+
+            for (int i = 0; i < can.Children.Count; i++)
+            {
+                if (can.Children[i].GetType() == typeof(Selection))
+                {
+                    res.Add((Selection)can.Children[i]);
+                }
+            }
+            return res;
+        }
+        private void RemoveSelectionsInCanvas(Canvas can)
+        {
+            List<UIElement> elms = new List<UIElement>();
+            for (int i = 0; i < can.Children.Count; i++)
+            {
+                if (can.Children[i].GetType() == typeof(Selection))
+                {
+                    can.Children.RemoveAt(i);
+                    //elms.Add(can.Children[i]);
+                }
+            }
+            /*can.Children.Clear();
+            for(int i = 0; i < elms.Count; i++)
+            {
+                can.Children.Add(elms[i]);
+            }*/
+        }
+        private void RemoveEveryImageFromCanvas(Canvas canvas)
+        {
+            List<UIElement> elms = new List<UIElement>();
+            for (int i = 0; i < canvas.Children.Count; i++)
+            {
+                if (canvas.Children[i].GetType() != typeof(Image))
+                {
+                    elms.Add(canvas.Children[i]);
+                }
+            }
+            canvas.Children.Clear();
+
+            InitElementsInCanvas(canvas, elms);
+        }
+        private Selection GetSelectionFromCanvas(Canvas canvas)
+        {
+            for (int i = 0; i < canvas.Children.Count; i++)
+            {
+                if (canvas.Children[i].GetType() == typeof(Selection))
+                {
+                    return (Selection)canvas.Children[i];
+                }
+            }
+            return null;
+        }
+
+        private void AddSelectionBgInDrawingCanvasCHECK(Canvas canvas)
+        {
+            if (canvas == DrawingCanvas) return;
+
+            Selection selParent = GetSeelctionsSelectionParent(canvas);
+
+            List<UIElement> elements = ReAssginChildrenInAuxiliaryCanvas(canvas);
+            canvas.Children.Clear();
+
+            Point selectionPoint = GetPointOfSelection(selParent);
+
+            Image img = ConvertCanvasInImage(canvas);
+            Canvas.SetLeft(img, selectionPoint.X);
+            Canvas.SetTop(img, selectionPoint.Y);
+            DrawingCanvas.Children.Add(img);
+
+            canvas.Background = new SolidColorBrush(Colors.Transparent);
+
+            AddSelectionBgInDrawingCanvasCHECK((Canvas)selParent.Parent);
+
+            SetInDraiwngCanvasAsBackground();
+            InitElementsInCanvas(canvas, elements);
+        }
+        private void SetInDraiwngCanvasAsBackground()
+        {
+            Selection sel = null;
+
+            for (int i = 0; i < DrawingCanvas.Children.Count; i++)
+            {
+                if (DrawingCanvas.Children[i].GetType() == typeof(Selection))
+                {
+                    sel = (Selection)DrawingCanvas.Children[i];
+                }
+            }
+            DrawingCanvas.Children.Remove(sel);
+
+            Image img = ConvertCanvasInImage(DrawingCanvas);
+            DrawingCanvas.Background = new ImageBrush()
+            {
+                ImageSource = img.Source
+            };
+
+            DrawingCanvas.Children.Clear();
+            DrawingCanvas.Children.Add(sel);
+        }
+
+        private void CheckSelectionsParams(Canvas can)
+        {
+            for (int i = 0; i < can.Children.Count; i++)
+            {
+                if (can.Children[i].GetType() == typeof(Selection))
+                {
+                    Selection sel = (Selection)can.Children[i];
+
+                    CheckSelectionParam(sel);
+
+                    CheckSelectionsParams(sel.SelectCan);
+                }
+            }
+        }
+        private void CheckSelectionParam(Selection select)
+        {
+            double xLoc = Canvas.GetLeft(select);
+            double yLoc = Canvas.GetTop(select);
+
+            double width = select.Width;
+            double height = select.Height;
+
+            double selectCanWIDTH = select.SelectCan.Width;
+            double selectCanHEIGHT = select.SelectCan.Height;
+        }
+        private void CheckStartDeepSelections(int tempCounter, int endValue, Selection tempSelection)
+        {
+            if (tempCounter == endValue)
+            {
+                tempSelection.SelectCan.Background = new SolidColorBrush(Colors.Yellow);
+                return;
+            }
+            for (int i = 0; i < tempSelection.SelectCan.Children.Count; i++)
+            {
+                if (tempSelection.SelectCan.Children[i].GetType() == typeof(Selection))
+                {
+                    Selection sel = (Selection)tempSelection.SelectCan.Children[i];
+                    tempCounter += 1;
+                    CheckStartDeepSelections(tempCounter, endValue, sel);
+                }
+            }
+        }
+        private int CountSelectionsInDeep(Canvas can, ref int res)
+        {
+            for (int i = 0; i < can.Children.Count; i++)
+            {
+                if (can.Children[i].GetType() == typeof(Selection))
+                {
+                    res += 1;
+                    CountSelectionsInDeep(((Selection)can.Children[i]).SelectCan, ref res);
+                }
+            }
+            return res;
+        }
+
+        private void MakeInvertSelection(Canvas canvas, bool ifMakeInvalidation = true, int check = 0)
+        {
+            for (int i = 0; i < canvas.Children.Count; i++)
+            {
+                if (canvas.Children[i].GetType() == typeof(Selection))
+                {
+                    _selection = (Selection)canvas.Children[i];
+                    Image bgImg = ConvertCanvasInImage(_selection.SelectCan);
+                    Console.WriteLine(_selection.Name);
+                    if (!ifMakeInvalidation)
+                    {
+                        //free selectied bg in drawingCanvas Canvas 
+
+
+                        InvertSelection();
+
+                        ChangeWhiteSelectionPartInInvertionSelection();
+                        MakeInvertSelection(((Selection)canvas.Children[i]).SelectCan, !ifMakeInvalidation, check);
+                    }
+                    else
+                    {
+                        ChangeWhiteSelectionPartInInvertionSelection();
+                        MakeInvertSelection(((Selection)canvas.Children[i]).SelectCan, !ifMakeInvalidation, check);
+                    }
+                }
+            }
+        }
+        private void ChangeWhiteSelectionPartInInvertionSelection()
+        {
+            //get SystemSelections parent canvas
+            Canvas parent = (Canvas)_selection.Parent;
+
+            //get SystemSelections Children + clear them
+            List<UIElement> elems = ReAssginChildrenInAuxiliaryCanvas(_selection.SelectCan);
+            _selection.SelectCan.Children.Clear();
+
+            //swap white with Tracparent in SystemSelection
+            Image selBgImg = ConvertCanvasInImage(_selection.SelectCan);
+            Image recImg = SwipeColorsInImage(selBgImg, _whiteColor, _transparantColor);
+
+            //Reinit BG
+            _selection.SelectCan.Background = new ImageBrush()
+            {
+                ImageSource = recImg.Source
+            };
+
+            //Set SystemsSelection children back
+            InitElementsInCanvas(_selection.SelectCan, elems);
+
+            //Set SystemSelection in his parent 
+        }
+        private void InvertSelection()
+        {
+            //Get the highest selection
+            Selection highest = GetHighestSelection();
+
+            //Get temp location SystemSelection
+            Point localLoc = new Point(Canvas.GetLeft(_selection), Canvas.GetTop(_selection));
+
+            //Get global location of SystemLocation
+            (Point selectionPoint, int corelCounter) = GetSelectionPointComporatedToDrawingCanvas(_selection, new Point(0, 0), 0);
+            selectionPoint = CorrelateGotPoint(selectionPoint, corelCounter + 1);
+
+            //Get SystemSelection Children + delete them
+            List<UIElement> systemSelChildren = ReAssginChildrenInAuxiliaryCanvas(_selection.SelectCan);
+            _selection.SelectCan.Children.Clear();
+
+            //Get SystemSelection parent Canvas
+            Canvas parentCan = (Canvas)_selection.Parent;
+
+            Console.WriteLine(((Selection)((Border)parentCan.Parent).Parent).Name);
+
+            //Remove SystemSelection from parent canvas
+            parentCan.Children.Remove(_selection);
+
+            //Clear drawingCavas children
+            DrawingCanvas.Children.Clear();
+
+            //Add SystemSelection to DrawingCanvas
+            DrawingCanvas.Children.Add(_selection);
+
+            // Init global loc to SystemSelection
+            Canvas.SetLeft(_selection, selectionPoint.X);
+            Canvas.SetTop(_selection, selectionPoint.Y);
+
+            //Get image BG of SystemSelection + Make BG in SystemSelection.SelectCan Transparent
+            Image systemSelBgImg = ConvertCanvasInImage(_selection.SelectCan);
+
+
+            //Add image in DrawingCanvas
+            DrawingCanvas.Children.Add(systemSelBgImg);
+
+            //Set location to image
+            Canvas.SetLeft(systemSelBgImg, selectionPoint.X);
+            Canvas.SetTop(systemSelBgImg, selectionPoint.Y);
+
+
+            //Remove SystemSelection from DrawingCanvas
+            DrawingCanvas.Children.Remove(_selection);
+
+            //Convert DrawingCanvas in Image 
+            Image drawingCavasIMG = ConvertCanvasInImage(DrawingCanvas);
+
+            //Clear DrawingCanvas Children 
+            DrawingCanvas.Children.Clear();
+
+            //Set Image as BG of DrawingCanvas
+            DrawingCanvas.Background = new ImageBrush()
+            {
+                ImageSource = drawingCavasIMG.Source
+            };
+
+            //Add Children of SystemSelection to SystemSelection children
+            InitElementsInCanvas(_selection.SelectCan, systemSelChildren);
+
+            //Add SystemSelection to parent canvas
+            parentCan.Children.Add(_selection);
+
+            //Set SystemSelection Local location
+            Canvas.SetLeft(_selection, localLoc.X);
+            Canvas.SetTop(_selection, localLoc.Y);
+
+            //Add highest to Drawing Canvas
+            DrawingCanvas.Children.Add(highest);
+
+            _selection.SelectCan.Background = new SolidColorBrush(Colors.Transparent);
+            _selection.Background = new SolidColorBrush(Colors.Transparent);
+
+
+            //highest.Background = new SolidColorBrush(Colors.Transparent);
+            //highest.SelectCan.Background = new SolidColorBrush(Colors.Transparent);
+        }
+        private void SetSelectionBgInDrawingCanvas()
+        {
+            List<UIElement> elems = ReAssginChildrenInAuxiliaryCanvas(_selection.SelectCan);
+            _selection.SelectCan.Children.Clear();
+
+            SetSelectedItemInDrawingCanvas();
+
+            for (int i = 0; i < elems.Count; i++)
+            {
+                _selection.SelectCan.Children.Add(elems[i]);
+            }
+
+            DrawingCanvas.Children.Remove(_selection);
+            Image img = ConvertCanvasInImage(DrawingCanvas);
+
+            DrawingCanvas.Background = new ImageBrush()
+            {
+                ImageSource = img.Source
+            };
+            _selection.SelectCan.Background = new SolidColorBrush(Colors.Transparent);
+        }
+        private void SetHighestSelectionInSysetemSelection()
+        {
+            for (int i = 0; i < DrawingCanvas.Children.Count; i++)
+            {
+                if (DrawingCanvas.Children[i].GetType() == typeof(Selection))
+                {
+                    _selection = ((Selection)DrawingCanvas.Children[i]);
+                    return;
+                }
+            }
+        }
+        private Selection GetHighestSelection()
+        {
+            for (int i = 0; i < DrawingCanvas.Children.Count; i++)
+            {
+                if (DrawingCanvas.Children[i].GetType() == typeof(Selection))
+                {
+                    return ((Selection)DrawingCanvas.Children[i]);
+                }
+            }
+            return null;
+        }
+        private void RemoveSelectionGridInDeep(Selection selection, int count)
+        {
+            if (count > 0)
+            {
+                selection.RemoveSizingGrid();
+            }
+            for (int i = 0; i < selection.SelectCan.Children.Count; i++)
+            {
+                if (selection.SelectCan.Children[i].GetType() == typeof(Selection))
+                {
+                    count += 1;
+                    RemoveSelectionGridInDeep((Selection)selection.SelectCan.Children[i], count);
+                }
+            }
+        }
+        private const int _res = 5;
+        private void InitBGForSelectionFromDeapest(Selection selection, Selection highest, int count)
+        {
+            if (selection is null) return;
+
+            //Equals temp selection to SystemSelection
+            _selection = selection;
+
+            //Get children of SystemSelection + remove them
+            List<UIElement> elems = ReAssginChildrenInAuxiliaryCanvas(_selection.SelectCan);
+            _selection.SelectCan.Children.Clear();
+
+            //Get temp point location of SystemSelection
+            Point tempSelPoint = new Point(Canvas.GetLeft(_selection), Canvas.GetTop(_selection));
+
+            //Get point on DrawingCanvas of SystemSelection
+            (Point pointInDrawingCan, int corelCounter) = GetSelectionPointComporatedToDrawingCanvas(selection, new Point(0, 0), 0);
+            pointInDrawingCan = CorrelateGotPoint(pointInDrawingCan, corelCounter);// new Point(selectionPoint.X + 3 * corelCounter, selectionPoint.Y + 3 * corelCounter);
+
+            //Get SystemSelection parentCanvas
+            Canvas parentCan = (Canvas)_selection.Parent;
+
+            //Remove SystemSelection from parentCanvas
+            parentCan.Children.Remove(_selection);
+
+            //Get highest selection (have it - highest)
+
+            //Clear drawingCanvas children
+            DrawingCanvas.Children.Clear();
+
+            //Add SystemSelection in drawingCanvas
+            //DrawingCanvas.Children.Add(_selection);
+
+            //Init global loc for SystemSelection
+            Canvas.SetLeft(_selection, pointInDrawingCan.X);
+            Canvas.SetTop(_selection, pointInDrawingCan.Y);
+
+            //Init RectSelection Values(Size, Location)
+            _selectionRect = new Rectangle()
+            {
+                Width = _selection.Width,
+                Height = _selection.Height
+            };
+            Canvas.SetLeft(_selection, pointInDrawingCan.X);
+            Canvas.SetTop(_selection, pointInDrawingCan.Y);
+
+            Canvas.SetLeft(_selectionRect, pointInDrawingCan.X);
+            Canvas.SetTop(_selectionRect, pointInDrawingCan.Y);
+
+            _firstSelectionStart = pointInDrawingCan;
+            _firstSelectionEnd = new Point(pointInDrawingCan.X + _selection.Width, pointInDrawingCan.Y + _selection.Height);
+
+
+            //MB ADD IT TO DRAWINGCANVAS
+
+            //_selection.SelectionBorder.BorderBrush = new SolidColorBrush(Colors.Black);
+            MakeSelection();
+
+            //swap color sfor selction 
+
+            Image selBG = ConvertCanvasInImage(_selection.SelectCan);
+            Image newBg = SwipeColorsInImage(selBG, _whiteColor, _transparantColor);
+            _selection.SelectCan.Background = new ImageBrush()
+            {
+                ImageSource = newBg.Source
+            };
+
+
+            //Clear DraiwngCanvas children
+
+            if (parentCan != DrawingCanvas)
+            {
+                DrawingCanvas.Children.Clear();
+
+                //Add SystemSelection to parentCanvas
+                parentCan.Children.Add(_selection);
+            }
+            //Init temp loce For SystemSelection (HAVE IT FROM PREV MOVE)
+            Canvas.SetLeft(_selection, tempSelPoint.X);
+            Canvas.SetTop(_selection, tempSelPoint.Y);
+
+            //Init SystemSelection children(Have it from prev move)
+            InitElementsInCanvas(_selection.SelectCan, elems);
+
+            //Add highest in DrawingCanvas(have it)
+            if (highest != _selection)
+            {
+                DrawingCanvas.Children.Add(highest);
+            }
+            //selection parent - parent(if not - null)
+
+            Selection selParent = null;
+
+
+            //UIElement asd = _selection.Parent as UIElement;
+            // Console.WriteLine(DrawingCanvas.Children);
+
+            if ((Canvas)_selection.Parent != DrawingCanvas)
+            {
+                //return;
+                selParent = GetSeelctionsSelectionParent((Canvas)_selection.Parent);
+            }
+
+            //Exit condition - selection is null
+
+            if (count == _res)
+            {
+                return;
+            }
+            //Make recursion
+            count++;
+            InitBGForSelectionFromDeapest(selParent, highest, count);
+        }
+        private List<UIElement> GetListOfChildrenExceptGrid(Canvas canvas)
+        {
+            List<UIElement> res = new List<UIElement>();
+
+            for (int i = 0; i < canvas.Children.Count; i++)
+            {
+                if (canvas.Children[i].GetType() == typeof(Selection))
+                {
+                    res.Add(canvas.Children[i]);
+                }
+            }
+            return res;
+        }
+        private Selection GetSeelctionsSelectionParent(Canvas selParent)
+        {
+            Border res = (Border)selParent.Parent;
+            Selection check = (Selection)res.Parent;
+
+            return check;
+        }
+
+        private Selection GetTheDeapestSelection(Canvas canvas, ref Selection res)
+        {
+            for (int i = 0; i < canvas.Children.Count; i++)
+            {
+                if (canvas.Children[i] is Selection selection)
+                {
+                    res = selection;
+                    GetTheDeapestSelection(((Selection)canvas.Children[i]).SelectCan, ref res);
+                }
+            }
+            return res;
         }
         private void MakeEverySecondSelecting(Canvas canvas, bool ifFreeSelection = true)
         {
@@ -4026,7 +4883,7 @@ namespace PaintWPF
         }
         private void SetLocationForSelection(Selection selection)
         {
-            Point loc = InitPointForSelectionInInversType(selection);
+            Point loc = GetPointOfSelection(selection);
             Canvas.SetLeft(selection, loc.X);
             Canvas.SetTop(selection, loc.Y);
         }
@@ -4034,7 +4891,7 @@ namespace PaintWPF
         {
             Rectangle res = new Rectangle();
 
-            Point startPoint = InitPointForSelectionInInversType(selection);
+            Point startPoint = GetPointOfSelection(selection);
 
             Canvas.SetLeft(res, startPoint.X);
             Canvas.SetTop(res, startPoint.Y);
@@ -4070,9 +4927,9 @@ namespace PaintWPF
 
             //add bgImage in drawingCanvas as a child 
             DrawingCanvas.Children.Add(selectionBGImg); //do somthing with location
-            //Init location for slectionBGIMG
+                                                        //Init location for slectionBGIMG
 
-            Point point = InitPointForSelectionInInversType(selection.SelectCan);
+            Point point = GetPointOfSelection(selection.SelectCan);
 
             Canvas.SetLeft(selectionBGImg, point.X);
             Canvas.SetTop(selectionBGImg, point.Y);
@@ -4104,7 +4961,7 @@ namespace PaintWPF
 
             return selectionBGImg;
         }
-        private Point InitPointForSelectionInInversType(UIElement element)
+        private Point GetPointOfSelection(UIElement element)
         {
             if (element == DrawingCanvas)
             {
@@ -4113,10 +4970,11 @@ namespace PaintWPF
             DependencyObject parent = VisualTreeHelper.GetParent(element);
             if (parent is UIElement parentElement)
             {
+
                 GeneralTransform transform = element.TransformToVisual(parentElement);
                 Point currentPosition = transform.Transform(new Point(0, 0));
 
-                Point parentPosition = InitPointForSelectionInInversType(parentElement);
+                Point parentPosition = GetPointOfSelection(parentElement);
 
                 return new Point(currentPosition.X + parentPosition.X, currentPosition.Y + parentPosition.Y);
             }
@@ -4244,7 +5102,7 @@ namespace PaintWPF
             DrawingCanvas.Children.Remove(_selection);
             DrawingCanvas.Children.Add(_selection);
 
-            _type = ActionType.Selection;
+            //_type = ActionType.Selection;
             _selection = null;
         }
         private void InitEventsForRightClickMenu()
@@ -4261,7 +5119,7 @@ namespace PaintWPF
             //Choose all 
             _clickMenu.ChooseAll.Click += ChooseAllSelection_MouseLeftButtonDown;
             //Invert
-            _clickMenu.InvertSelection.Click += InvalidateSelection_Click;
+            _clickMenu.InvertSelection.Click += InvertSelection_Click;
             //delete
             _clickMenu.Delete.Click += DeleteSelectionContainment_Click;
 
@@ -4336,7 +5194,7 @@ namespace PaintWPF
             if (_selection is null)
             {
                 return (ConvertBackgroundToImage(DrawingCanvas), DrawingCanvas);
-        
+
             }
             _selection.RemoveSizingGrid();
             (Image img, Canvas can) res = (ConvertBackgroundToImage(_selection.SelectCan), _selection.SelectCan);

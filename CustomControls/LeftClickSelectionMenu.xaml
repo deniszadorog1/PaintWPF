@@ -35,7 +35,10 @@
     </UserControl.Triggers>
 
     <Grid Height="300">
-        <ListBox x:Name="listBox" Width="300" RenderTransformOrigin="0.5,0.5" Height="300" Opacity="0.9" Background="White" >
+        <ListBox x:Name="listBox" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
+                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                 Width="300" RenderTransformOrigin="0.5,0.5" Height="300" Opacity="0.9" Background="White" >
             <ListBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1"/>

@@ -37,7 +37,7 @@
                 <Rectangle Name="RightCenter"
                            Height="10" Width="10" 
                            HorizontalAlignment ="Right"
-                           VerticalAlignment="Center" Margin="0 0 -9 0" Fill="White"
+                           VerticalAlignment="Center" Margin="0 0 -10 0" Fill="White"
                            StrokeThickness="1" Stroke="Black"/>
                 <Rectangle Name="RightBottom"
                            Height="10" Width="10" 
@@ -47,7 +47,7 @@
                 <Rectangle Name="CenterBottom"
                            Height="10" Width="10" 
                            HorizontalAlignment ="Center"
-                           VerticalAlignment="Bottom" Margin="0 0 0 -9" Fill="White"
+                           VerticalAlignment="Bottom" Margin="0 0 0 -10" Fill="White"
                            StrokeThickness="1" Stroke="Black"/>
                 <Rectangle Name="LeftBottom"
                            Height="10" Width="10" 
