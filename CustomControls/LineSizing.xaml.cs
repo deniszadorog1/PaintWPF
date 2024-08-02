@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit.PropertyGrid.Converters;
 
 using PaintWPF.Models.Enums;
+using System.Runtime.Remoting;
 
 namespace PaintWPF.CustomControls
 {
@@ -30,8 +31,11 @@ namespace PaintWPF.CustomControls
         private Point _anchorPointSelection;
 
         public Polyline _sizingLine;
-        public LineSizing(Polyline line)
+        private Label _lineSize;
+        public LineSizing(Polyline line, Label lineSize)
         {
+            _lineSize = lineSize;
+
             InitializeComponent();
 
             _sizingLine = line;
@@ -109,6 +113,8 @@ namespace PaintWPF.CustomControls
             {
                 MoveEnd(e);
             }
+            _lineSize.Content = $"{Math.Abs(Line.X2 - Line.X1)} x {Math.Abs(Line.Y2 - Line.Y1)} пкс";
+
             return true;
         }
         public void MoveStart(MouseEventArgs e)
@@ -140,6 +146,12 @@ namespace PaintWPF.CustomControls
         public void RemoveLineFromCanvas()
         {
             LineCanvas.Children.Remove(Line);
+        }
+        public void RemoveEveryThingExceptLine()
+        {
+            LineCanvas.Children.Remove(TransLine);
+            LineCanvas.Children.Remove(Start);
+            LineCanvas.Children.Remove(End);
         }
     }
 }

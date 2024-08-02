@@ -12,11 +12,14 @@
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="700" MinHeight="700" MaxHeight="700"
-        Width="1100" MinWidth="1100" MaxWidth="1100"
+        Width="1100"  MaxWidth="1100"
         Background="#eef4f9" MouseMove="Window_MouseMove" 
         MouseLeftButtonUp="Window_MouseLeftButtonUp" 
         MouseLeftButtonDown="Window_MouseLeftButtonDown" 
-        SizeChanged="Window_SizeChanged" MouseDoubleClick="PaintWindow_MouseDoubleClick" MouseUp="PaintWindow_MouseUp">
+        SizeChanged="Window_SizeChanged" 
+        MouseDoubleClick="PaintWindow_MouseDoubleClick" MouseUp="PaintWindow_MouseUp"
+        
+        >
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -236,6 +239,21 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+        <Setter Property="Stylus.IsFlicksEnabled" Value="True" />
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Height" Value="40" />
+                <Setter Property="MinHeight" Value="40" />
+            </Trigger>
+            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="Width" Value="5" />
+                <Setter Property="MinWidth" Value="5" />
+            </Trigger>
+        </Style.Triggers>
+        </Style>
+
     </Window.Resources>
 
 
@@ -287,19 +305,19 @@
                         <MenuItem Name = "twoFile" Header="Импортировать на холст"
                           Height="30" Width="400"
                           Style="{StaticResource SubMenuItem}"
-                          Click="OpenFileButton_Click">
+                          Click="ImportOnDraiwngCanvas_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Import.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
 
-                        <MenuItem Name = "threeFile" Header="Последние"
+                        <!-- <MenuItem Name = "threeFile" Header="Последние"
                           Height="30" Width="400"
                           Style="{StaticResource SubMenuItem}">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Last.png"/>
                             </MenuItem.Icon>
-                        </MenuItem>
+                        </MenuItem> -->
 
                         <MenuItem Name = "fourFile" Header="Сохранить"
                           Height="30" Width="400"
@@ -330,7 +348,8 @@
 
                         <MenuItem Name = "sevenFile" Header="Отправить"
                           Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
+                          Style="{StaticResource SubMenuItem}"
+                                  Click="NotWorkingSend_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Send.png"/>
                             </MenuItem.Icon>
@@ -378,8 +397,8 @@
                     <MenuItem  Header="Изменить" 
                         Style="{StaticResource DropDownMenu}" Margin="0 0 0 0">
 
-                        <MenuItem Name = "zeroChange" Header="Вырезать"
-                          Height="30" Width="400"
+                        <MenuItem Name = "CutChange" Header="Вырезать"
+                          Height="30" Width="400" Opacity="0.5" IsEnabled="False"
                           Style="{StaticResource SubMenuItem}"
                           Click="Cut_Click">
                             <MenuItem.Icon>
@@ -387,8 +406,8 @@
                             </MenuItem.Icon>
                         </MenuItem>
 
-                        <MenuItem Name = "oneChange" Header="Копировать"
-                          Height="30" Width="400"
+                        <MenuItem Name = "CopyChange" Header="Копировать"
+                          Height="30" Width="400" Opacity="0.5" IsEnabled="False"
                           Style="{StaticResource SubMenuItem}"
                           Click="Copy_Click">
                             <MenuItem.Icon>
@@ -396,8 +415,8 @@
                             </MenuItem.Icon>
                         </MenuItem>
 
-                        <MenuItem Name = "twoChange" Header="Вставить"
-                          Height="30" Width="400"
+                        <MenuItem Name = "PasteChange" Header="Вставить"
+                          Height="30" Width="400" Opacity="0.5" IsEnabled="False"
                           Style="{StaticResource SubMenuItem}"
                           Click="Paste_Click">
                             <MenuItem.Icon>
@@ -471,7 +490,7 @@
             <WrapPanel Grid.Column="1" Margin="0 5 0 0">
                 <Image Source="Images/Pallete/MainPanelBotomIcons/dottedSquare.png"
                        Height="20" Width="20"/>
-                <Label Name ="ObjSize"  Width="110" FontSize="11">123456789012345</Label>
+                <Label Name ="ObjSize"  Width="110" FontSize="11"></Label>
             </WrapPanel>
 
             <Line Grid.Column="2" Stroke="Black" StrokeThickness="0.5"
@@ -575,12 +594,12 @@
         <Grid Grid.Row="1" Background="#f8f9fc" Name ="MainPanel">
 
             <Grid.ColumnDefinitions >
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width = "150"/>
-                <ColumnDefinition Width="75"/>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="350"/>
-                <ColumnDefinition />
+                <ColumnDefinition Name = "SelectionPart" Width="100" />
+                <ColumnDefinition Name = "ToolsPart"  Width = "150"/>
+                <ColumnDefinition Name = "BrushPart"  Width="75"/>
+                <ColumnDefinition Name = "FiguresPart"  Width="300"/>
+                <ColumnDefinition Name = "ColorsPart"  Width="350"/>
+                <ColumnDefinition Name ="FreePart"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="100" Height="*"/>
@@ -919,194 +938,199 @@
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0" BorderThickness="1" BorderBrush="#e8ebed" Margin="10 10 10 0">
-                    <WrapPanel  Name= "FigurePanel"
-                            Background="#f7fafc">
-                        <Button Name ="Line" Height="22" Width="22" 
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                  HorizontalScrollBarVisibility="Disabled">
+                        
+
+                        <WrapPanel  Name= "FigurePanel"
+                            Background="#f7fafc" Width="270">
+                            
+                            <Button Name ="Line" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Line.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Line.png"/>
+                            </Button>
 
-                        <Button Name ="Curve" Height="22" Width="22" 
+                            <Button Name ="Curve" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/CroockedLine.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/CroockedLine.png"/>
+                            </Button>
 
-                        <Button Name ="Oval" Height="22" Width="22" 
+                            <Button Name ="Oval" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Circle.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Circle.png"/>
+                            </Button>
 
-                        <Button Name ="Rectangle" Height="22" Width="22" 
+                            <Button Name ="Rectangle" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Rectangle.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Rectangle.png"/>
+                            </Button>
 
-                        <Button Name ="RoundedRectangle" Height="22" Width="22" 
+                            <Button Name ="RoundedRectangle" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
+                                <Image Source="Images/Figures/ShapedRectangle.png"/>
+                            </Button>
 
-                            <Image Source="Images/Figures/ShapedRectangle.png"/>
-
-                        </Button>
-
-                        <Button Name ="Polygon" Height="22" Width="22" 
+                            <Button Name ="Polygon" Height="22" Width="22"  
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Polygon.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Polygon.png"/>
+                            </Button>
 
-                        <Button Name ="Triangle" Height="22" Width="22" 
+                            <Button Name ="Triangle"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Triangle.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Triangle.png"/>
+                            </Button>
 
-                        <Button Name ="RightTriangle" Height="22" Width="22" 
+                            <Button Name ="RightTriangle"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/RightTriangle.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/RightTriangle.png"/>
+                            </Button>
 
-                        <Button Name ="Rhombus" Height="22" Width="22" 
+                            <Button Name ="Rhombus"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Rhombus.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Rhombus.png"/>
+                            </Button>
 
-                        <Button Name ="Pentagon" Height="22" Width="22" 
+                            <Button Name ="Pentagon"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Pentagon.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Pentagon.png"/>
+                            </Button>
 
-                        <Button Name ="Hexagon" Height="22" Width="22" 
+                            <Button Name ="Hexagon"  Height="22" Width="22"   
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Hexagon.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Hexagon.png"/>
+                            </Button>
 
-                        <Button Name ="RightArrow" Height="23" Width="23" 
+                            <Button Name ="RightArrow"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/RightArrow.png"/>
-                        </Button>
-                        <Button Name ="LeftArrow" Height="23" Width="23" 
+                                <Image Source="Images/Figures/RightArrow.png"/>
+                            </Button>
+                            <Button Name ="LeftArrow"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/LeftArrow.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/LeftArrow.png"/>
+                            </Button>
 
-                        <Button Name ="UpArrow" Height="23" Width="23" 
+                            <Button Name ="UpArrow" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/UpArrow.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/UpArrow.png"/>
+                            </Button>
 
-                        <Button Name ="DownArrow" Height="23" Width="23" 
+                            <Button Name ="DownArrow"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/DownArrow.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/DownArrow.png"/>
+                            </Button>
 
-                        <Button Name ="FourPointedStar" Height="22" Width="22" 
+                            <Button Name ="FourPointedStar"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/FourPointStar.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/FourPointStar.png"/>
+                            </Button>
 
-                        <Button Name ="FivePointedStar" Height="22" Width="22" 
+                            <Button Name ="FivePointedStar"  Height="22" Width="22"  
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/FivePointedStar.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/FivePointedStar.png"/>
+                            </Button>
 
-                        <Button Name ="SixPointedStar" Height="22" Width="22" 
+                            <Button Name ="SixPointedStar"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/SixPointedStar.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/SixPointedStar.png"/>
+                            </Button>
 
-                        <Button Name ="RoundedRectangularLeader" Height="22" Width="24" 
+                            <Button Name ="RoundedRectangularLeader"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/ShapeRectMeesage.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/ShapeRectMeesage.png"/>
+                            </Button>
 
-                        <Button Name ="OvalCallout" Height="22" Width="22" 
+                            <Button Name ="OvalCallout"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/OvalMessage.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/OvalMessage.png"/>
+                            </Button>
 
-                        <Button Name ="CalloutCloud" Height="22" Width="22" 
+                            <Button Name ="CalloutCloud"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Cloud.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Cloud.png"/>
+                            </Button>
 
-                        <Button Name ="Heart" Height="23" Width="23" 
+                            <Button Name ="Heart"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Heart.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Heart.png"/>
+                            </Button>
 
-                        <Button Name ="Lightning" Height="22" Width="22" 
+                            <Button Name ="Lightning"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
-                            <Image Source="Images/Figures/Lightning.png"/>
-                        </Button>
+                                <Image Source="Images/Figures/Lightning.png"/>
+                            </Button>
 
-                    </WrapPanel>
+                        </WrapPanel>
+                    </ScrollViewer>
+
                 </Border>
                 <Label Grid.Row="1" 
                        VerticalAlignment="Center" 

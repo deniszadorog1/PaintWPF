@@ -215,6 +215,10 @@ namespace PaintWPF
                 color = brush.Color;
                 _pallete.ChosenColor = brush;
             }
+            _colorToPaint = (SolidColorBrush)but.Background;
+            InitParamsForGivenColor();
+
+
             if (color is null) return;
 
             (int y, int x) mainColorIndex =
@@ -368,12 +372,23 @@ namespace PaintWPF
         }
         private void OK_Click(object sender, EventArgs e)
         {
-            if (_pallete.ChosenColor is null) InitChosenColor();
+            if (_pallete.ChosenColor is null || 
+                _pallete.ChosenColor != (SolidColorBrush)ChosenColorShow.Background) InitChosenColor();
             Close();
         }
+        private SolidColorBrush _basicWhite = 
+            new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 255, 255));
+        private SolidColorBrush _usageWhite =
+            new SolidColorBrush(System.Windows.Media.Color.FromRgb(252, 252, 252));
         private void InitChosenColor()
         {
             _pallete.ChosenColor = (SolidColorBrush)ChosenColorShow.Background;
+            Console.WriteLine(_pallete.ChosenColor.Color.R.ToString(), _pallete.ChosenColor.Color.G, _pallete.ChosenColor.Color.B);
+
+            if(_pallete.ChosenColor.Color == _basicWhite.Color)
+            {
+                _pallete.ChosenColor = _usageWhite;
+            }
         }
         private void OTMENA_Click(object sender, EventArgs e)
         {
@@ -506,7 +521,9 @@ namespace PaintWPF
         }
         private void SpecCanvas_PreViewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!_ifCircleCanBeMoved || specDragEl == null) return;
+            MoveCircle(sender, e);
+
+            /*if (!_ifCircleCanBeMoved || specDragEl == null) return;
             _colorPoint = e.GetPosition(sender as IInputElement);
             if (_colorPoint.X < 0)
             {
@@ -524,10 +541,10 @@ namespace PaintWPF
             {
                 _colorPoint.Y = coloeSpecter.Height - 1;
             }
-            Canvas.SetTop(specDragEl, _colorPoint.Y - specCircleOffset.Y);
-            Canvas.SetLeft(specDragEl, _colorPoint.X - specCircleOffset.X);
+            Canvas.SetTop(specDragEl, _colorPoint.Y - 7.5);
+            Canvas.SetLeft(specDragEl, _colorPoint.X - 7.5);
 
-            UpdateShowColor();
+            UpdateShowColor();*/
         }
         public void UpdateShowColor()
         {
@@ -968,6 +985,7 @@ namespace PaintWPF
         private void PalletePanel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _ifLumValueCanBeChanged = false;
+            _ifCircleCanBeMoved = false;
 
         }
         //private bool _preInputParamCheck = false;
@@ -1035,8 +1053,44 @@ namespace PaintWPF
             HexTable.Text = _tempColor.GetHexFromRGB();
 
             //correct luminance column
-            InitLumCircleHeight((int)(_tempColor.L * 100));     
+            InitLumCircleHeight((int)(_tempColor.L * 100));
+
+
+            _ifCircleCanBeMoved = true;
+            this.specDragEl = draggableButton;
+            DraggableButton_PreViewMouseDown(draggableButton, e);
         }
+
+        private void coloeSpecter_MouseMove(object sender, MouseEventArgs e)
+        {
+            MoveCircle(sender, e);
+        }
+        private void MoveCircle(object sender, MouseEventArgs e)
+        {
+            if (!_ifCircleCanBeMoved || specDragEl == null) return;
+            _colorPoint = e.GetPosition(sender as IInputElement);
+            if (_colorPoint.X < 0)
+            {
+                _colorPoint.X = 0;
+            }
+            if (_colorPoint.X > coloeSpecter.Width - 1)
+            {
+                _colorPoint.X = coloeSpecter.Width - 1;
+            }
+            if (_colorPoint.Y < 0)
+            {
+                _colorPoint.Y = 0;
+            }
+            if (_colorPoint.Y > coloeSpecter.Height - 1)
+            {
+                _colorPoint.Y = coloeSpecter.Height - 1;
+            }
+            Canvas.SetTop(specDragEl, _colorPoint.Y - 7.5);
+            Canvas.SetLeft(specDragEl, _colorPoint.X - 7.5);
+
+            UpdateShowColor();
+        }
+
     }
 }
 

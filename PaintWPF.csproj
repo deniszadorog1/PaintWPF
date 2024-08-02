@@ -53,6 +53,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9e7cd3b544a090dc, processorArchitecture=MSIL">
+      <HintPath>packages\WpfAnimatedGif.2.0.2\lib\net40\WpfAnimatedGif.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock, Version=4.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>packages\Extended.Wpf.Toolkit.4.6.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
@@ -135,6 +138,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Other\DoesntWork.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pallete.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -154,6 +161,9 @@
     <Compile Include="Models\Tools\ColorConvertor.cs" />
     <Compile Include="Models\Tools\TaskColor.cs" />
     <Compile Include="Models\Tools\ProgressBarConverter.cs" />
+    <Compile Include="Other\DoesntWork.xaml.cs">
+      <DependentUpon>DoesntWork.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pallete.xaml.cs">
       <DependentUpon>Pallete.xaml</DependentUpon>
     </Compile>
@@ -326,6 +336,9 @@
     <Resource Include="Images\ClickMenu\FlipHorizontal.png" />
     <Resource Include="Images\ClickMenu\FlipVertical.png" />
     <Resource Include="Images\ClickMenu\TurnIn180.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gif\monkeyGif.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

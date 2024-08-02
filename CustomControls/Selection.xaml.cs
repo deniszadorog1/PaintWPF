@@ -34,19 +34,49 @@ namespace PaintWPF.CustomControls
         private Point _anchorPointSelection;
         public SelectionSide _selectionSizeToChangeSize;
         private Image _figuresImg = null;
+        private Label _selSize;
 
-        public Selection()
+        public Selection(Label selSize)
         {
+            _selSize = selSize;
+
             InitializeComponent();
             InitEventsForSelection();
+            CreateDashedBorder();
+
         }
-        public Selection(Image image)
+        public Selection(Image image, Label selSize)
         {
+            _selSize = selSize;
             _figuresImg = image;
 
             InitializeComponent();
             InitEventsForSelection();
             InitShapeFigure();
+        }
+        private void CreateDashedBorder()
+        {
+/*            SelectionBorder.BorderBrush = 
+                CreateDashedBrush(Colors.Red);*/
+        }
+
+        private Brush CreateDashedBrush(Color color)
+        {
+            DrawingBrush drawingBrush = new DrawingBrush();
+            GeometryDrawing geometryDrawing = new GeometryDrawing();
+            Pen pen = new Pen(new SolidColorBrush(color), 3)
+            {
+                DashStyle = new DashStyle(new double[] { 300, 51 }, 0)
+            };
+
+            RectangleGeometry rectangleGeometry = 
+                new RectangleGeometry(new Rect(0, 0, 1, 1));
+            geometryDrawing.Geometry = rectangleGeometry;
+            geometryDrawing.Pen = pen;
+
+            drawingBrush.Drawing = geometryDrawing;
+            drawingBrush.Stretch = Stretch.Fill;
+            return drawingBrush;
         }
         private void InitEventsForSelection()
         {
@@ -330,6 +360,11 @@ namespace PaintWPF.CustomControls
         {
             ReinitShapeSize();
             CheckForTextBox();
+            UpdateSizeLabel();
+        }
+        private void UpdateSizeLabel()
+        {
+            _selSize.Content = $"{this.Width} x {this.Height} пкс";
         }
         public void CheckForTextBox()
         {
@@ -337,6 +372,10 @@ namespace PaintWPF.CustomControls
             if (richTextBoxIndex == -1) return;
             ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Height = SelectionBorder.Height - 15;
             ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Width = SelectionBorder.Width - 15;
+
+            Canvas.SetLeft(((RichTextBox)SelectCan.Children[richTextBoxIndex]), 5);
+            Canvas.SetTop(((RichTextBox)SelectCan.Children[richTextBoxIndex]), 5);
+
         }
         public int GetRichTextBoxIndex()
         {
@@ -445,8 +484,8 @@ namespace PaintWPF.CustomControls
             double heightRatio = e.NewSize.Height / e.PreviousSize.Height;
 
             foreach (UIElement child in SelectCan.Children)
-            {           
-                if (child.GetType() != typeof(Grid) &&  child is FrameworkElement element)
+            {
+                if (child.GetType() != typeof(Grid) && child is FrameworkElement element)
                 {
                     double newWidth = element.Width * widthRatio;
                     double newHeight = element.Height * heightRatio;
@@ -455,7 +494,7 @@ namespace PaintWPF.CustomControls
                     element.Width = newWidth;
                     element.Height = newHeight;
 
-                    if(child is Selection)
+                    if (child is Selection)
                     {
                         ((Selection)child).SelectionBorder.Width = newWidth;
                         ((Selection)child).SelectionBorder.Height = newHeight;

@@ -132,7 +132,7 @@
         </Style>
 
 
-        <LinearGradientBrush x:Key="Spectrum" StartPoint="0,0" EndPoint="1,0">
+        <LinearGradientBrush x:Name="OneMoreGrad" x:Key="Spectrum" StartPoint="0,0" EndPoint="1,0">
             <GradientStop Color="Red" Offset="0.0"/>
             <GradientStop Color="Orange" Offset="0.1"/>
             <GradientStop Color="Yellow" Offset="0.2"/>
@@ -152,9 +152,9 @@
                             <RectangleGeometry Rect="0,0,1,1" />
                         </GeometryDrawing.Geometry>
                         <GeometryDrawing.Brush>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <LinearGradientBrush x:Name="gradientBrusha" StartPoint="0,0" EndPoint="1,0">
                                 <!-- Red -->
-                                <GradientStop Color="#FF0000" Offset="0.00"/>
+                                <GradientStop  Color="#FF0000" Offset="0.00"/>
 
                                 <!-- Orange -->
                                 <GradientStop Color="Orange" Offset="0.17"/>
@@ -213,7 +213,6 @@
         </Label>
 
         <Grid Grid.Row="1" Name="qwe" Grid.ColumnSpan="2">
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="75"/>
@@ -221,24 +220,21 @@
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Grid.Row="1">
-
+            <Grid Grid.Column="0" Grid.Row="1" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Name="firstSpecCol" Width="20"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="20"/>
-
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column ="0" Panel.ZIndex="1"/>
 
-
-                <Grid Grid.Column="1" ClipToBounds="True" 
+                <Grid Grid.Column="1" ClipToBounds="True"
                          PreviewMouseDown="SpecCanvas_LeftMouseDown">
-                    <Rectangle
-                           Margin="0 0 0 0" Name="coloeSpecter"
-                           Fill="{StaticResource SpectrumWithVerticalFade}"
-                           Stretch="Fill" Height="250" Width="260"/>
+                    <Rectangle MouseMove="coloeSpecter_MouseMove"
+                               Margin="0 0 0 0" Name="coloeSpecter"
+                               Fill="{StaticResource SpectrumWithVerticalFade}"
+                               Stretch="Fill" Height="250" Width="260"/>
                 </Grid>
 
                 <Canvas  Grid.Column="1" 
@@ -611,9 +607,9 @@
                     Пользывательские цвета
                 </Label>
                 <Button Width="25" Height="25" Margin="5 20 0 0" 
-                        Background="White" FontSize="30"
+                        Background="White" FontSize="32"
                         VerticalContentAlignment="Top"
-                        Padding="0 -10 0 0"
+                        Padding="0 -14 0 0"
                         Click="AddCustomColor_Click">
                     +
                 </Button>

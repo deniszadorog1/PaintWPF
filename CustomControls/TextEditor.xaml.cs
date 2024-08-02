@@ -79,18 +79,18 @@ namespace PaintWPF.CustomControls
         }
         private void TextBox_TextChanged(object sender, EventArgs e)
         {
-         /*   if (_textBox == null) return;
+            if (_textBox == null) return;
             TextSelection ts = _textBox.Selection;
             if (ts != null)
             {
                 ts.ApplyPropertyValue(TextElement.ForegroundProperty, _paintObj.FirstColor);
             }
-            _textBox.Focus();*/
-            /*if (_textBox != null)
+            _textBox.Focus();
+            if (_textBox != null)
             {
                 _textSizeChanging.Height = _textSizeChanging.SelectionBorder.Height;
                 _textSizeChanging.SelectionBorder.Height = _textBox.Height + 15;
-            }*/
+            }
         }
         private void InitComboboxes()
         {

@@ -1,0 +1,18 @@
+﻿<Window x:Class="PaintWPF.Other.DoesntWork"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PaintWPF.Other"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+        mc:Ignorable="d"
+        Title="DoesntWork" Height="450" Width="800" Background="Gray"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label Content="It Doesnt work btw!" HorizontalAlignment="Center" FontSize="24" Margin="0 10 0 0"/>
+        <Image gif:ImageBehavior.RepeatBehavior="Forever"
+               gif:ImageBehavior.AnimatedSource="/Gif/monkeyGif.gif"
+               Height="350" Width="600" Margin="0 40 0 0" Source="/Gif/monkeyGif.gif"/>
+
+    </Grid>
+</Window>

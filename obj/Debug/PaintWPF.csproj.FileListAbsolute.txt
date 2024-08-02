@@ -50,3 +50,8 @@ B:\GitHub\PaintWPF\obj\Debug\CustomControls\SubMenud\RightClickSubMenu.g.cs
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\SubMenud\SubMenuElement.g.cs
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\SubMenud\RightClickSubMenu.baml
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\SubMenud\SubMenuElement.baml
+B:\GitHub\PaintWPF\obj\Debug\Other\DoesntWork.g.cs
+B:\GitHub\PaintWPF\obj\Debug\Other\DoesntWork.baml
+B:\GitHub\PaintWPF\bin\Debug\WpfAnimatedGif.dll
+B:\GitHub\PaintWPF\bin\Debug\WpfAnimatedGif.pdb
+B:\GitHub\PaintWPF\bin\Debug\WpfAnimatedGif.xml
