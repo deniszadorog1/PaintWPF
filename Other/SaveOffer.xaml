@@ -1,0 +1,62 @@
+﻿<Window x:Class="PaintWPF.Other.SaveOffer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PaintWPF.Other"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="SaveOffer" Height="275" Width="325" 
+        Opacity="0.9" Background="#f3f3f3">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Name ="UpperPart" Height="1*"/>
+            <RowDefinition Name ="MiddlePart" Height="3*"/>
+            <RowDefinition Name ="BottomPart" Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1" Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Name ="SaveQuest" Height="1*"/>
+                <RowDefinition Name ="newFileQuest" Height="1*"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Padding="10 0 0 0">
+                <TextBlock Text="Сохранить результаты Работы?" 
+               TextWrapping="Wrap" FontSize="22"/>
+            </Label>
+
+            <Label Grid.Row="1" Padding="10 0 0 0" VerticalAlignment="Center">
+                <TextBlock Text="найдены несохраненные даные" 
+                TextWrapping="Wrap" FontSize="16"/>
+            </Label>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Name="Save"/>
+                <ColumnDefinition Name="SaveAs"/>
+                <ColumnDefinition Name="Cancel"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Name="SaveBut"
+                    Grid.Column="0" Width="90" Height="30"
+                    HorizontalAlignment="Right" Margin="0 0 5 0"
+                    Background="Blue" 
+                    Foreground="White" Content="Сохранить"
+                    Click="SaveBut_Click" />
+            <Button Name ="SaveAsBut"
+                    Grid.Column="1" Width="90" Height="30"
+                    HorizontalAlignment="Center" Margin="0 0 5 0"
+                    Background="White" 
+                    Foreground="Black" Content="Не Сохранять"
+                    Click="NotSaveBut_Click"/>
+            <Button Name ="CancelBut" 
+                  Grid.Column="2" Width="90" Height="30"
+                  HorizontalAlignment="Left" Margin="1 0 0 0"
+                  Background="White" 
+                  Foreground="Black" Content="Отменить"
+                    Click="CancelBut_Click"/>
+        </Grid>
+
+    </Grid>
+</Window>

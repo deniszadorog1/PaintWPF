@@ -7,18 +7,17 @@
         xmlns:xctk ="http://schemas.xceed.com/wpf/xaml/toolkit"  
         
         xmlns:UserControls="clr-namespace:PaintWPF.CustomControls"
-
-        
+        xmlns:BrusheMenu="clr-namespace:PaintWPF.CustomControls.BrushesMenu"
+       
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="700" MinHeight="700" MaxHeight="700"
-        Width="1100"  MaxWidth="1100"
+        Width="1100"  MaxWidth="1600" MinWidth="600"
         Background="#eef4f9" MouseMove="Window_MouseMove" 
         MouseLeftButtonUp="Window_MouseLeftButtonUp" 
         MouseLeftButtonDown="Window_MouseLeftButtonDown" 
         SizeChanged="Window_SizeChanged" 
-        MouseDoubleClick="PaintWindow_MouseDoubleClick" MouseUp="PaintWindow_MouseUp"
-        
+        MouseDoubleClick="PaintWindow_MouseDoubleClick" MouseUp="PaintWindow_MouseUp"     
         >
 
     <Window.Resources>
@@ -194,13 +193,14 @@
                                 BorderThickness="1">
                             <Grid>
                                 <!--// Icon //-->
-                                <ContentPresenter Name="SelectionIcon" 
+                                <ContentPresenter x:Name="SelectionIcon" 
                                                   ContentSource="Icon"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Center"
                                                   Height="18"
                                                   Width="18"
-                                                  Margin="8,0,0,0" />
+                                                  Margin="8,0,0,0"/>
+
                                 <!--// Text //-->
                                 <ContentPresenter ContentSource="Header"
                                                   TextBlock.Foreground="Black"
@@ -241,17 +241,18 @@
         </Style>
 
         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
-        <Setter Property="Stylus.IsFlicksEnabled" Value="True" />
-        <Style.Triggers>
-            <Trigger Property="Orientation" Value="Horizontal">
-                <Setter Property="Height" Value="40" />
-                <Setter Property="MinHeight" Value="40" />
-            </Trigger>
-            <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="Width" Value="5" />
-                <Setter Property="MinWidth" Value="5" />
-            </Trigger>
-        </Style.Triggers>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="True" />
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height" Value="40" />
+                    <Setter Property="MinHeight" Value="40" />
+                </Trigger>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="3" />
+                    <Setter Property="MinWidth" Value="3" />
+                    <Setter Property="BorderBrush" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
     </Window.Resources>
@@ -259,13 +260,24 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition  Height="100"/>
-            <RowDefinition/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Name ="SettingsRow" Height="20"/>
+            <RowDefinition Name="ToolsRow" Height="100"/>
+            <RowDefinition Name="DrawingRow"/>
+            <RowDefinition Name="BottomRow" Height="35"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="#f0f3f9" Panel.ZIndex="1">
+        <Canvas Name="FigureCanvasToAdapt"
+                Background="Transparent"   
+                Width="{Binding ElementName=FigurePanel, Path=ActualWidth}"
+                Height="{Binding ElementName=FigurePanel, Path=ActualHeight }" 
+                Panel.ZIndex="1">
+        </Canvas>
+        <Canvas  Panel.ZIndex="1">
+            <BrusheMenu:BrushMenu x:Name ="BrushesMenu" Visibility="Hidden"
+                               Height="310" Width="315"/>
+        </Canvas>
+
+        <Grid Grid.Row="0" Name="UpperPanel" Background="#f0f3f9" Panel.ZIndex="1">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
@@ -297,6 +309,7 @@
                           Height="30" Width="400"
                           Style="{StaticResource SubMenuItem}"
                           Click="OpenFileButton_Click">
+
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Open.png"/>
                             </MenuItem.Icon>
@@ -311,18 +324,10 @@
                             </MenuItem.Icon>
                         </MenuItem>
 
-                        <!-- <MenuItem Name = "threeFile" Header="Последние"
-                          Height="30" Width="400"
-                          Style="{StaticResource SubMenuItem}">
-                            <MenuItem.Icon>
-                                <Image Source="Images/File/Last.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem> -->
-
                         <MenuItem Name = "fourFile" Header="Сохранить"
                           Height="30" Width="400"
                           Style="{StaticResource SubMenuItem}"
-                          Click="SaveField_Click">
+                          Click="Save_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/Pallete/MainPanelTopPart/save.png"/>
                             </MenuItem.Icon>
@@ -331,7 +336,7 @@
                         <MenuItem Name = "fiveFile" Header="Сохранить как"
                             Height="30" Width="400"
                             Style="{StaticResource SubMenuItem}"
-                            Click="SaveField_Click">
+                            Click="SaveAs_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/SaveAs.png"/>
                             </MenuItem.Icon>
@@ -389,13 +394,17 @@
             <Line Grid.Column="1" X1 ="0" X2="0" Y1="2" Y2="16" 
                   Stroke="Black" StrokeThickness="1" Opacity="0.3"/>
 
-            <Grid Grid.Column="1" 
+            <Grid Grid.Column="1"  
                   MouseLeave="MainPabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter">
-                <Menu Background="Transparent" HorizontalAlignment="Center">
+                <Menu Background="Transparent" Padding="0 0 0 0">
 
-                    <MenuItem  Header="Изменить" 
-                        Style="{StaticResource DropDownMenu}" Margin="0 0 0 0">
+                    <MenuItem 
+                        Style="{StaticResource DropDownMenu}" >
+
+                        <MenuItem.Header>
+                            <TextBlock Text="Изменить" FontSize="14" Margin="-5,-5,0,0"/>
+                        </MenuItem.Header>
 
                         <MenuItem Name = "CutChange" Header="Вырезать"
                           Height="30" Width="400" Opacity="0.5" IsEnabled="False"
@@ -434,9 +443,8 @@
                     Background="#eef4f9" BorderThickness="0"
                       MouseLeave="MainPabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter"
-                    Click="SaveField_Click"
+                    Click="SaveAs_Click"
                     Name="Save">
-
                 <Image Source="Images/Pallete/MainPanelTopPart/save.png"/>
             </Button>
             <Line Grid.Column="3" X1 ="0" X2="0" Y1="2" Y2="16" 
@@ -559,14 +567,14 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Name="PaintFieldColumn" Width="1000"/>
+                <ColumnDefinition Name="PaintFieldColumn" Width="21*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition Name="TextRow"/>
                 <RowDefinition Name="PaintFieldRow" Height="400"/>
-                <RowDefinition/>
+                <RowDefinition />
             </Grid.RowDefinitions>
 
             <Grid Grid.Column="1" Grid.Row="1" >
@@ -580,12 +588,18 @@
                 MouseLeave="PaintField_MouseLeave" 
                 VerticalAlignment="Center" Margin="0"
                 MouseRightButtonDown="DrawingCanvas_MouseRightButtonDown">
-
-
                 </Canvas>
 
-
             </Grid>
+            <DockPanel Name="ScrollDrawingCanvasRow" Grid.Column="1" Grid.Row="2">
+                <ScrollViewer Name ="DraiwngScroll"  VerticalAlignment="Bottom"
+                Width="{Binding ElementName=ScrollDrawingCanvasRow, Path=ActualWidth}"
+                Height="10" Background="White"
+                VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" 
+                               ScrollChanged="DrawingAdapt_ScrollChanged">
+                    <Canvas Width="1000" Height="10" Background="Transparent"/>
+                </ScrollViewer>
+            </DockPanel>
         </Grid>
 
         <Line Grid.Row="1" Stroke="Black" StrokeThickness="1"
@@ -604,6 +618,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="100" Height="*"/>
             </Grid.RowDefinitions>
+
 
             <Grid Grid.Column="0">
 
@@ -720,91 +735,88 @@
                 X1="0" Y1="5" X2="0" Y2="95" 
                   Stroke="Black" StrokeThickness="0.5" Opacity="0.3" VerticalAlignment="Top" />
 
-            <Grid Grid.Column="1">
+            <Grid Name="ToolsGrid" Grid.Column="1">
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition Height="33"/>
+                    <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
 
-
-                <Button Name ="Pen"
-                        Grid.Column="0" Grid.Row="0" 
-                        Style="{StaticResource NoStyleButton}"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
-                        MouseEnter="MainPanelBoxes_MouseEnter"
-                        Click="Tool_MouseClick">
-                    <Image Source="Images/Pallete/MainPanelIcons/Pen.png" 
-                           Height="25" Width="25" HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                <Button Name="ToolsAdaptBut" Width="70" Visibility="Hidden" 
+                        Margin="5" Background="White" 
+                        BorderBrush="Aqua" BorderThickness="0.5"
+                        Click="ToolsAdaptBut_Click">
+                    <Image Source="Images/Adaptive/ToolsAdapt.png"/>
                 </Button>
 
-                <Button Name ="Bucket"
-                        Grid.Column="1" Grid.Row="0" 
+                <WrapPanel Name="ToolsPartPanel" Visibility="Visible" 
+                           Grid.Row="0" Margin ="5" Background="#f7fafc" 
+                           Width="140" Height="60">
+                    <Button Name ="Pen" Margin="10 0 10 3"
                         Style="{StaticResource NoStyleButton}"
                         MouseLeave="MainPabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
-                    <Image Grid.Column="1" Grid.Row="0"
+                        <Image Source="Images/Pallete/MainPanelIcons/Pen.png" 
+                           Height="25" Width="25" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+                    </Button>
+
+                    <Button Name ="Bucket" Margin="10 0 10 3"
+                        Style="{StaticResource NoStyleButton}"
+                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseEnter="MainPanelBoxes_MouseEnter"
+                        Click="Tool_MouseClick">
+                        <Image Grid.Column="1" Grid.Row="0"
                            Source="Images/Pallete/MainPanelIcons/bucket.png" 
                            Height="25" Width="25" HorizontalAlignment="Center"
                            VerticalAlignment="Center" />
-                </Button>
+                    </Button>
 
-                <Button Name ="Text" 
-                        Grid.Column="2" Grid.Row="0"
+                    <Button Name ="Text" Margin="5 0 5 3"
                         Style="{StaticResource NoStyleButton}"
                         MouseLeave="MainPabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
-                    <Image Source="Images/Pallete/MainPanelIcons/text.png" 
+                        <Image Source="Images/Pallete/MainPanelIcons/text.png" 
                            Height="25" Width="25" HorizontalAlignment="Center"
                            VerticalAlignment="Center" />
-                </Button>
+                    </Button>
 
-                <Button Name = "Erazer" 
-                        Grid.Column="0" Grid.Row="1"
+                    <Button Name = "Erazer" Margin="10 0 10 0"
                         Style="{StaticResource NoStyleButton}"
                         MouseLeave="MainPabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
-                    <Image Source="Images/Pallete/MainPanelIcons/erazer.png" 
+                        <Image Source="Images/Pallete/MainPanelIcons/erazer.png" 
                            Height="25" Width="25" HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
-                </Button>
+                    </Button>
 
 
-                <Button Name = "ColorDrop"
-                        Grid.Column="1" Grid.Row="1"
+                    <Button Name = "ColorDrop" Margin="10 0 10 0"
                         Style="{StaticResource NoStyleButton}"
                         MouseLeave="MainPabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
-                    <Image Source="Images/Pallete/MainPanelIcons/colorDrop.png" 
+                        <Image Source="Images/Pallete/MainPanelIcons/colorDrop.png" 
                            Height="25" Width="25" HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
-                </Button>
+                    </Button>
 
-                <Button Name="Glass"
-                        Grid.Column="2" Grid.Row="1"
+                    <Button Name="Glass" Margin="5 0 5 0"
                         Style="{StaticResource NoStyleButton}"
                         MouseLeave="MainPabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
-                    <Image Grid.Column="2" Grid.Row="1"
+                        <Image Grid.Column="2" Grid.Row="1"
                            Source="Images/Pallete/MainPanelIcons/glass.png" 
                            Height="25" Width="25" HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
-                </Button>
-
+                    </Button>
+                </WrapPanel>
                 <Label Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Top" 
-                       HorizontalAlignment="Center" FontSize="14" Foreground="#5e5f60">
+                       HorizontalAlignment="Center" FontSize="12" Foreground="#5e5f60">
                     Инструменты
                 </Label>
             </Grid>
@@ -833,23 +845,32 @@
 
                 <Grid Grid.Row="1" 
                   MouseLeave="MainPabelBoxes_MouseLeave"
-                    MouseEnter="MainPanelBoxes_MouseEnter">
-                    <Menu Background="Transparent" HorizontalAlignment="Center">
+                  MouseEnter="MainPanelBoxes_MouseEnter">
+
+                    <Button Name ="BrushesBut" Click="BrushButton_Click" 
+                            Background="Transparent" BorderThickness="0">
+                        <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
+                               Height="20" Width="20" Stretch="Uniform"
+                               />
+                    </Button>
+
+
+                    <!--    <Menu Background="Transparent" HorizontalAlignment="Center">
                         <MenuItem Width="40" Height="25"                   
                         Style="{StaticResource DropDownMenu}">
-                            <MenuItem.Icon >
-                                <Image  Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
+                            <MenuItem.Icon>
+                                <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
                                Height="20" Width="20" Stretch="Uniform"/>
                             </MenuItem.Icon>
 
                             <Border BorderThickness="0.5" Opacity="0.5" BorderBrush="Black"/>
 
                             <MenuItem Name = "ZeroBrushType"  
-                                  Header="Кисть"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"   
-                          Click="BrushType_Click">
+                                Header="Кисть"
+                                Height="40"
+                                Width="400"
+                                Style="{StaticResource SubMenuItem}"   
+                                Click="BrushType_Click">
                             </MenuItem>
 
                             <MenuItem Name = "OneBrushType"
@@ -909,14 +930,15 @@
                             </MenuItem>
 
                             <MenuItem Name = "EightBrushType"
-                                  Header="Кить для акварели"
+                                  Header="Киcть для акварели"
                           Height="40"
                           Width="400"
                           Style="{StaticResource SubMenuItem}"  
                           Click="BrushType_Click">
                             </MenuItem>
                         </MenuItem>
-                    </Menu>
+                    </Menu>-->
+
                 </Grid>
 
 
@@ -930,21 +952,28 @@
                 X1="0" Y1="5" X2="0" Y2="95" 
                   Stroke="Black" StrokeThickness="0.5" Opacity="0.3" VerticalAlignment="Top" />
 
-            <Grid Grid.Column="3">
 
+            <Grid  Name="FigGridPart" Grid.Column="3">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" BorderThickness="1" BorderBrush="#e8ebed" Margin="10 10 10 0">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
-                                  HorizontalScrollBarVisibility="Disabled">
-                        
 
-                        <WrapPanel  Name= "FigurePanel"
+                <Button Name="AdaptFigureBut" Grid.Row="0" Margin="5" Width="70" 
+                        HorizontalAlignment="Center"  Background="Transparent"
+                        BorderBrush="Aqua" BorderThickness="0.5" Visibility="Hidden"
+                        Click="AdaptFigureBut_Click">
+                    <Image Source="Images/Adaptive/FiguresAdapt.png"/>
+                </Button>
+                <Border Name ="FiguresBorder" Visibility="Visible"
+                    Grid.Row="0" BorderThickness="1" BorderBrush="#e8ebed" Margin="10 10 10 0">
+                    <ScrollViewer Name="AdaptFigScroll"
+                                  VerticalScrollBarVisibility="Auto" 
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <WrapPanel  Name= "FigurePanel" Orientation="Horizontal"
                             Background="#f7fafc" Width="270">
-                            
+
                             <Button Name ="Line" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
                                 MouseLeave="MainPabelBoxes_MouseLeave"
@@ -1127,230 +1156,237 @@
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Lightning.png"/>
                             </Button>
-
                         </WrapPanel>
                     </ScrollViewer>
-
                 </Border>
                 <Label Grid.Row="1" 
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"
                        Foreground="#5e5f60">
-
                     Фигуры</Label>
-
             </Grid>
             <Line Grid.Column="4"
                 X1="0" Y1="5" X2="0" Y2="95" 
                   Stroke="Black" StrokeThickness="0.5" Opacity="0.3" VerticalAlignment="Top" />
+            <Grid Name="ColorColGrid" Grid.Column="4">
 
-            <Grid Grid.Column="4">
 
-                <Grid.ColumnDefinitions >
-                    <ColumnDefinition Width="45" />
-                    <ColumnDefinition Width="230" />
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="70" Height="70"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                    <Button Name = "FirstColor" 
+                <Button Name="PaletteAdaptBut" Visibility="Hidden"
+                        Margin="5" Width="70" Background="White" 
+                        BorderBrush="Aqua" BorderThickness="0.5"
+                        Click="PaletteAdaptBut_Click">
+                    <Image Source="Images/Adaptive/PalletteAdapt.png"/>
+                </Button>
+
+                <Grid Grid.Row="0" Name="ColorPart" 
+                      Visibility="Visible" Background="#f8f9fc">
+                    <Grid.ColumnDefinitions >
+                        <ColumnDefinition Width="45" />
+                        <ColumnDefinition Width="230" />
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <Button Name = "FirstColor" 
                             Style="{StaticResource RoundButtonStyle}" 
                             Background="Black" Margin="5" 
                             Height="25" Width="25" 
                             Click="PaintColor_Click"/>
-                    <Button Name ="SecondColor"
+                        <Button Name ="SecondColor"
                             Style="{StaticResource RoundButtonStyle}"
                             Background="#FCFCFC" Margin="10 6 10 0"
                             Height="25" Width="25" 
                             Click="PaintColor_Click"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <WrapPanel Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,100,0" Name="asd">
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                    <WrapPanel Grid.Column="1" Grid.ColumnSpan="3" 
+                               Margin="0,0,100,0" Name="asd">
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#000000" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#7f7f7f" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#880015" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             MouseDown="Color_MouseDown"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ed1c24" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ff7f27" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#fff200" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#22b14c" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#00a2e8" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#3f48cc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#a349a4" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
 
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#FCFCFC" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#c3c3c3" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#b97a57" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ffaec9" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#ffc90e" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#efe4b0" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#b5e61d" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#99d9ea" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#7092be" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Background="#c8bfe7" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
 
-                    <Button Style="{StaticResource RoundButtonStyle}" 
+                        <Button Style="{StaticResource RoundButtonStyle}" 
                             Name ="OnePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="TwoPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="ThreePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"   
+                        <Button Style="{StaticResource RoundButtonStyle}"   
                             Name ="FourPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="FivePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="SixPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="SevenPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="EightPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="NinePaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                    <Button Style="{StaticResource RoundButtonStyle}"  
+                        <Button Style="{StaticResource RoundButtonStyle}"  
                             Name ="TenPaletteColor"
                             Background="#f8f9fc" Margin="5 5 0 0" 
                             MouseEnter="MyButton_MouseEnter" MouseLeave="MyButton_MouseLeave"
                             PreviewMouseLeftButtonDown="Color_PreviewMouseLeftButtonDown"
                             PreviewMouseRightButtonDown="Color_PreviewMouseRightButtonDown"/>
-                </WrapPanel>
+                    </WrapPanel>
 
-                <Border Grid.Column="2" Grid.Row="0" 
+                    <Border Grid.Column="2" Grid.Row="0" 
                         Height="40" Width="40" CornerRadius="4"                        
                         HorizontalAlignment="Left" Margin="5 0 0 0" 
                         BorderThickness="1"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         MouseLeave="MainPabelBoxes_MouseLeave">
-                    <Button 
+                        <Button 
                         Style="{StaticResource NoStyleButton}"
                         Name ="ChooseColorPalette"
                         Click="Pallete_Click"
                         Background="Transparent"
                         >
-                        <Image Source="Images/Pallete/MainPanelIcons/palette.png"/>
-                    </Button>
-                </Border>
-
+                            <Image Source="Images/Pallete/MainPanelIcons/palette.png"/>
+                        </Button>
+                    </Border>
+                </Grid>
                 <Label Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Top" 
                        HorizontalAlignment="Center" FontSize="14" Foreground="#5e5f60">
                     Цвета

@@ -42,7 +42,6 @@ namespace PaintWPF.CustomControls
 
             InitializeComponent();
             InitEventsForSelection();
-            CreateDashedBorder();
 
         }
         public Selection(Image image, Label selSize)
@@ -54,30 +53,7 @@ namespace PaintWPF.CustomControls
             InitEventsForSelection();
             InitShapeFigure();
         }
-        private void CreateDashedBorder()
-        {
-/*            SelectionBorder.BorderBrush = 
-                CreateDashedBrush(Colors.Red);*/
-        }
 
-        private Brush CreateDashedBrush(Color color)
-        {
-            DrawingBrush drawingBrush = new DrawingBrush();
-            GeometryDrawing geometryDrawing = new GeometryDrawing();
-            Pen pen = new Pen(new SolidColorBrush(color), 3)
-            {
-                DashStyle = new DashStyle(new double[] { 300, 51 }, 0)
-            };
-
-            RectangleGeometry rectangleGeometry = 
-                new RectangleGeometry(new Rect(0, 0, 1, 1));
-            geometryDrawing.Geometry = rectangleGeometry;
-            geometryDrawing.Pen = pen;
-
-            drawingBrush.Drawing = geometryDrawing;
-            drawingBrush.Stretch = Stretch.Fill;
-            return drawingBrush;
-        }
         private void InitEventsForSelection()
         {
             SelectCan.MouseLeftButtonDown += SelectionBorder_MouseLeftButtonDown;
@@ -463,8 +439,8 @@ namespace PaintWPF.CustomControls
         {
             const int _sizeDiffer = 5;
             if (SelectionBorder.Width - _sizeDiffer <= 0 || SelectionBorder.Height - _sizeDiffer <= 0) return;
-            SelectCan.Width = SelectionBorder.Width - _sizeDiffer;
-            SelectCan.Height = SelectionBorder.Height - _sizeDiffer;
+            SelectCan.Width = SelectionBorder.Width;
+            SelectCan.Height = SelectionBorder.Height;
         }
         public void RemoveSizingGrid()
         {

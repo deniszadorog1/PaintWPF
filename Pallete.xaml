@@ -154,22 +154,26 @@
                         <GeometryDrawing.Brush>
                             <LinearGradientBrush x:Name="gradientBrusha" StartPoint="0,0" EndPoint="1,0">
                                 <!-- Red -->
-                                <GradientStop  Color="#FF0000" Offset="0.00"/>
+                                <GradientStop  Color="#FF0000" Offset="0.01"/>
 
                                 <!-- Orange -->
                                 <GradientStop Color="Orange" Offset="0.17"/>
 
                                 <!-- Yellow -->
-                                <GradientStop Color="Yellow" Offset="0.33"/>
+                                <GradientStop Color="#FFFF00" Offset="0.33"/>
+                                <GradientStop Color="#FFFF00" Offset="0.35"/>
 
                                 <!-- Green -->
-                                <GradientStop Color="#06ff05" Offset="0.50"/>
+                                <GradientStop Color="#00FF00" Offset="0.50"/>
+                                <GradientStop Color="#00FF00" Offset="0.51"/>
 
                                 <!-- Cyan -->
-                                <GradientStop Color="#12f9ff" Offset="0.67"/>
+                                <GradientStop Color="#00FFFF" Offset="0.60"/>
+                                <GradientStop Color="#00FFFF" Offset="0.63"/>
 
                                 <!-- Blue -->
-                                <GradientStop Color="Blue" Offset="0.83"/>
+                                <GradientStop Color="#0000FF" Offset="0.78"/>
+                                <GradientStop Color="#0000FF" Offset="0.80"/>
 
                                 <!-- Magenta -->
                                 <GradientStop Color="#ff06e2" Offset="0.92"/>
@@ -186,7 +190,7 @@
                         </GeometryDrawing.Geometry>
                         <GeometryDrawing.Brush>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="Transparent" Offset="0.0"/>
+                                <GradientStop Color="Transparent" Offset="0.01"/>
                                 <GradientStop Color="#FFFFFF" Offset="0.99"/>
                             </LinearGradientBrush>
                         </GeometryDrawing.Brush>
@@ -207,7 +211,9 @@
             <RowDefinition Height="250"/>
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
-
+ 
+      
+        
         <Label FontSize ="32" Margin="25,0,0,0" Grid.ColumnSpan="2" >
             Изменить цвета
         </Label>
@@ -235,6 +241,7 @@
                                Margin="0 0 0 0" Name="coloeSpecter"
                                Fill="{StaticResource SpectrumWithVerticalFade}"
                                Stretch="Fill" Height="250" Width="260"/>
+                    
                 </Grid>
 
                 <Canvas  Grid.Column="1" 

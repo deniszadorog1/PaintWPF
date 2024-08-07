@@ -35,6 +35,9 @@ namespace PaintWPF
         private TaskColor _tempColor = new TaskColor(255, 0, 0, 0);
 
         private System.Windows.Media.Color? _chosenColor = null;
+
+        private LinearGradientBrush _gradient;
+
         public Pallete(PalleteModel pallete, SolidColorBrush mainColor)
         {
             _pallete = pallete;
@@ -47,6 +50,10 @@ namespace PaintWPF
             valueDragElem = ValueBut;
 
             InitParamsForGivenColor();
+        }
+        private void InitStopsInGradient()
+        {
+
         }
         private void InitParamsForGivenColor()
         {

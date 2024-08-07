@@ -30,16 +30,16 @@
     </UserControl.Resources>
     
     <Grid>
-        <WrapPanel Name ="TextObject"  Height="40" Width="700" Background="#f5f3f3"
+        <WrapPanel Name ="TextObject"  Height="40" Width="500" Background="#f5f3f3"
                     HorizontalAlignment="Center" VerticalAlignment="Center" >
 
-            <ComboBox Name = "FontFamaly"  Height="30" Width="150" 
+            <ComboBox Name = "FontFamaly"  Height="25" Width="130" 
                       HorizontalAlignment="Left" Margin="5"
                       SelectionChanged="FontFamaly_SelectionChanged"/>
-            <ComboBox Name = "FontSize" Height= "30" Width="75"
+            <ComboBox Name = "FontSize" Height= "25" Width="50"
                       SelectionChanged="FontSize_SelctionChanged"/>
 
-            <Button Name ="Bold" Height="30" Width="30" 
+            <Button Name ="Bold" Height="25" Width="25" 
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
@@ -48,7 +48,7 @@
                 <Image Source="/Images/Text/Bold.png"/>
             </Button>
 
-            <Button Name ="Italics" Height="30" Width="30" 
+            <Button Name ="Italics" Height="25" Width="25" 
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
@@ -57,7 +57,7 @@
                 <Image Source="/Images/Text/Italics.png"/>
             </Button>
 
-            <Button Name ="Underline" Height="30" Width="30" 
+            <Button Name ="Underline" Height="25" Width="25" 
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
@@ -66,7 +66,7 @@
                 <Image Source="/Images/Text/Underline.png"/>
             </Button>
 
-            <Button Name ="Crossed" Height="30" Width="30" 
+            <Button Name ="Crossed" Height="25" Width="25" 
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
@@ -75,7 +75,7 @@
                 <Image Source="/Images/Text/Crossed.png"/>
             </Button>
 
-            <Button Name ="LeftPos" Height="30" Width="30" 
+            <Button Name ="LeftPos" Height="25" Width="25" 
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="TextAlign_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
@@ -84,7 +84,7 @@
                 <Image Source="/Images/Text/AlignLeft.png"/>
             </Button>
 
-            <Button Name ="CenterPos" Height="30" Width="30" 
+            <Button Name ="CenterPos" Height="25" Width="25" 
                     Margin="10 0 0 0" Background="White"
                     MouseEnter="TextAlign_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
@@ -93,7 +93,7 @@
                 <Image Source="/Images/Text/AlignCenter.png"/>
             </Button>
 
-            <Button Name ="RightPos" Height="30" Width="30" 
+            <Button Name ="RightPos" Height="25" Width="25" 
                     Margin="10 0 0 0" Background="White"
                     MouseEnter="TextAlign_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
@@ -102,8 +102,8 @@
                 <Image Source="/Images/Text/AlignRight.png"/>
             </Button>
 
-            <CheckBox Name ="Fill" Height="30" Width="150" Margin="10 0 0 0"
-                      Content="Fill Backgroung" FontSize="18" VerticalContentAlignment="Center"
+            <CheckBox Margin="5 0 0 0" Name ="Fill" Height="25" Width="55"
+                      Content="Fill" FontSize="18" VerticalContentAlignment="Center"
                       Checked="FillBg_Checked" Unchecked="FillBgUnChecked"/>
             
         </WrapPanel>

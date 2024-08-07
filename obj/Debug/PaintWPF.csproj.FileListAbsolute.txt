@@ -55,3 +55,11 @@ B:\GitHub\PaintWPF\obj\Debug\Other\DoesntWork.baml
 B:\GitHub\PaintWPF\bin\Debug\WpfAnimatedGif.dll
 B:\GitHub\PaintWPF\bin\Debug\WpfAnimatedGif.pdb
 B:\GitHub\PaintWPF\bin\Debug\WpfAnimatedGif.xml
+B:\GitHub\PaintWPF\obj\Debug\Other\SaveOffer.g.cs
+B:\GitHub\PaintWPF\obj\Debug\Other\SaveOffer.baml
+B:\GitHub\PaintWPF\obj\Debug\CustomControls\BrushesMenu\BrushMenu.g.cs
+B:\GitHub\PaintWPF\obj\Debug\CustomControls\BrushesMenu\BrushMenuItem.g.cs
+B:\GitHub\PaintWPF\obj\Debug\CustomControls\BrushesMenu\BrushMenu.baml
+B:\GitHub\PaintWPF\obj\Debug\CustomControls\BrushesMenu\BrushMenuItem.baml
+B:\GitHub\PaintWPF\obj\Debug\GeneratedInternalTypeHelper.g.cs
+B:\GitHub\PaintWPF\obj\Debug\App.baml

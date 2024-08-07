@@ -77,6 +77,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CustomControls\BrushesMenu\BrushMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\BrushesMenu\BrushMenuItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomControls\LeftClickSelectionMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -113,6 +121,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CustomControls\BrushesMenu\BrushMenu.xaml.cs">
+      <DependentUpon>BrushMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\BrushesMenu\BrushMenuItem.xaml.cs">
+      <DependentUpon>BrushMenuItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\LeftClickSelectionMenu.xaml.cs">
       <DependentUpon>LeftClickSelectionMenu.xaml</DependentUpon>
     </Compile>
@@ -142,6 +156,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Other\SaveOffer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pallete.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -150,6 +168,7 @@
   <ItemGroup>
     <Compile Include="Models\ColorParams.cs" />
     <Compile Include="Models\Enums\ActionType.cs" />
+    <Compile Include="Models\Enums\AdaptationStages.cs" />
     <Compile Include="Models\Enums\BrushType.cs" />
     <Compile Include="Models\Enums\FigureTypes.cs" />
     <Compile Include="Models\Enums\LineSizingRectType.cs" />
@@ -163,6 +182,9 @@
     <Compile Include="Models\Tools\ProgressBarConverter.cs" />
     <Compile Include="Other\DoesntWork.xaml.cs">
       <DependentUpon>DoesntWork.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Other\SaveOffer.xaml.cs">
+      <DependentUpon>SaveOffer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pallete.xaml.cs">
       <DependentUpon>Pallete.xaml</DependentUpon>
@@ -274,35 +296,20 @@
     <Resource Include="Images\Other\InProgress.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Figures\DownArrow.png" />
     <Resource Include="Images\Figures\FivePointedStar.png" />
-    <Resource Include="Images\Figures\LeftArrow.png" />
     <Resource Include="Images\Figures\Pentagon.png" />
     <Resource Include="Images\Figures\Rhombus.png" />
     <Resource Include="Images\Figures\RightTriangle.png" />
-    <Resource Include="Images\Figures\UpArrow.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Figures\Hexagon.png" />
-    <Resource Include="Images\Figures\RightArrow.png" />
     <Resource Include="Images\Figures\Triangle.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Figures\FourPointStar.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Figures\SixPointedStar.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Figures\Lightning.png" />
     <Resource Include="Images\Figures\OvalMessage.png" />
-    <Resource Include="Images\Figures\ShapeRectMeesage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Figures\Heart.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Figures\Cloud.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Figures\CroockedLine.png" />
@@ -339,6 +346,47 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Gif\monkeyGif.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Adaptive\FiguresAdapt.png" />
+    <Resource Include="Images\Adaptive\PalletteAdapt.png" />
+    <Resource Include="Images\Adaptive\ToolsAdapt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\UpArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Heart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\DownArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\LeftArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\RightArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Lightning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\FourPointStar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\ShapeRectMeesage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Figures\Cloud.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Brushes\UsualBrush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Brushes\OilBrushPaint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Brushes\ColoredBrushPaint.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

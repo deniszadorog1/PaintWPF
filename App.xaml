@@ -4,6 +4,15 @@
              xmlns:local="clr-namespace:PaintWPF"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        
+        <VisualBrush x:Key="RectangleBrush">
+            <VisualBrush.Visual>
+                <Grid>
+                    <!--<Rectangle Fill="{StaticResource MyBackgroundColor}"/>-->
+                    <Image Source="Images/Brushes/OilBrushPaint.png"/>
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
+        
     </Application.Resources>
 </Application>
