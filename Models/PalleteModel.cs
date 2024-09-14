@@ -47,14 +47,15 @@ namespace PaintWPF.Models
         }
         public void MoveUserColorIndex()
         {
-            if (ChosenCustomColorIndex.Item2 + 1 <= userColorWidth - 1)
+            const int _oneCorrel = 1;
+            if (ChosenCustomColorIndex.Item2 + _oneCorrel <= userColorWidth - _oneCorrel)
             {
-                ChosenCustomColorIndex = (ChosenCustomColorIndex.Item1, ChosenCustomColorIndex.Item2 + 1);
+                ChosenCustomColorIndex = (ChosenCustomColorIndex.Item1, ChosenCustomColorIndex.Item2 + _oneCorrel);
             }
-            else if (ChosenCustomColorIndex.Item1 + 1 < userColorHeight - 1 &&
-                ChosenCustomColorIndex.Item2 + 1 > userColorHeight - 1)
+            else if (ChosenCustomColorIndex.Item1 + _oneCorrel < userColorHeight - _oneCorrel &&
+                ChosenCustomColorIndex.Item2 + _oneCorrel > userColorHeight - _oneCorrel)
             {
-                ChosenCustomColorIndex = (ChosenCustomColorIndex.Item1 + 1, 0 );
+                ChosenCustomColorIndex = (ChosenCustomColorIndex.Item1 + _oneCorrel, 0);
             }
             else 
             {

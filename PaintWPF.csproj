@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MouseKeyHook.5.7.1\lib\net48\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -171,7 +174,9 @@
     <Compile Include="Models\Enums\AdaptationStages.cs" />
     <Compile Include="Models\Enums\BrushType.cs" />
     <Compile Include="Models\Enums\FigureTypes.cs" />
+    <Compile Include="Models\Enums\LineDivision.cs" />
     <Compile Include="Models\Enums\LineSizingRectType.cs" />
+    <Compile Include="Models\Enums\ParagraphPosition.cs" />
     <Compile Include="Models\Enums\SelectionSide.cs" />
     <Compile Include="Models\Enums\SelectionType.cs" />
     <Compile Include="Models\Enums\SubMenuItems.cs" />
@@ -387,6 +392,33 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Brushes\ColoredBrushPaint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Brushes\Check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Brushes\CheckOne.png" />
+    <Resource Include="Images\Brushes\CheckTwo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Models\Cursors\Diagonal1.cur" />
+    <Resource Include="Models\Cursors\Diagonal2.cur" />
+    <Resource Include="Models\Cursors\Horizontal.cur" />
+    <Resource Include="Models\Cursors\Move.cur" />
+    <Resource Include="Models\Cursors\Vertical.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Models\Cursors\Pipette.cur" />
+    <Resource Include="Models\Cursors\Spray.cur" />
+    <Resource Include="Models\Cursors\Texting.cur" />
+    <Resource Include="Models\Cursors\Cross.cur" />
+    <Resource Include="Models\Cursors\Pencil.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Models\Cursors\Bucket.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Other\paintIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

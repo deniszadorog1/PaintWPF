@@ -43,7 +43,7 @@
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
-                    Click="TextType_Click" 
+                    Click="Bold_Click" 
                     Style="{StaticResource NoStyleButton}">
                 <Image Source="/Images/Text/Bold.png"/>
             </Button>
@@ -52,7 +52,7 @@
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
-                    Click="TextType_Click"
+                    Click="Italics_Click"
                     Style="{StaticResource NoStyleButton}">
                 <Image Source="/Images/Text/Italics.png"/>
             </Button>
@@ -61,7 +61,7 @@
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
-                    Click="TextType_Click"
+                    Click="Undeline_Click"
                     Style="{StaticResource NoStyleButton}">
                 <Image Source="/Images/Text/Underline.png"/>
             </Button>
@@ -70,7 +70,7 @@
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="ButtonsTextType_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
-                    Click="TextType_Click"
+                    Click="Cross_Click"
                     Style="{StaticResource NoStyleButton}">
                 <Image Source="/Images/Text/Crossed.png"/>
             </Button>
@@ -79,8 +79,9 @@
                     Margin="10 0 0 0" Background="White" 
                     MouseEnter="TextAlign_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
-                    Click="TextAlignment_Click"
-                    Style="{StaticResource NoStyleButton}">
+                    Click="AlignMentLeft_Click"
+                    Style="{StaticResource NoStyleButton}"
+                    BorderBrush="#67c0ff" BorderThickness="3">
                 <Image Source="/Images/Text/AlignLeft.png"/>
             </Button>
 
@@ -88,8 +89,8 @@
                     Margin="10 0 0 0" Background="White"
                     MouseEnter="TextAlign_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
-                    Click="TextAlignment_Click"
-                    Style="{StaticResource NoStyleButton}" BorderBrush="#67c0ff" BorderThickness="3"> 
+                    Click="AlignMentCenter_Click"
+                    Style="{StaticResource NoStyleButton}" > 
                 <Image Source="/Images/Text/AlignCenter.png"/>
             </Button>
 
@@ -97,7 +98,7 @@
                     Margin="10 0 0 0" Background="White"
                     MouseEnter="TextAlign_MouseEnter"
                     MouseLeave="Buttons_MouseLeave"
-                    Click="TextAlignment_Click"
+                    Click="AlignMentRight_Click"
                     Style="{StaticResource NoStyleButton}">
                 <Image Source="/Images/Text/AlignRight.png"/>
             </Button>

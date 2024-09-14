@@ -11,14 +11,18 @@
        
         mc:Ignorable="d"
         Title="MainWindow" 
-        Height="700" MinHeight="700" MaxHeight="700"
-        Width="1100"  MaxWidth="1600" MinWidth="600"
+        Height="700" MinHeight="700"
+        Width="1100"   MinWidth="600"
         Background="#eef4f9" MouseMove="Window_MouseMove" 
         MouseLeftButtonUp="Window_MouseLeftButtonUp" 
         MouseLeftButtonDown="Window_MouseLeftButtonDown" 
         SizeChanged="Window_SizeChanged" 
-        MouseDoubleClick="PaintWindow_MouseDoubleClick" MouseUp="PaintWindow_MouseUp"     
-        >
+        MouseDoubleClick="PaintWindow_MouseDoubleClick" 
+        MouseUp="PaintWindow_MouseUp" 
+        KeyDown="PaintWindow_KeyDown" 
+        Loaded="PaintWindow_Loaded" 
+        MouseLeave="PaintWindow_MouseLeave" 
+        Icon="Images/Other/paintIcon.png">
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -69,7 +73,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="ValueGradCircle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -97,7 +100,6 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
-
         <Style x:Key="DropDownMenu"
                TargetType="MenuItem">
             <Setter Property="Template">
@@ -182,7 +184,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="SubMenuItem"
                TargetType="MenuItem">
             <Setter Property="Template">
@@ -239,7 +240,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
             <Setter Property="Stylus.IsFlicksEnabled" Value="True" />
             <Style.Triggers>
@@ -254,7 +254,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
     </Window.Resources>
 
 
@@ -290,7 +289,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Row="0" 
-                  MouseLeave="MainPabelBoxes_MouseLeave"
+                  MouseLeave="MainLabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter">
                 <Menu  Background="Transparent" HorizontalAlignment="Center">
 
@@ -318,7 +317,7 @@
                         <MenuItem Name = "twoFile" Header="Импортировать на холст"
                           Height="30" Width="400"
                           Style="{StaticResource SubMenuItem}"
-                          Click="ImportOnDraiwngCanvas_Click">
+                          Click="ImportOnDrawingCanvas_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/Import.png"/>
                             </MenuItem.Icon>
@@ -372,7 +371,7 @@
                         <MenuItem Name = "nineFile" Header="Свойства изображения"
                           Height="30" Width="400"
                           Style="{StaticResource SubMenuItem}"
-                                  Click="Settigns_Click">
+                                  Click="Settings_Click">
                             <MenuItem.Icon>
                                 <Image Source="Images/File/ImageSettings.png"/>
                             </MenuItem.Icon>
@@ -395,7 +394,7 @@
                   Stroke="Black" StrokeThickness="1" Opacity="0.3"/>
 
             <Grid Grid.Column="1"  
-                  MouseLeave="MainPabelBoxes_MouseLeave"
+                  MouseLeave="MainLabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter">
                 <Menu Background="Transparent" Padding="0 0 0 0">
 
@@ -441,7 +440,7 @@
 
             <Button Grid.Column="2" Style="{StaticResource NoStyleButton}" 
                     Background="#eef4f9" BorderThickness="0"
-                      MouseLeave="MainPabelBoxes_MouseLeave"
+                      MouseLeave="MainLabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter"
                     Click="SaveAs_Click"
                     Name="Save">
@@ -452,7 +451,7 @@
 
             <Button Grid.Column="3" Style="{StaticResource NoStyleButton}" 
                     Background="#eef4f9" BorderThickness="0"
-                    MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseLeave="MainLabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter"
                     Click="PreviousCanvas_Click"
                     Name="TurnLeft">
@@ -461,7 +460,7 @@
 
             <Button Grid.Column="4" Style="{StaticResource NoStyleButton}" 
                     Background="#eef4f9" BorderThickness="0"
-                    MouseLeave="MainPabelBoxes_MouseLeave"
+                    MouseLeave="MainLabelBoxes_MouseLeave"
                     MouseEnter="MainPanelTop_MouseEnter"
                     Click="NextCanvas_Click"
                     Name = "TurnRight" Height="20" VerticalAlignment="Top">
@@ -473,10 +472,14 @@
 
         </Grid>
 
+
         <Line Grid.Row="2" Stroke="Black" StrokeThickness="1"
-                  X1="0" Y1="0" X2="1100" Y2="0" Opacity="0.3"/>
+                  X1="0" Y1="0" 
+                X2="{Binding ElementName=PaintWindow, Path=ActualWidth}" Y2="0" Opacity="0.3"/>
+
         <Line Grid.Row="3" Stroke="Black" StrokeThickness="1"
-                  X1="0" Y1="0" X2="1100" Y2="0" Opacity="0.3"/>
+                  X1="0" Y1="0"
+              X2="{Binding ElementName=PaintWindow, Path=ActualWidth}" Y2="0" Opacity="0.3"/>
 
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
@@ -489,7 +492,7 @@
             <WrapPanel Grid.Column = "0" Margin="0 5 0 0">
                 <Image Source="Images/Pallete/MainPanelBotomIcons/cursor.png"
                        Height="20" Width="20"/>
-                <Label Name="CursCords" Width="110" FontSize="11">123456789012345</Label>
+                <Label Name="CursCords" Width="110" FontSize="11"></Label>
             </WrapPanel>
 
             <Line Grid.Column="1" Stroke="Black" StrokeThickness="0.5"
@@ -563,23 +566,24 @@
             </Grid>
         </Border>
 
-        <Grid x:Name="CenterWindowPanel" Grid.Row = "2">
+        <Grid x:Name="CenterWindowPanel" Grid.Row = "2" ClipToBounds="False">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Name="LeftSideDrawingCan"/>
                 <ColumnDefinition Name="PaintFieldColumn" Width="21*"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Name ="RightSideDrawingCan"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition Name="TextRow"/>
-                <RowDefinition Name="PaintFieldRow" Height="400"/>
+                <RowDefinition Name="PaintFieldRow" Height="400" />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Column="1" Grid.Row="1" >
+            <Grid Grid.Column="1" Grid.Row="1" Name ="DrawingGrid" 
+                  HorizontalAlignment="Center"  ClipToBounds="False">
                 <Canvas 
-                    ClipToBounds="True"
+                    ClipToBounds="False"
                 Name = "DrawingCanvas" Background="White"
                 Height="400" Width="1000"
                 MouseLeftButtonDown="Field_MouseDown"
@@ -587,7 +591,19 @@
                 MouseUp="Field_MouseUp" 
                 MouseLeave="PaintField_MouseLeave" 
                 VerticalAlignment="Center" Margin="0"
-                MouseRightButtonDown="DrawingCanvas_MouseRightButtonDown">
+                MouseRightButtonDown="DrawingCanvas_MouseRightButtonDown" 
+                    MouseEnter="DrawingCanvas_MouseEnter"
+                    RenderOptions.EdgeMode="Aliased">
+
+                    <Border Name = "RazerMarker" Width="100" Height="100" Margin="10" 
+                            BorderBrush="Black" Background="White" Panel.ZIndex="0"
+                            BorderThickness="1" Visibility="Hidden"/>
+                    <Border  Name ="BrushMarker"
+                             Height ="150" Width="150" 
+                             BorderBrush="Black" Background="Black" 
+                             CornerRadius="90" Visibility="Hidden"/>
+                    <Rectangle x:Name="CheckRect" Width="25" Height="25" Fill="Red"/>
+
                 </Canvas>
 
             </Grid>
@@ -603,9 +619,10 @@
         </Grid>
 
         <Line Grid.Row="1" Stroke="Black" StrokeThickness="1"
-                  X1="0" Y1="0" X2="1100" Y2="0" Opacity="0.3"/>
+                  X1="0" Y1="0" 
+              X2="{Binding ElementName=PaintWindow, Path=ActualWidth}" Y2="0" Opacity="0.3"/>
 
-        <Grid Grid.Row="1" Background="#f8f9fc" Name ="MainPanel">
+        <Grid Grid.Row="1" Background="#f8f9fc" Name ="MainPanel" MouseMove="MainPanel_MouseMove">
 
             <Grid.ColumnDefinitions >
                 <ColumnDefinition Name = "SelectionPart" Width="100" />
@@ -619,7 +636,6 @@
                 <RowDefinition MinHeight="100" Height="*"/>
             </Grid.RowDefinitions>
 
-
             <Grid Grid.Column="0">
 
                 <Grid.RowDefinitions>
@@ -627,13 +643,11 @@
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-
-
                 <Button Grid.Row="0" 
                         Name ="SelectionBut"
                         Style="{StaticResource NoStyleButton}"
                         Background="Transparent" Height="40" Width="40"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         PreviewMouseDown = "TurnClickedObjInBlue_MouseDown"
                         VerticalAlignment="Bottom" Margin="0 0 5 0">
@@ -641,8 +655,8 @@
                 </Button>
 
                 <Grid Grid.Row="1" 
-                  MouseLeave="MainPabelBoxes_MouseLeave"
-                    MouseEnter="MainPanelBoxes_MouseEnter" >
+                  MouseLeave="MainLabelBoxes_MouseLeave"
+                    MouseEnter="MainPanelBoxes_MouseEnter" RenderTransformOrigin="22.122,16.202" >
                     <Menu Name="SelectionMenu" Background="Transparent"
                           HorizontalAlignment="Center">
                         <MenuItem Width="40" Height="25"
@@ -655,11 +669,11 @@
                             </MenuItem.Icon>
 
                             <MenuItem Name = "ZeroSelection"  
-                                  Header="Прямоугольник"
-                          Height="30"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"   
-                          Click="SquareSelection_Click">
+                                      Header="Прямоугольник"
+                                      Height="30"
+                                      Width="400"
+                                      Style="{StaticResource SubMenuItem}"   
+                                      Click="SquareSelection_Click">
                                 <MenuItem.Icon>
                                     <Image Source="Images/Selection/Rectangle.png"/>
                                 </MenuItem.Icon>
@@ -728,7 +742,6 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"
                        Foreground="#5e5f60">Выдиление</Label>
-
             </Grid>
 
             <Line Grid.Column="1"
@@ -754,7 +767,7 @@
                            Width="140" Height="60">
                     <Button Name ="Pen" Margin="10 0 10 3"
                         Style="{StaticResource NoStyleButton}"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
                         <Image Source="Images/Pallete/MainPanelIcons/Pen.png" 
@@ -764,7 +777,7 @@
 
                     <Button Name ="Bucket" Margin="10 0 10 3"
                         Style="{StaticResource NoStyleButton}"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
                         <Image Grid.Column="1" Grid.Row="0"
@@ -775,7 +788,7 @@
 
                     <Button Name ="Text" Margin="5 0 5 3"
                         Style="{StaticResource NoStyleButton}"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
                         <Image Source="Images/Pallete/MainPanelIcons/text.png" 
@@ -785,7 +798,7 @@
 
                     <Button Name = "Erazer" Margin="10 0 10 0"
                         Style="{StaticResource NoStyleButton}"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
                         <Image Source="Images/Pallete/MainPanelIcons/erazer.png" 
@@ -793,10 +806,9 @@
                            VerticalAlignment="Center"/>
                     </Button>
 
-
                     <Button Name = "ColorDrop" Margin="10 0 10 0"
                         Style="{StaticResource NoStyleButton}"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
                         <Image Source="Images/Pallete/MainPanelIcons/colorDrop.png" 
@@ -806,7 +818,7 @@
 
                     <Button Name="Glass" Margin="5 0 5 0"
                         Style="{StaticResource NoStyleButton}"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         Click="Tool_MouseClick">
                         <Image Grid.Column="2" Grid.Row="1"
@@ -837,14 +849,14 @@
                         Name ="PaintingBut"
                         Style="{StaticResource NoStyleButton}"
                         Background="Transparent" Height="40" Width="40"
-                        MouseLeave="MainPabelBoxes_MouseLeave"
+                        MouseLeave="MainLabelBoxes_MouseLeave"
                         MouseEnter="MainPanelBoxes_MouseEnter"
                         PreviewMouseDown = "TurnClickedObjInBlue_MouseDown">
                     <Image  Name="BrushTypePic" Source="Images/BrushType/UsualBrush.png"/>
                 </Button>
 
                 <Grid Grid.Row="1" 
-                  MouseLeave="MainPabelBoxes_MouseLeave"
+                  MouseLeave="MainLabelBoxes_MouseLeave"
                   MouseEnter="MainPanelBoxes_MouseEnter">
 
                     <Button Name ="BrushesBut" Click="BrushButton_Click" 
@@ -853,94 +865,7 @@
                                Height="20" Width="20" Stretch="Uniform"
                                />
                     </Button>
-
-
-                    <!--    <Menu Background="Transparent" HorizontalAlignment="Center">
-                        <MenuItem Width="40" Height="25"                   
-                        Style="{StaticResource DropDownMenu}">
-                            <MenuItem.Icon>
-                                <Image Source="Images/Pallete/MainPanelCaligraphy/showMarkers.png"
-                               Height="20" Width="20" Stretch="Uniform"/>
-                            </MenuItem.Icon>
-
-                            <Border BorderThickness="0.5" Opacity="0.5" BorderBrush="Black"/>
-
-                            <MenuItem Name = "ZeroBrushType"  
-                                Header="Кисть"
-                                Height="40"
-                                Width="400"
-                                Style="{StaticResource SubMenuItem}"   
-                                Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "OneBrushType"
-                            Header="Калиграфическая кисть"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}" 
-                          Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "TwoBrushType"
-                                  Header="Перьевая ручка"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"  
-                          Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "ThreeBrushType"
-                                  Header="Распылитель"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"  
-                          Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "FourBrushType"
-                                  Header="Кисть для масляных красок"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"  
-                          Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "FiveBrushType"
-                                  Header="Цветной карандаш"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"  
-                          Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "SixBrushType"
-                                  Header="Маркер"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}" 
-                          Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "SevenBrushType"
-                                  Header="Текстурный карандаш"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"  
-                          Click="BrushType_Click">
-                            </MenuItem>
-
-                            <MenuItem Name = "EightBrushType"
-                                  Header="Киcть для акварели"
-                          Height="40"
-                          Width="400"
-                          Style="{StaticResource SubMenuItem}"  
-                          Click="BrushType_Click">
-                            </MenuItem>
-                        </MenuItem>
-                    </Menu>-->
-
                 </Grid>
-
 
                 <Label Grid.Row="2" 
                        HorizontalAlignment="Center"
@@ -951,7 +876,6 @@
             <Line Grid.Column="3"
                 X1="0" Y1="5" X2="0" Y2="95" 
                   Stroke="Black" StrokeThickness="0.5" Opacity="0.3" VerticalAlignment="Top" />
-
 
             <Grid  Name="FigGridPart" Grid.Column="3">
                 <Grid.RowDefinitions>
@@ -976,7 +900,7 @@
 
                             <Button Name ="Line" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Line.png"/>
@@ -984,7 +908,7 @@
 
                             <Button Name ="Curve" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/CroockedLine.png"/>
@@ -992,7 +916,7 @@
 
                             <Button Name ="Oval" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Circle.png"/>
@@ -1000,7 +924,7 @@
 
                             <Button Name ="Rectangle" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Rectangle.png"/>
@@ -1008,7 +932,7 @@
 
                             <Button Name ="RoundedRectangle" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/ShapedRectangle.png"/>
@@ -1016,7 +940,7 @@
 
                             <Button Name ="Polygon" Height="22" Width="22"  
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Polygon.png"/>
@@ -1024,7 +948,7 @@
 
                             <Button Name ="Triangle"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Triangle.png"/>
@@ -1032,7 +956,7 @@
 
                             <Button Name ="RightTriangle"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/RightTriangle.png"/>
@@ -1040,7 +964,7 @@
 
                             <Button Name ="Rhombus"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Rhombus.png"/>
@@ -1048,7 +972,7 @@
 
                             <Button Name ="Pentagon"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Pentagon.png"/>
@@ -1056,7 +980,7 @@
 
                             <Button Name ="Hexagon"  Height="22" Width="22"   
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Hexagon.png"/>
@@ -1064,14 +988,14 @@
 
                             <Button Name ="RightArrow"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/RightArrow.png"/>
                             </Button>
                             <Button Name ="LeftArrow"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/LeftArrow.png"/>
@@ -1079,7 +1003,7 @@
 
                             <Button Name ="UpArrow" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/UpArrow.png"/>
@@ -1087,7 +1011,7 @@
 
                             <Button Name ="DownArrow"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/DownArrow.png"/>
@@ -1095,7 +1019,7 @@
 
                             <Button Name ="FourPointedStar"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/FourPointStar.png"/>
@@ -1103,7 +1027,7 @@
 
                             <Button Name ="FivePointedStar"  Height="22" Width="22"  
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/FivePointedStar.png"/>
@@ -1111,7 +1035,7 @@
 
                             <Button Name ="SixPointedStar"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/SixPointedStar.png"/>
@@ -1119,7 +1043,7 @@
 
                             <Button Name ="RoundedRectangularLeader"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/ShapeRectMeesage.png"/>
@@ -1127,7 +1051,7 @@
 
                             <Button Name ="OvalCallout"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/OvalMessage.png"/>
@@ -1135,7 +1059,7 @@
 
                             <Button Name ="CalloutCloud"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Cloud.png"/>
@@ -1143,7 +1067,7 @@
 
                             <Button Name ="Heart"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Heart.png"/>
@@ -1151,7 +1075,7 @@
 
                             <Button Name ="Lightning"  Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
-                                MouseLeave="MainPabelBoxes_MouseLeave"
+                                MouseLeave="MainLabelBoxes_MouseLeave"
                                 MouseEnter="MainPanelBoxes_MouseEnter"
                                 Click="Figure_Click">
                                 <Image Source="Images/Figures/Lightning.png"/>
@@ -1376,11 +1300,11 @@
                         HorizontalAlignment="Left" Margin="5 0 0 0" 
                         BorderThickness="1"
                         MouseEnter="MainPanelBoxes_MouseEnter"
-                        MouseLeave="MainPabelBoxes_MouseLeave">
+                        MouseLeave="MainLabelBoxes_MouseLeave">
                         <Button 
                         Style="{StaticResource NoStyleButton}"
                         Name ="ChooseColorPalette"
-                        Click="Pallete_Click"
+                        Click="Palette_Click"
                         Background="Transparent"
                         >
                             <Image Source="Images/Pallete/MainPanelIcons/palette.png"/>

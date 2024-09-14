@@ -14,7 +14,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using PaintWPF.CustomControls.SubMenu;
 using PaintWPF.Models.Enums;
 namespace PaintWPF.CustomControls
 {
@@ -95,7 +94,6 @@ namespace PaintWPF.CustomControls
             }
             Canvas.SetTop(_subMenu, buttonPosition.Y);
         }
-
         public void RemoveSubMenu()
         {
             for(int i = 0; i < _drawingCanvas.Children.Count; i++)

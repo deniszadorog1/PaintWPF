@@ -380,8 +380,6 @@ namespace PaintWPF.Models.Tools
             }
             return res;
         }
-
-
         private int Round(double val)
         {
             return (int)(val + 0.5);

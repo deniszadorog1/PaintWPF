@@ -15,7 +15,6 @@ namespace PaintWPF.Models.Enums
         ForthFigures,
         FiguresTransformation, 
         ToolsTransformation, 
-        ColorsTransformation
-        
+        ColorsTransformation 
     }
 }

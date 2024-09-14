@@ -45,9 +45,9 @@ namespace PaintWPF
             _lastSaveDate = lastSaveDate;
 
             InitializeComponent();
-
             InitBaseParams();
         }
+        private const string emptyStr = " ";
         private void InitBaseParams()
         {
             //init DrawingCanvas Size in pixels
@@ -55,25 +55,27 @@ namespace PaintWPF
             DrawingWidth.Content = _drawingCanvas.Width;
 
             //Init Image wieght
-            ImageWeight.Content = GetImageWeightInString() + 
-                (_finalWeightValueIndex == -1 ? "" : " " +  _weightValues[_finalWeightValueIndex]);
+            ImageWeight.Content = GetImageWeightInString() +
+                (_finalWeightValueIndex == -1 ? string.Empty : emptyStr + _weightValues[_finalWeightValueIndex]);
 
             LastSave.Content = GetLastSaveDate();
-
             Dpi.Content = _dpi.ToString() + " точек на дюйм";
         }
+        private string _dotStr = ".";
+        private string _doubleDots = ":";
         private string GetLastSaveDate()
         {
-            return _lastSaveDate is null ? LastSave.Content.ToString() : 
-            _lastSaveDate.Value.Day + "." + _lastSaveDate.Value.Month + "." + _lastSaveDate.Value.Year + " " +  
-                _lastSaveDate.Value.Hour + ":" + _lastSaveDate.Value.Minute;
+            return _lastSaveDate is null ? LastSave.Content.ToString() :
+            _lastSaveDate.Value.Day + _dotStr + _lastSaveDate.Value.Month + _dotStr + _lastSaveDate.Value.Year + emptyStr +
+                _lastSaveDate.Value.Hour + _doubleDots + _lastSaveDate.Value.Minute;
         }
+        private const int _maxMarksAfterPoint = 3;
         private string GetImageWeightInString()
         {
             double res = GetImageWeight();
             ConvertBytesIntoAnoutherValue(ref res);
             if (res == -1) _finalWeightValueIndex = -1;
-            return res == -1 ? ImageWeight.Content.ToString() : (Math.Round(res, 3)).ToString();
+            return res == -1 ? ImageWeight.Content.ToString() : (Math.Round(res, _maxMarksAfterPoint)).ToString();
         }
         private double ConvertBytesIntoAnoutherValue(ref double weight)
         {
@@ -85,6 +87,7 @@ namespace PaintWPF
             } while (weight >= _weightDivider);
             return weight;
         }
+        private const int _bitInByte = 8;
         private double GetImageWeight()
         {
             if (_lastDrawImgSave == string.Empty) return -1;
@@ -92,8 +95,7 @@ namespace PaintWPF
             BitmapImage bitmap = new BitmapImage(new Uri(_lastDrawImgSave));
             image.Source = bitmap;
 
-            // Размер изображения в байтах = ширина * высота * (глубина цвета / 8)
-            long size = bitmap.PixelWidth * bitmap.PixelHeight * (bitmap.Format.BitsPerPixel / 8);
+            long size = bitmap.PixelWidth * bitmap.PixelHeight * (bitmap.Format.BitsPerPixel / _bitInByte);
             return size;
         }
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
@@ -114,12 +116,13 @@ namespace PaintWPF
             RadioButton but = sender as RadioButton;
 
             InitDPI();
-            DrawingWidth.Content = Math.Round(ConvertPixelsToCentimetersX(_drawingCanvas.Width), 3);
-            DrawingHeight.Content = Math.Round(ConvertPixelsToCentimetersY(_drawingCanvas.Height), 3);
+            DrawingWidth.Content = Math.Round(ConvertPixelsToCentimetersX(_drawingCanvas.Width), _maxMarksAfterPoint);
+            DrawingHeight.Content = Math.Round(ConvertPixelsToCentimetersY(_drawingCanvas.Height), _maxMarksAfterPoint);
         }
         double ConvertInchesToCentimeters(double inches)
         {
-            return inches * 2.54;
+            const double cmInInches = 2.54;
+            return inches * cmInInches;
         }
         double ConvertPixelsToCentimetersX(double pixels)
         {
@@ -147,8 +150,8 @@ namespace PaintWPF
             RadioButton but = sender as RadioButton;
 
             InitDPI();
-            DrawingWidth.Content = Math.Round(ConvertPixelsToInchesX(_drawingCanvas.Width), 3);
-            DrawingHeight.Content = Math.Round(ConvertPixelsToInchesY(_drawingCanvas.Height), 3);
+            DrawingWidth.Content = Math.Round(ConvertPixelsToInchesX(_drawingCanvas.Width), _maxMarksAfterPoint);
+            DrawingHeight.Content = Math.Round(ConvertPixelsToInchesY(_drawingCanvas.Height), _maxMarksAfterPoint);
         }
         private double ConvertPixelsToInchesX(double pixels)
         {

@@ -75,8 +75,7 @@ namespace PaintWPF.Other
                 _ifClear = true;
                 return;
             }
-            _ifClear = false;
-           
+            _ifClear = false;  
         }
     }
 }

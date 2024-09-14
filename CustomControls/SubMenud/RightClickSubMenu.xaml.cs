@@ -46,26 +46,26 @@ namespace PaintWPF.CustomControls.SubMenu
         private const int _menuWidthCor = 5;
         private void InitItems()
         {
+            const int multAdd = 1;
+            const int multMultiplier = 5;
             SubMenuElement newElem = new SubMenuElement();
-
-            double menuHeight = newElem.Height * _items.Count + 1 + _items.Count * 5;
+            double menuHeight = newElem.Height * _items.Count + multAdd + _items.Count * multMultiplier;
             for (int i = 0; i < _items.Count; i++)
             {
                 newElem = new SubMenuElement();
                (string path, string text) itemParams = GetItemParams(_items[i]);
-
                 newElem.ItemText.Content = itemParams.text;
                 GetImageFromFile(newElem.ItemImage, itemParams.path);
-                
+               
                 SubMenu.Items.Add(newElem);
             }
             InitSize(menuHeight, newElem.Width);
         }
         private void InitSize(double height, double width)
         {
-            SubMenu.Height = height + 50;
+            const int heightAdd = 50;
+            SubMenu.Height = height + heightAdd;
             Height = height;
-
             SubMenu.Width = width;
             Width = width;
         }
@@ -84,7 +84,6 @@ namespace PaintWPF.CustomControls.SubMenu
                 item == SubMenuItems.FlipInVertical ? (_flipInVerticalPath, _flipInVertical) :
                 (_flipInHorizontalPath, _flipInHorizontal);
         }
-
         private void InitImagesPaths()
         {
             DirectoryInfo info = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
@@ -96,6 +95,5 @@ namespace PaintWPF.CustomControls.SubMenu
             _flipInVerticalPath = System.IO.Path.Combine(clickPath, "FlipVertical.png");
             _flipInHorizontalPath = System.IO.Path.Combine(clickPath, "FlipHorizontal.png");
         }
-
     }
 }

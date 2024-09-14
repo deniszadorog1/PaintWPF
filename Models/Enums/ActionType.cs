@@ -16,6 +16,8 @@ namespace PaintWPF.Models.Enums
         Text,
         PickingColor,
         ChangingFigureSize,
-        Nothing
+        Nothing,
+        Pencil
+
     }
 }

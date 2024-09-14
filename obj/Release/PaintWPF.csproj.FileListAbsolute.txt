@@ -55,3 +55,11 @@ B:\GitHub\PaintWPF\obj\Release\PaintWPF.csproj.CoreCompileInputs.cache
 B:\GitHub\PaintWPF\obj\Release\PaintWPF.csproj.Up2Date
 B:\GitHub\PaintWPF\obj\Release\PaintWPF.exe
 B:\GitHub\PaintWPF\obj\Release\PaintWPF.pdb
+B:\GitHub\PaintWPF\obj\Release\CustomControls\BrushesMenu\BrushMenu.g.cs
+B:\GitHub\PaintWPF\obj\Release\CustomControls\BrushesMenu\BrushMenuItem.g.cs
+B:\GitHub\PaintWPF\obj\Release\Other\SaveOffer.g.cs
+B:\GitHub\PaintWPF\obj\Release\GeneratedInternalTypeHelper.g.cs
+B:\GitHub\PaintWPF\obj\Release\App.baml
+B:\GitHub\PaintWPF\obj\Release\CustomControls\BrushesMenu\BrushMenu.baml
+B:\GitHub\PaintWPF\obj\Release\CustomControls\BrushesMenu\BrushMenuItem.baml
+B:\GitHub\PaintWPF\obj\Release\Other\SaveOffer.baml

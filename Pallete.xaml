@@ -8,9 +8,9 @@
 
         mc:Ignorable="d"
         Title="Pallete" 
-        Height="660" MaxHeight="660" MinHeight="600" 
-        Width="680" MaxWidth="680" MinWidth="680" 
-        Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp">
+        Height="660" MaxHeight="660" MinHeight="660" 
+        Width="680" MaxWidth="680" MinWidth="680" ResizeMode="NoResize"
+        Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp" >
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -38,7 +38,6 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
-
         <Style x:Key="RoundButtonStylee" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -74,7 +73,6 @@
             <EventSetter Event="MouseEnter" Handler="MyButton_MouseEnter"/>
             <EventSetter Event="MouseLeave" Handler="MyButton_MouseLeave"/>
         </Style>
-
         <Style x:Key="SpectreCircle" TargetType="Button">
             <Setter Property ="Template">
                 <Setter.Value>
@@ -102,7 +100,6 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
-
         <Style x:Key="ValueGradCircle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -130,8 +127,6 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
-
-
         <LinearGradientBrush x:Name="OneMoreGrad" x:Key="Spectrum" StartPoint="0,0" EndPoint="1,0">
             <GradientStop Color="Red" Offset="0.0"/>
             <GradientStop Color="Orange" Offset="0.1"/>
@@ -142,7 +137,6 @@
             <GradientStop Color="#ff06e2" Offset="0.6"/>
             <GradientStop Color="Red" Offset="0.7"/>
         </LinearGradientBrush>
-
         <DrawingBrush x:Key="SpectrumWithVerticalFade">
             <DrawingBrush.Drawing>
                 <DrawingGroup>
@@ -211,9 +205,7 @@
             <RowDefinition Height="250"/>
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
- 
-      
-        
+  
         <Label FontSize ="32" Margin="25,0,0,0" Grid.ColumnSpan="2" >
             Изменить цвета
         </Label>
@@ -237,7 +229,7 @@
 
                 <Grid Grid.Column="1" ClipToBounds="True"
                          PreviewMouseDown="SpecCanvas_LeftMouseDown">
-                    <Rectangle MouseMove="coloeSpecter_MouseMove"
+                    <Rectangle MouseMove="ColorSpecter_MouseMove"
                                Margin="0 0 0 0" Name="coloeSpecter"
                                Fill="{StaticResource SpectrumWithVerticalFade}"
                                Stretch="Fill" Height="250" Width="260"/>
@@ -249,7 +241,6 @@
                          ClipToBounds="True"
                          PreviewMouseUp="SpecCanvas_PreViewMouseUp"
                          PreviewMouseMove="SpecCanvas_PreViewMouseMove">
-
                     <Button x:Name="draggableButton" 
                         Style="{StaticResource SpectreCircle}" 
                         Grid.Column="1" 

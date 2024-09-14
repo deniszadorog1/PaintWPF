@@ -9,7 +9,6 @@ namespace PaintWPF.Models.Enums
     public enum SubMenuItems
     {
         TurnIn180, 
-
         FlipInVertical, 
         FlipInHorizontal
     }

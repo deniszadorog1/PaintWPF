@@ -9,7 +9,7 @@
             <VisualBrush.Visual>
                 <Grid>
                     <!--<Rectangle Fill="{StaticResource MyBackgroundColor}"/>-->
-                    <Image Source="Images/Brushes/OilBrushPaint.png"/>
+                    <Image Source="Images/Brushes/TexturePencilBrush.png"/>
                 </Grid>
             </VisualBrush.Visual>
         </VisualBrush>

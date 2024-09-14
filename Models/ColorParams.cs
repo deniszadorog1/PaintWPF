@@ -42,6 +42,5 @@ namespace PaintWPF.Models
             this.HSVParam = HSVParam;
             CordOnSpec = (-1, -1);
         }
-
     }
 }

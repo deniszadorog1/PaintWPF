@@ -63,3 +63,4 @@ B:\GitHub\PaintWPF\obj\Debug\CustomControls\BrushesMenu\BrushMenu.baml
 B:\GitHub\PaintWPF\obj\Debug\CustomControls\BrushesMenu\BrushMenuItem.baml
 B:\GitHub\PaintWPF\obj\Debug\GeneratedInternalTypeHelper.g.cs
 B:\GitHub\PaintWPF\obj\Debug\App.baml
+B:\GitHub\PaintWPF\bin\Debug\Gma.System.MouseKeyHook.dll

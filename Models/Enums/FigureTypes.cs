@@ -31,6 +31,5 @@ namespace PaintWPF.Models.Enums
         CalloutCloud,
         Heart,
         Lightning,
-
     }
 }

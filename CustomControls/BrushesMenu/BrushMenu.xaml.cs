@@ -54,7 +54,6 @@ namespace PaintWPF.CustomControls.BrushesMenu
 
             InitImagePathes();
             InitParts();
-
             InitBrushes();
         }
         private void InitParts()
@@ -70,7 +69,6 @@ namespace PaintWPF.CustomControls.BrushesMenu
             _menuItemsParts.Add((_texturePencilString, GetImageFromFile(_texturePencilPath), "TexturePencil"));
             _menuItemsParts.Add((_watercolorBrushString, GetImageFromFile(_watercolorPath), "WatercolorBrush"));
         }
-
         private Image GetImageFromFile(string path)
         {
             if (path is null) return null;
@@ -85,14 +83,12 @@ namespace PaintWPF.CustomControls.BrushesMenu
             };
             return img;
         }
-
         private void InitImagePathes()
         {
             DirectoryInfo info = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
             string startdir = info.Parent.Parent.FullName;
             string imgPath = System.IO.Path.Combine(startdir, "Images");
             string brushPath = System.IO.Path.Combine(imgPath, "Brushes");
-
 
             _usualPath = System.IO.Path.Combine(brushPath, "ColoredBrush.png");
             _calligraphyPath = System.IO.Path.Combine(brushPath, "OilBrush.png");
@@ -104,14 +100,12 @@ namespace PaintWPF.CustomControls.BrushesMenu
             _texturePencilPath = System.IO.Path.Combine(brushPath, "OilBrush.png");
             _watercolorPath = System.IO.Path.Combine(brushPath, "ColoredBrush.png");
         }
-
         private void InitBrushes()
         {
             for (int i = 0; i < _menuItemsParts.Count; i++)
             {
                 BrushMenuItem item = GetBrushMenuItem(_menuItemsParts[i].Item1,
                     _menuItemsParts[i].Item2, _menuItemsParts[i].Item3);
-
                 BrushesListBox.Items.Add(item);
             }
         }
@@ -125,9 +119,7 @@ namespace PaintWPF.CustomControls.BrushesMenu
                 res.BrushImage.Source = itemImage.Source;
             }
             res.Name = itemName;
-
             return res;
         }
-
     }
 }
