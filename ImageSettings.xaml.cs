@@ -14,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
 using Image = System.Windows.Controls.Image;
 
 namespace PaintWPF

@@ -91,8 +91,10 @@ namespace PaintWPF.Models
                         "L 70 0 L 110 50 L 90 50 L 90 150 Z";
         public const string downArrowData = "M 50 50 L 50 150 L 30 150 " +
                         "L 70 200 L 110 150 L 90 150 L 90 50 Z";
-        public const string fourPointedStar = "M 95 20 L 110 70 L 180 80 L 110 100 " +
-                        "L 95 160 L 75 100 L 20 80 L 80 70 L 95 20";
+
+        public const string fourPointedStar = "M 90 20 L 105 70 L 165 85 L 105 95    " +
+                        "L 90 150 L 75 95 L 20 85 L 75 70 L 90 20";
+        
         public const string fivePointStar = "M 100 10  L 130 90 L 200 90 L 145 130 " +
                         "L 170 200 L 100 160 L 30 200  L 55 130 L 0 90  L 70 90 Z";
         public const string sixPointStarData = "M 100 10 L 130 60 L 180 60 L 150 100 " +
@@ -102,7 +104,7 @@ namespace PaintWPF.Models
                         "Q 170 120, 150 120 L 75 120 L 65 140 L 55 120 Q 25, 120, 25 100 " +
                         "L 25 40 Q 25 10, 40 10 Z";
         public const string ovalCommentData = "M 100,100 A 40, 30 0 1 1 200, 100 " +
-                        "A 60, 60 1 0 1 140, 130 L 125 145 L 120 130 Q 100 120 100 100";
+                        "A 55, 35 1 0 1 130, 130 L 125 145 L 120 130 Q 100 120 100 100";
         public const string cloudCommentData = "M 80,50 A 20 10 1 1 1 150 45 A 20 10 1 1 1 210 40 " +
                         "A 10 5 1 1 1 270 70 A 10 10 1 1 1 270 120 A 10 10 1 1 1 240 155 " +
                         "A 15 12 1 1 1 180 165 A 18 10 1 1 1 90 170 A 45 35 1 0 1 30 130 " +
@@ -196,6 +198,9 @@ namespace PaintWPF.Models
             _ifFilling = false;
             _ifTexting = false;
             _ifPickingColor = false;
+
+            
+
 
             _ifChangingFigureSize = false;
             IfSelectionIsMacken = false;
@@ -488,21 +493,28 @@ namespace PaintWPF.Models
         public void SetPaintingMarker(MouseEventArgs e, Canvas DrawingCanvas)
         {
             const double markerOpacity = 0.5;
-            var polyline = new Polyline();
-            polyline.Stroke = ColorToPaint;
-
+            var polyline = new Polyline() 
+            {
+                StrokeStartLineCap = PenLineCap.Flat,
+                StrokeEndLineCap = PenLineCap.Flat,
+                StrokeLineJoin = PenLineJoin.Round,
+                Stroke = ColorToPaint,
+                StrokeThickness = brushThickness + _brushSizeCorrel,
+                Opacity = markerOpacity
+            };
             RectangleGeometry clip = new RectangleGeometry(new Rect(0, 0, DrawingCanvas.Width, DrawingCanvas.Height));
             polyline.ClipToBounds = true;
             polyline.Clip = clip;
+            
+            if(polylines.Count > 50)
+            {
+                polylines.Clear();
+            }
 
             polylines.Add(polyline);
 
-            polyline.Points.Add(e.GetPosition(DrawingCanvas));
-
             DrawingCanvas.Children.Add(polyline);
 
-            polyline.StrokeThickness = brushThickness + _brushSizeCorrel;
-            polyline.Opacity = markerOpacity;
         }
         public bool CheckMethod(Point point, Polyline poly)
         {
@@ -510,7 +522,7 @@ namespace PaintWPF.Models
             for (int i = 0; i < poly.Points.Count - (brushThickness + _brushSizeCorrel); i++)
             {
                 if ((Math.Sqrt(Math.Pow(point.X - poly.Points[i].X, formulaPower) +
-                                        Math.Pow(point.Y - poly.Points[i].Y, formulaPower))) <= (brushThickness + _brushSizeCorrel))
+                                        Math.Pow(point.Y - poly.Points[i].Y, formulaPower))) + 30 <= (brushThickness + _brushSizeCorrel))
                 {
                     return true;
                 }
@@ -519,21 +531,29 @@ namespace PaintWPF.Models
         }
         public void MarkerBrushPaint(MouseEventArgs e, Canvas DrawingCanvas)
         {
-            if (polylines.Last().Points.Last() ==
-                e.GetPosition(DrawingCanvas))
+            if (polylines.Count == 0) return;
+
+                var point = e.GetPosition(DrawingCanvas);
+
+            if (polylines.Last().Points.Count > 0 &&
+                polylines.Last().Points.Last() == point)
             {
                 return;
             }
-            var point = e.GetPosition(DrawingCanvas);
-            if (CheckMethod(point, polylines.Last()))
+
+            if (CheckMethod(point, polylines.Last()) || polylines.Last().Points.Count > 400)
             {
                 SetPaintingMarker(e, DrawingCanvas);
             }
-            polylines.Last().Points.Add(point);
+            else
+            {
+                polylines.Last().Points.Add(e.GetPosition(DrawingCanvas));
+            }
         }
         private const int _dpiParam = 96;
         public RenderTargetBitmap ConvertCanvasToBitmap(Canvas canvas)
         {
+            canvas.RenderTransform = new TranslateTransform(0, 0);
             RenderOptions.SetEdgeMode(canvas, EdgeMode.Aliased);
             RenderOptions.SetBitmapScalingMode(canvas, BitmapScalingMode.NearestNeighbor);
 
@@ -544,7 +564,7 @@ namespace PaintWPF.Models
             canvas.Measure(new Size((int)canvas.Width, (int)canvas.Height));
             canvas.Arrange(new Rect(new Size((int)canvas.Width, (int)canvas.Height)));
 
-            RenderOptions.SetEdgeMode(renderBitmap, EdgeMode.Aliased);
+            //RenderOptions.SetEdgeMode(renderBitmap, EdgeMode.Aliased);
             renderBitmap.Render(canvas);
 
             return renderBitmap;
@@ -559,13 +579,15 @@ namespace PaintWPF.Models
             RenderOptions.SetBitmapScalingMode(canvas, BitmapScalingMode.NearestNeighbor);
 
             RenderTargetBitmap renderBitmap = ConvertCanvasToBitmap(canvas);
-
+      
             Image image = new Image
             {
                 Source = renderBitmap,
                 Width = canvas.Width,
                 Height = canvas.Height,
             };
+
+            image.RenderTransform = new TranslateTransform(0, 0);
             RenderOptions.SetEdgeMode(image, EdgeMode.Aliased);
 
             return image;
@@ -573,6 +595,7 @@ namespace PaintWPF.Models
         private ImageBrush _tempBrush;
         public void SetImageBrush(string brushPngPath)
         {
+            return;
             //Not useing it. CAN BE DELETED
             WriteableBitmap writeableBitmap = GetChangedBitMapColor(brushPngPath);
 
@@ -613,15 +636,15 @@ namespace PaintWPF.Models
                     byte g = pixelData[index + 1];
                     byte r = pixelData[index + 2];
                     byte a = pixelData[index + 3];
-
+/*
                     double alpha = a / 255.0;
                     byte newR = (byte)(r * alpha + ColorToPaint.Color.R * (1 - alpha));
                     byte newG = (byte)(g * alpha + ColorToPaint.Color.G * (1 - alpha));
-                    byte newB = (byte)(b * alpha + ColorToPaint.Color.B * (1 - alpha));
+                    byte newB = (byte)(b * alpha + ColorToPaint.Color.B * (1 - alpha));*/
 
-                    pixelData[index] = newB;
-                    pixelData[index + 1] = newG;
-                    pixelData[index + 2] = newR;
+                    pixelData[index] = ColorToPaint.Color.B;
+                    pixelData[index + 1] = ColorToPaint.Color.G;
+                    pixelData[index + 2] = ColorToPaint.Color.R;
                     pixelData[index + 3] = a;
                 }
             }
@@ -663,6 +686,7 @@ namespace PaintWPF.Models
                 SetImageBrush(_texturePencilBrushPath);
                 InitBrushPolyline(e, _checkPath);
             }
+            
         }
         public RenderTargetBitmap _renderBitmap;
         private const int bitsInPixel = 8;

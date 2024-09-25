@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using PaintWPF.Models;
 using PaintWPF.Models.Enums;
-using Xceed.Wpf.Toolkit;
-using static System.Net.Mime.MediaTypeNames;
 using Color = System.Windows.Media.Color;
 using FontFamily = System.Windows.Media.FontFamily;
 using RichTextBox = System.Windows.Controls.RichTextBox;
@@ -124,7 +119,7 @@ namespace PaintWPF.CustomControls
             InitForeColor();
 
             _textBox.Focus();
-            
+
         }
         private void MakeStartFilling()
         {
@@ -149,7 +144,75 @@ namespace PaintWPF.CustomControls
 
                 _textBox.TextChanged -= TextBox_TextChanged;
                 _textBox.TextChanged += TextBox_TextChanged;
+
+                _textBox.PreviewTextInput -= TextBox_PreviewTextInput;
+                _textBox.PreviewTextInput += TextBox_PreviewTextInput;
+
+                _textBox.KeyDown -= TextBox_KeyDown;
+                _textBox.KeyDown += TextBox_KeyDown;
+
             }
+        }
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            return;
+            if (e.Key >= Key.Space && e.Key <= Key.OemTilde) 
+            {
+                char letter = (char)KeyInterop.VirtualKeyFromKey(e.Key);
+
+                AddLetterNotInTheEnd(letter);
+
+                e.Handled = true;
+            }
+
+        }
+        private void AddLetterNotInTheEnd(char letter)
+        {
+            TextPointer caretPos = _textBox.CaretPosition;
+            
+            if (caretPos != null)
+            {
+                caretPos.InsertTextInRun(letter.ToString());
+
+                TextPointer start = caretPos.GetPositionAtOffset(-1); 
+                TextPointer end = caretPos; 
+                TextRange newTextRange = new TextRange(start, end);
+                newTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Windows.Media.Brushes.Green);
+
+                _textBox.CaretPosition = caretPos.GetPositionAtOffset(1, LogicalDirection.Forward);
+            }
+        }
+
+
+        private void TextBox_PreviewTextInput(object sender, EventArgs e)
+        {
+            if (IsCaretAtEnd())
+            {
+                Console.WriteLine();
+            }
+            InitForeColor();
+
+            TextSelection ts = _textBox.Selection;
+            object value = ts.GetPropertyValue(Inline.TextDecorationsProperty);
+
+            if (value is TextDecorationCollection collection)
+            {
+                for (int i = 0; i < collection.Count; i++)
+                {
+                    string asd = collection[i].ToString();
+
+                    Console.WriteLine();
+                }
+            }
+
+            Console.WriteLine();
+        }
+        private bool IsCaretAtEnd()
+        {
+            TextPointer caretPos = _textBox.CaretPosition;
+
+            TextPointer endPos = _textBox.Document.ContentEnd.GetNextInsertionPosition(LogicalDirection.Backward);
+            return caretPos.CompareTo(endPos) == 0;
         }
         private void InitTextBoxHeight()
         {
@@ -184,17 +247,28 @@ namespace PaintWPF.CustomControls
 
             return new Size(formattedText.Width, formattedText.Height);
         }
-
         private bool _loopCheck = true;
         private void TextBox_TextChanged(object sender, EventArgs e)
         {
-            if (!_loopCheck) return;
+            if (!_loopCheck)
+            {
+                _loopCheck = true;
+                return;
+            }
             if (_textBox == null) return;
-
-            InitForeColor();
         }
-        private void InitForeColor()
+        private int counter = 0;
+        private const int maxRepsLoop = 10;
+        public void InitForeColor()
         {
+            if (counter > maxRepsLoop)
+            {
+                _loopCheck = false;
+                counter = 0;
+                return;
+            }
+            counter++;
+
             TextSelection ts = _textBox.Selection;
             if (ts != null)
             {
@@ -204,6 +278,12 @@ namespace PaintWPF.CustomControls
         }
         public void ChangeTextColor()
         {
+            if (counter > 100)
+            {
+                Console.WriteLine();
+            }
+            counter++;
+
             if (_textBox is null) return;
             TextRange selectionTextRange = _textBox.Selection;
             if (selectionTextRange != null)
@@ -212,27 +292,11 @@ namespace PaintWPF.CustomControls
             }
             else
             {
-                if (_textBox == null) return;
                 TextSelection ts = _textBox.Selection;
                 if (ts != null)
                     ts.ApplyPropertyValue(TextElement.ForegroundProperty, _paintObj.FirstColor);
             }
         }
-        /*
-              TextRange selectionTextRange = _textBox.Selection;
-            if (!selectionTextRange.IsEmpty)
-            {
-                selectionTextRange.ApplyPropertyValue(TextElement.FontSizeProperty, (double)_textSettings.FontSize);
-            }
-            else
-            {
-                if (_textBox == null) return;
-                TextSelection ts = _textBox.Selection;
-                if (ts != null)
-                    selectionTextRange.ApplyPropertyValue(TextElement.FontSizeProperty, (double)_textSettings.FontSize);
-                _textBox.Focus();
-            }
-         */
         private bool IfOnlyOneSymbolInTextBox()
         {
             TextPointer start = _textBox.Document.ContentStart;

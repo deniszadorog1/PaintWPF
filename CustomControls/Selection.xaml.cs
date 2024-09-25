@@ -74,6 +74,8 @@ namespace PaintWPF.CustomControls
             InitEventsForSelection();
 
             InitSizes();
+
+            // ClipOutOfBoundariesGeo();
             //InitCursors();
         }
         public void InitCursors()
@@ -103,7 +105,10 @@ namespace PaintWPF.CustomControls
             SelectionBorder.Height = _shape.Height;
             SelectionBorder.Width = _shape.Width;
         }
-
+        public void SetMoveCursor()
+        {
+            Cursor = _moveCurs;
+        }
         public Selection(Label selSize, (FigureTypes type, string data)? figParams)
         {
             _selSize = selSize;
@@ -120,6 +125,13 @@ namespace PaintWPF.CustomControls
             MouseLeave += SelectionBorder_MouseLeave;
             CheckCan.MouseDown += SelectCan_MouseLeftButtonDown;
 
+
+            this.KeyDown += ReleseCapture_KeyDown;
+            SelectCan.KeyDown += ReleseCapture_KeyDown;
+            CheckCan.KeyDown += ReleseCapture_KeyDown;
+            SelectionBorder.KeyDown += ReleseCapture_KeyDown;
+            SizingGrid.KeyDown += ReleseCapture_KeyDown;
+
             LeftTop.MouseLeftButtonDown += SelectionLeftTop_MouseDown;
             CenterTop.MouseLeftButtonDown += SelectionCenterTop_MouseDown;
             RightTop.MouseLeftButtonDown += SelectionRightTop_MouseDown;
@@ -128,6 +140,15 @@ namespace PaintWPF.CustomControls
             CenterBottom.MouseLeftButtonDown += SelectionCenterBottom_MouseDown;
             LeftBottom.MouseLeftButtonDown += SelectionLeftBottom_MouseDown;
             LeftCenter.MouseLeftButtonDown += SelectionLeftCenter_MouseDown;
+        }
+
+        private void ReleseCapture_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                (sender as UIElement).ReleaseMouseCapture();
+                SelectCan.ReleaseMouseCapture();
+            }
         }
         private void SelectionBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -182,7 +203,7 @@ namespace PaintWPF.CustomControls
             _startPointSelection = e.GetPosition(this.Parent as IInputElement);
         }
         public void SelectionBorder_MouseMove(object sender, MouseEventArgs e)
-        {          
+        {
             if (e.LeftButton != MouseButtonState.Pressed &&
                 e.RightButton != MouseButtonState.Pressed && !this.IsMouseCaptured)
             {
@@ -196,19 +217,21 @@ namespace PaintWPF.CustomControls
                 CheckCan.Children.Contains(SizingGrid))
             {
                 RichTextBox textBox = GetRichTextBox();
-                if(textBox is null) (sender as UIElement).CaptureMouse();
+                if (textBox is null) (sender as UIElement).CaptureMouse();
                 if (!(textBox is null) && textBox.IsFocused)
                 {
                     (sender as UIElement).ReleaseMouseCapture();
                 }
 
                 Cursor = _moveCurs;
-                RectangleGeometry geo = new RectangleGeometry(new Rect(0, 0, parent.Width, parent.Height));
-                SelectCan.Clip = geo;
+                /*                RectangleGeometry geo = new RectangleGeometry(new Rect(0, 0, parent.Width, parent.Height));
+                                SelectCan.Clip = geo;*/
+                ClipOutOfBoundariesGeo();
+
                 Point currentPoint = e.GetPosition(this.Parent as IInputElement);
 
-                Point check = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
-                SetRectGeometry(check, parent);
+                /*                Point check = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+                                SetRectGeometry(check, parent);*/
 
                 if (ChangeSizeForSelection(e)) return;
 
@@ -219,9 +242,19 @@ namespace PaintWPF.CustomControls
                 Canvas.SetTop(this, _anchorPointSelection.Y + offsetY);
             }
         }
+        public void ClipOutOfBoundariesGeo()
+        {
+            Canvas parent = this.Parent as Canvas;
+            if (parent is null) return;
+            RectangleGeometry geo = new RectangleGeometry(new Rect(0, 0, parent.Width, parent.Height));
+            SelectCan.Clip = geo;
+
+            Point check = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+            SetRectGeometry(check, parent);
+        }
         private RichTextBox GetRichTextBox()
         {
-            foreach(UIElement el in SelectCan.Children)
+            foreach (UIElement el in SelectCan.Children)
             {
                 if (el is RichTextBox) return (RichTextBox)el;
             }
@@ -229,6 +262,7 @@ namespace PaintWPF.CustomControls
         }
         private void CheckForRightClickMenu(Canvas parent)
         {
+            if (parent is null) return;
             for (int i = 0; i < parent.Children.Count; i++)
             {
                 if (parent.Children[i] is LeftClickSelectionMenu)
@@ -242,6 +276,7 @@ namespace PaintWPF.CustomControls
         public void SetRectGeometry(Point point, Canvas parent)
         {
             if (SelectCan.Clip is null) return;
+            if (this.Parent is null) return;
             Rect rect = SelectCan.Clip.Bounds;
 
             if (point.X < 0)
@@ -305,68 +340,195 @@ namespace PaintWPF.CustomControls
             }
             return true;
         }
+        private const int _minSelSize = 5;
+        private bool OutOfBoundariesResize(MouseEventArgs e, ResizeSelectionType resizeType)
+        {
+            Point point = e.GetPosition(this.Parent as IInputElement);
+            Point selLoc = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+
+            if ((resizeType == ResizeSelectionType.Width && selLoc.X > point.X) ||
+               (resizeType == ResizeSelectionType.ReverseWidth && selLoc.X + this.Width < point.X))
+            {
+                if (resizeType == ResizeSelectionType.ReverseWidth)
+                {
+                    if (this.Width > _minSelSize)
+                    {
+                        Canvas.SetLeft(this, Canvas.GetLeft(this) + this.Width - _minSelSize);
+                        this.Width = _minSelSize;
+                        this.SelectionBorder.Width = _minSelSize;
+                    }
+                }
+                else
+                {
+                    this.Width = _minSelSize;
+                    this.SelectionBorder.Width = _minSelSize;
+                }
+                return true;
+            }
+            else if ((resizeType == ResizeSelectionType.Height && selLoc.Y > point.Y) ||
+                    (resizeType == ResizeSelectionType.ReverseHeight && selLoc.Y + this.Height < point.Y))
+            {
+                if (resizeType == ResizeSelectionType.ReverseHeight)
+                {
+                    if (this.Height > _minSelSize)
+                    {
+                        Canvas.SetTop(this, Canvas.GetTop(this) + this.Height - _minSelSize);
+                        this.Height = _minSelSize;
+                        this.SelectionBorder.Height = _minSelSize;
+                    }
+                }
+                else
+                {
+                    this.Height = _minSelSize;
+                    this.SelectionBorder.Height = _minSelSize;
+                }
+                return true;
+            }
+            return false;
+        }
         private void ChangeLeftBottom(MouseEventArgs e)
         {
-            Point tempPoint = e.GetPosition(this.Parent as IInputElement);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            if (!CheckForMousePressing(e)) return;
+            Point point = e.GetPosition(this.Parent as IInputElement);
+            double newWidth = this.Width;
+            double offsetX = point.X - _startPointSelection.X;
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.ReverseWidth))
             {
-                ChangeLeftCenter(e);
-                return;
+                if (point.X > _startPointSelection.X ||
+                point.X < _startPointSelection.X)
+                {
+                    newWidth = this.Width - offsetX;
+                }
+                if (newWidth > _widthBlock)
+                {
+                    Canvas.SetLeft(this, Canvas.GetLeft(this) + offsetX);
+                    this.Width = newWidth;
+                    this.SelectionBorder.Width = newWidth;
+                }
             }
-            ChangeCenterBottom(e);
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.Height))
+            {
+                double newHeight = this.Height;
+                double offsetY = point.Y - _startPointSelection.Y;
+                newHeight = this.Height + offsetY;
+                if (newHeight > _widthBlock)
+                {
+                    this.Height = newHeight;
+                    this.SelectionBorder.Height = newHeight;
+                }
+            }
+            _startPointSelection = point;
+            CheckForAddedObjects();
+
         }
         private void ChangeRightBottom(MouseEventArgs e)
         {
-            Point tempPoint = e.GetPosition(this.Parent as IInputElement);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            if (!CheckForMousePressing(e)) return;
+            Point point = e.GetPosition(this.Parent as IInputElement);
+
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.Width))
             {
-                ChangeRightCenter(e);
-                return;
+                double newWidth = this.Width;
+                double offsetX = point.X - _startPointSelection.X;
+                newWidth = this.Width + offsetX;
+                if (newWidth > _widthBlock)
+                {
+                    this.Width = newWidth;
+                    this.SelectionBorder.Width = newWidth;
+                }
             }
-            ChangeCenterBottom(e);
+
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.Height))
+            {
+                double newHeight = this.Height;
+                double offsetY = point.Y - _startPointSelection.Y;
+                newHeight = this.Height + offsetY;
+                if (newHeight > _widthBlock)
+                {
+                    this.Height = newHeight;
+                    this.SelectionBorder.Height = newHeight;
+                }
+            }
+            _startPointSelection = point;
+            CheckForAddedObjects();
         }
         private void ChangeRightTop(MouseEventArgs e)
         {
-            Point tempPoint = e.GetPosition(this.Parent as IInputElement);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            if (!CheckForMousePressing(e)) return;
+
+            Point point = e.GetPosition(this.Parent as IInputElement);
+
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.Width))
             {
-                ChangeRightCenter(e);
-                return;
+                double newWidth = this.Width;
+                double offsetX = point.X - _startPointSelection.X;
+                newWidth = this.Width + offsetX;
+                if (newWidth > _widthBlock)
+                {
+                    this.Width = newWidth;
+                    this.SelectionBorder.Width = newWidth;
+                }
             }
-            ChangeCenterTop(e);
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.ReverseHeight))
+            {
+                double newHeight = this.Height;
+                double offsetY = point.Y - _startPointSelection.Y;
+                newHeight = this.Height - offsetY;
+                if (newHeight > _widthBlock)
+                {
+                    Canvas.SetTop(this, Canvas.GetTop(this) + offsetY);
+                    this.Height = newHeight;
+                    this.SelectionBorder.Height = newHeight;
+                }
+            }
+            _startPointSelection = point;
+            CheckForAddedObjects();
         }
         private void ChangeLeftTop(MouseEventArgs e)
         {
-            Point tempPoint = e.GetPosition(this.Parent as IInputElement);
-            if (tempPoint.X > _startPointSelection.X || tempPoint.X < _startPointSelection.X)
+            if (!CheckForMousePressing(e)) return;
+            Point point = e.GetPosition(this.Parent as IInputElement);
+
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.ReverseWidth))
             {
-                ChangeLeftCenter(e);
-                return;
+                double newWidth = this.Width;
+                double offsetX = point.X - _startPointSelection.X;
+                newWidth = this.Width - offsetX;
+                if (newWidth > _widthBlock)
+                {
+                    Canvas.SetLeft(this, Canvas.GetLeft(this) + offsetX);
+                    this.Width = newWidth;
+                    this.SelectionBorder.Width = newWidth;
+                }
             }
-            ChangeCenterTop(e);
+            if (!OutOfBoundariesResize(e, ResizeSelectionType.ReverseHeight))
+            {
+                double newHeight = this.Height;
+                double offsetY = point.Y - _startPointSelection.Y;
+                newHeight = this.Height - offsetY;
+                if (newHeight > _widthBlock)
+                {
+                    Canvas.SetTop(this, Canvas.GetTop(this) + offsetY);
+                    this.Height = newHeight;
+                    this.SelectionBorder.Height = newHeight;
+                }
+            }
+            _startPointSelection = point;
+            CheckForAddedObjects();
         }
 
         private const int _widthBlock = 5;
         public void ChangeLeftCenter(MouseEventArgs e)
         {
             if (!CheckForMousePressing(e)) return;
-
-            //(RotateTransform rotate, ScaleTransform scale) = GetTransforms();
+            if (OutOfBoundariesResize(e, ResizeSelectionType.ReverseWidth)) return;
 
             Point point = e.GetPosition(this.Parent as IInputElement);
             double newWidth = this.Width;
             double offsetX = point.X - _startPointSelection.X;
+            newWidth = this.Width - offsetX;
 
-            if (point.X > _startPointSelection.X ||
-                point.X < _startPointSelection.X)
-            {
-                newWidth = this.Width - offsetX;
-            }
-            if (newWidth < _widthBlock)
-            {
-                return;
-            }
-            if (newWidth > 0)
+            if (newWidth > _widthBlock)
             {
                 Canvas.SetLeft(this, Canvas.GetLeft(this) + offsetX);
                 this.Width = newWidth;
@@ -403,26 +565,16 @@ namespace PaintWPF.CustomControls
         public void ChangeRightCenter(MouseEventArgs e)
         {
             if (!CheckForMousePressing(e)) return;
+            if (OutOfBoundariesResize(e, ResizeSelectionType.Width)) return;
 
             Point point = e.GetPosition(this.Parent as IInputElement);
-            double widthPoint = Canvas.GetLeft(this) + this.Width;
 
             double newWidth = this.Width;
             double offsetX = point.X - _startPointSelection.X;
 
-            if (widthPoint > _startPointSelection.X)
-            {
-                newWidth = this.Width + offsetX;
-            }
-            else if (widthPoint < _startPointSelection.X)
-            {
-                newWidth = this.Width - offsetX;
-            }
-            if (newWidth < _widthBlock)
-            {
-                return;
-            }
-            if (newWidth > 0)
+            newWidth = this.Width + offsetX;
+
+            if (newWidth > _widthBlock)
             {
                 this.Width = newWidth;
                 this.SelectionBorder.Width = newWidth;
@@ -433,6 +585,7 @@ namespace PaintWPF.CustomControls
         public void ChangeCenterBottom(MouseEventArgs e)
         {
             if (!CheckForMousePressing(e)) return;
+            if (OutOfBoundariesResize(e, ResizeSelectionType.Height)) return;
 
             Point point = e.GetPosition(this.Parent as IInputElement);
 
@@ -440,15 +593,7 @@ namespace PaintWPF.CustomControls
 
             double newHeight = this.Height;
             double offsetY = point.Y - _startPointSelection.Y;
-
-            if (heightPoint > _startPointSelection.Y)
-            {
-                newHeight = this.Height + offsetY;
-            }
-            else if (heightPoint < _startPointSelection.Y)
-            {
-                newHeight = this.Height + offsetY;
-            }
+            newHeight = this.Height + offsetY;
             if (newHeight < _widthBlock)
             {
                 return;
@@ -464,24 +609,13 @@ namespace PaintWPF.CustomControls
         public void ChangeCenterTop(MouseEventArgs e)
         {
             if (!CheckForMousePressing(e)) return;
+            if (OutOfBoundariesResize(e, ResizeSelectionType.ReverseHeight)) return;
 
             Point point = e.GetPosition(this.Parent as IInputElement);
             double newHeight = this.Height;
             double offsetY = point.Y - _startPointSelection.Y;
-
-            if (point.Y > _startPointSelection.Y)
-            {
-                newHeight = this.Height - offsetY;
-            }
-            else if (point.Y < _startPointSelection.Y)
-            {
-                newHeight = this.Height - offsetY;
-            }
-            if (newHeight < _widthBlock)
-            {
-                return;
-            }
-            if (newHeight > 0)
+            newHeight = this.Height - offsetY;
+            if (newHeight > _widthBlock)
             {
                 Canvas.SetTop(this, Canvas.GetTop(this) + offsetY);
                 this.Height = newHeight;
@@ -572,7 +706,7 @@ namespace PaintWPF.CustomControls
                 {
                     SelectCan.CaptureMouse();
                 }
-                else if(clickedElement == SelectCan)
+                else if (clickedElement == SelectCan)
                 {
                     SelectCan.CaptureMouse();
 

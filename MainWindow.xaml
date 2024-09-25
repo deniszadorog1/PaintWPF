@@ -22,7 +22,8 @@
         KeyDown="PaintWindow_KeyDown" 
         Loaded="PaintWindow_Loaded" 
         MouseLeave="PaintWindow_MouseLeave" 
-        Icon="Images/Other/paintIcon.png">
+        Icon="Images/Other/paintIcon.png" 
+        WindowStartupLocation="CenterScreen" PreviewKeyDown="PaintWindow_PreviewKeyDown">
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -146,13 +147,13 @@
                                             BorderBrush="#f8f9fc">
 
                                         <ScrollViewer x:Name="SubMenuScrollViewer"
-                                                      Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                                      Style="{DynamicResource {ComponentResourceKey 
+                                            ResourceId=MenuScrollViewer,TypeInTargetAssembly={x:Type FrameworkElement}}}">
 
                                             <Grid RenderOptions.ClearTypeHint="Enabled">
 
                                                 <Canvas HorizontalAlignment="Left"
                                                         VerticalAlignment="Top" />
-
                                                 <ItemsPresenter x:Name="ItemsPresenter" />
 
                                             </Grid>
@@ -161,23 +162,21 @@
                                 </Popup>
                             </Grid>
                         </Border>
-
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsSuspendingPopupAnimation"
                                      Value="True">
                                 <Setter Property="PopupAnimation"
                                         TargetName="PART_Popup"
-                                        Value="None" />
+                                        Value="None"/>
                             </Trigger>
                             <Trigger Property="IsHighlighted"
                                      Value="True">
                                 <Setter Property="Background"
                                         TargetName="border"
-                                        Value="Transparent" />
+                                        Value="Transparent"/>
                                 <Setter Property="BorderBrush"
                                         TargetName="border"
-                                        Value="Transparent" />
+                                        Value="Transparent"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -530,13 +529,13 @@
                 HorizontalAlignment="Left" 
                 Panel.ZIndex="2" 
                 Background="White">
-
             <Grid>
                 <Image Source = "Images/Pallete/Other/lines.png"
                        VerticalAlignment="Top" 
                        Margin="0 10 0 0" 
                        Height="20" Width="20"/>
                 <ProgressBar Name="ValueProgressBar"
+                             MouseDown="ValueCanvas_MouseDown"
                              Height="270" 
                              Width="5"
                              BorderBrush="Transparent" 
@@ -544,7 +543,6 @@
                              Minimum="0" 
                              Maximum="100"
                              VerticalAlignment="Bottom" Margin="0 0 0 10"/>
-
                 <Canvas Name ="ValueCanvas"
                         PreviewMouseUp="ValueCanvas_PreViewMouseUp"
                         PreviewMouseMove="ValueCanvas_PreViewMouseMove" 
@@ -555,17 +553,23 @@
                             Canvas.Left="5"
                             Canvas.Top="255"
                             PreviewMouseDown="ValueDrag_PreViewMouseDown"/>
+                    <Popup Name="Check" IsOpen="False" PlacementTarget="{Binding ElementName=ValueCanvas}" 
+                           StaysOpen="True" HorizontalOffset="-70" VerticalOffset="-10">
+                        <Border CornerRadius="5" BorderBrush="Red" 
+                                BorderThickness="1"  Background="LightGray">
+                            <Label Name="BrushSizeLB" Content="999  px" Padding="10"/>
+                        </Border>
+                    </Popup>
                 </Canvas>
-
                 <Canvas Name="paintInBlueCan"
                         PreviewMouseUp="ValueCanvas_PreViewMouseUp"
                         PreviewMouseMove="ValueCanvas_PreViewMouseMove"
+                        MouseDown="ValueCanvas_MouseDown"
                         Background="Blue" VerticalAlignment="Bottom"
                         Height="0" Width="5" Margin="0 30 0 10"/>
 
             </Grid>
         </Border>
-
         <Grid x:Name="CenterWindowPanel" Grid.Row = "2" ClipToBounds="False">
 
             <Grid.ColumnDefinitions >
@@ -590,10 +594,13 @@
                 MouseMove="Field_MouseMove"
                 MouseUp="Field_MouseUp" 
                 MouseLeave="PaintField_MouseLeave" 
-                VerticalAlignment="Center" Margin="0"
+                VerticalAlignment="Center" 
                 MouseRightButtonDown="DrawingCanvas_MouseRightButtonDown" 
                     MouseEnter="DrawingCanvas_MouseEnter"
                     RenderOptions.EdgeMode="Aliased">
+
+                    <!--<Path Data="M 100,100 A 40, 30 0 1 1 200, 100 
+                          A 55, 35 1 0 1 130, 130 L 125 145 L 120 130 Q 100 120 100 100"></Path> -->
 
                     <Border Name = "RazerMarker" Width="100" Height="100" Margin="10" 
                             BorderBrush="Black" Background="White" Panel.ZIndex="0"
@@ -602,7 +609,7 @@
                              Height ="150" Width="150" 
                              BorderBrush="Black" Background="Black" 
                              CornerRadius="90" Visibility="Hidden"/>
-                    <Rectangle x:Name="CheckRect" Width="25" Height="25" Fill="Red"/>
+                    <Rectangle x:Name="CheckRect" Width="25" Height="25" Fill="Transparent"/>
 
                 </Canvas>
 
@@ -896,7 +903,7 @@
                                   VerticalScrollBarVisibility="Auto" 
                                   HorizontalScrollBarVisibility="Disabled">
                         <WrapPanel  Name= "FigurePanel" Orientation="Horizontal"
-                            Background="#f7fafc" Width="270">
+                            Background="#f7fafc" Width="270" KeyDown="FigurePanel_KeyDown">
 
                             <Button Name ="Line" Height="22" Width="22" 
                                 Style="{StaticResource NoStyleButton}"
@@ -1323,7 +1330,4 @@
 
         </Grid>
     </Grid>
-
-
-
 </Window>

@@ -7,20 +7,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Canvas x:Name="LineCanvas">
-        <Line x:Name="Line"
+    <Canvas x:Name="LineCanvas" >
+
+        <Canvas x:Name="CheckLine">
+            <Line x:Name="Line"
               Stroke="Black"              
               StrokeThickness="2"
               X1="50" Y1="50" X2="150" Y2="150"/>
 
-        <Line x:Name="TransLine" 
+            <Line x:Name="TransLine" 
               Stroke="Transparent"
               StrokeThickness="25"
               X1="{Binding X1, ElementName=Line}"
               Y1="{Binding Y1, ElementName=Line}"
               X2="{Binding X2, ElementName=Line}"
               Y2="{Binding Y2, ElementName=Line}"/>
-
+        </Canvas>
         <Rectangle x:Name="Start"
                    Width="10" Height="10"
                    Fill="White"

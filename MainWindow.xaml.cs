@@ -26,19 +26,14 @@ using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
 using PaintWPF.CustomControls.SubMenu;
 using PaintWPF.CustomControls.BrushesMenu;
-using Xceed.Wpf.AvalonDock.Controls;
 using System.Reflection.Emit;
 using System.Xml.Linq;
 
-using Gma.System.MouseKeyHook;
-using System.Windows;
-using System.Windows.Input;
-using System.Security.Policy;
-using Xceed.Wpf.Toolkit.PropertyGrid.Converters;
 using System.Net;
 using System.Windows.Media.Animation;
 using System.Text;
 using System.Security.Cryptography;
+using System.Diagnostics.Eventing.Reader;
 
 namespace PaintWPF
 {
@@ -164,10 +159,11 @@ namespace PaintWPF
 
             InitBrushMenu();
 
-
             //this.MouseMove += OnMouseMove;
             InitEventsForCheckRect();
         }
+
+
         private void InitEventsForCheckRect()
         {
             Canvas.SetLeft(CheckRect, 0);
@@ -194,14 +190,14 @@ namespace PaintWPF
                 Canvas.SetLeft(CheckRect, _anchorPointSelection.X + offsetX - CheckRect.Width / 2);
                 Canvas.SetTop(CheckRect, _anchorPointSelection.Y + offsetY - CheckRect.Height / 2);
             }
+            /*
+                        if (_main._ifSelection)
+                        {
+                            _firstSelectionEnd = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
 
-            if (_main._ifSelection)
-            {
-                /*                _firstSelectionEnd = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
-
-                                double widthDiffer = _firstSelectionEnd.X - _firstSelectionStart.X;
-                                double heightDiffer = _firstSelectionEnd.Y - _firstSelectionStart.Y;*/
-            }
+                            double widthDiffer = _firstSelectionEnd.X - _firstSelectionStart.X;
+                            double heightDiffer = _firstSelectionEnd.Y - _firstSelectionStart.Y;
+                        }*/
 
             if (_main._ifSelection)
             {
@@ -211,41 +207,61 @@ namespace PaintWPF
 
                 double check = _firstSelectionEnd.X - _firstSelectionStart.X;
             }
+            else if (!(_lineSizing is null))
+            {
+                _lineSizing.Line_MouseMove(_lineSizing, e);
+            }
+
+
+            //DrawingCanvas.Children.Remove(CheckRect);
+
         }
         private Point _anchorPointSelection;
         private Point _startPointSelection;
         private void CheckRect_PreviewMouseDown(object sender, MouseEventArgs e)
         {
+            if (IfThereIsReClick()) return;
+
             _anchorPointSelection = new Point(Canvas.GetLeft(CheckRect), Canvas.GetTop(CheckRect));
             _startPointSelection = e.GetPosition(CheckRect.Parent as IInputElement);
             CheckRect.CaptureMouse();
+
+            if (_main._ifFiguring)
+            {
+                _main.InitShapesToPaint(e, DrawingCanvas);
+                DrawingCanvas.ClipToBounds = true;
+                AddCheckRect(e);
+            }
+
         }
         private void CheckRect_PreviewMouseUp(object sender, MouseEventArgs e)
         {
+            sprayTimer.Stop();
+            return;
             DrawingCanvas.Children.Remove(CheckRect);
             CheckRect.ReleaseMouseCapture();
             if (_main._ifSelection && !_main.IfSelectionIsMacken)
             {
-                /*                Point point = new Point(Canvas.GetLeft(_selectionRect), Canvas.GetTop(_selectionRect));
-                                Console.WriteLine(_firstSelectionStart);
-                                Console.WriteLine(_firstSelectionEnd);
-
-                                Canvas.SetLeft(_selectionRect, point.X);
-                                Canvas.SetTop(_selectionRect, point.Y);
-                */
                 MakeSelection();
             }
-
-            if (_main._ifFiguring) FiguringMouseUp();
-            _main.MakeAllActionsNegative();
-
+            if (_main._ifFiguring)
+            {
+                bool polygonCheck = IfPolygonFigureIsDone();
+                bool curveCheck = IfCurveFigureIsDone();
+                if (polygonCheck && curveCheck)
+                {
+                    InitFigureInSizingBorder();
+                    ReloadCurvePainting();
+                    //_main.MakeAllActionsNegative();
+                }
+            }
             if (!(CheckRect is null) && !(CheckRect.Parent is null))
             {
                 ((Canvas)CheckRect.Parent).Children.Remove(CheckRect);
                 DrawingCanvas.Children.Add(CheckRect);
             }
 
-           // DrawingCanvas.ClipToBounds = false;
+            // DrawingCanvas.ClipToBounds = false;
         }
         private void InitBrushMenu()
         {
@@ -635,13 +651,12 @@ namespace PaintWPF
         private void Tool_MouseClick(object sender, EventArgs e)
         {
             ResetRenderTransform();
-
             DrawingCanvas.RenderTransform = new TranslateTransform(0, 0);
             _main._tempCursor = null;
             IfSelectionContainsAndClearIt();
             RemoveRightClickMenus();
             FreeSelection();
-
+            RemoveRazerMark();
             if (sender is Button but)
             {
                 ClearDynamicValues(brushClicked: but.Name == "Pen" || but.Name == "Erazer",
@@ -695,18 +710,23 @@ namespace PaintWPF
                 }
             }
         }
+        private bool _ifCursorInsideDrawingCan = false;
         public void PaintField_MouseLeave(object sender, MouseEventArgs e)
         {
+            _ifCursorInsideDrawingCan = false;
             RazerMarker.Visibility = Visibility.Hidden;
             CursCords.Content = string.Empty;
+
+            //AddCheckRect(e);
+            sprayTimer.Stop();
 
             CursorCheck();
             Cursor = null;
         }
-        /*        private RenderTargetBitmap _renderBitmap;
-        */
+
         private void Field_MouseDown(object sender, MouseEventArgs e)
         {
+            if (IfThereIsReClick()) return;
             ResetRenderTransform();
 
             DrawingCanvas.Children.Remove(RazerMarker);
@@ -730,6 +750,9 @@ namespace PaintWPF
             }
             _main.previousPoint = e.GetPosition(DrawingCanvas);
             _main.InitDeed();
+            ClipCheck();
+
+
 
             if (_main._ifPickingColor)
             {
@@ -752,10 +775,37 @@ namespace PaintWPF
             }
             else
             {
+
                 _main.previousPoint = e.GetPosition(DrawingCanvas);
                 _main.SetMarkers(e, DrawingCanvas);
+                if (_main._ifDrawing) BrushPaint(e);
+
+                AddCheckRect(e);
             }
             UpdateRenderTransform();
+        }
+        private bool IfThereIsReClick()
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed &&
+               Mouse.RightButton == MouseButtonState.Pressed)
+            {
+                if (!(_selection is null) && _selection.CheckCan.IsMouseCaptured)
+                {
+                    SetEscapeBgSelection();
+                    Cursor = null;
+                }
+                RemoveClicked();
+                DrawingCanvas.Children.Remove(CheckRect);
+                return true;
+            }
+            return false;
+        }
+        public void ClipCheck()
+        {
+            if (!(_main._ifErasing) || _main._type != ActionType.Erazing)
+            {
+                DrawingCanvas.ClipToBounds = false;
+            }
         }
         private void EnterInitedColor(MouseEventArgs e)
         {
@@ -778,6 +828,10 @@ namespace PaintWPF
 
             _main._type = ActionType.Drawing;
             ValueBorder.Visibility = Visibility.Visible;
+
+            ClearDynamicValues();
+            _main.SetActionTypeByButtonPressed(Pen);
+
         }
         private const int _dpiParam = 96;
 
@@ -804,6 +858,7 @@ namespace PaintWPF
 
             if (DrawingCanvas.Children.Contains(CheckRect))
             {
+                return;
                 DrawingCanvas.Children.Remove(CheckRect);
             }
             DrawingCanvas.Children.Add(CheckRect);
@@ -846,6 +901,7 @@ namespace PaintWPF
         private void Field_MouseMove(object sender, MouseEventArgs e)
         {
             Point position = e.GetPosition(DrawingCanvas);
+            currentPoint = position;
             position = _main.GetCursLoc(position, DrawingCanvas);
 
             string cursPosInPaintField = ((position.X == -1) || (position.Y == -1)) ? string.Empty : $"{(int)position.X}, {(int)position.Y}";
@@ -871,9 +927,6 @@ namespace PaintWPF
                 ObjSize.Content = $"{Math.Abs(widthDiffer)} x {Math.Abs(heightDiffer)} пкс";
             }
         }
-
-     
-
         private const int mostZIndex = 1;
         private const int brushHalf = 2;
         private const int pngBrushPosCorel = 10;
@@ -885,7 +938,7 @@ namespace PaintWPF
                 RazerMarker.Visibility = Visibility.Visible;
                 return;
             }
-            if (!DrawingCanvas.Children.Contains(RazerMarker))
+            if (!DrawingCanvas.Children.Contains(RazerMarker) && _ifCursorInsideDrawingCan)
             {
                 DrawingCanvas.Children.Clear();
                 var parent = RazerMarker.Parent;
@@ -906,9 +959,7 @@ namespace PaintWPF
             if (_main._selectionType == SelectionType.Rectangle)
             {
                 if (!IfRotationOutOfBordersRectSelection(e)) return;
-
                 _firstSelectionEnd = new Point(e.GetPosition(DrawingCanvas).X, e.GetPosition(DrawingCanvas).Y);
-
                 double widthDiffer = _firstSelectionEnd.X - _firstSelectionStart.X;
                 double heightDiffer = _firstSelectionEnd.Y - _firstSelectionStart.Y;
 
@@ -983,37 +1034,39 @@ namespace PaintWPF
             {
                 double x = e.GetPosition(DrawingCanvas).X;
                 double y = e.GetPosition(DrawingCanvas).Y;
-
-                if (x < 0)
-                {
-                    Console.WriteLine();
-                }
                 bool check = false;
-                if (x <= 0)
+                if (x < 0)
                 {
                     xLoc = 0;
                     check = true;
-                    _selectionRect.Width = shapeSize.Width;
-                    Canvas.SetLeft(_selectionRect, 0);
+
+                    //double differ = Math.Abs(_firstSelectionStart.X - shapeSize.Width);
+                    _selectionRect.Width =  _firstSelectionStart.X;// shapeSize.Width;
+                    //_firstSelectionStart.X = shapeSize.Width;
+                    Canvas.SetLeft(_selectionRect, xLoc);
+
+                    //_firstSelectionStart.X = shapeSize.Width;
                 }
                 else if (x > DrawingCanvas.Width)
                 {
                     xLoc = DrawingCanvas.Width;
                     check = true;
-                    _selectionRect.Width = shapeSize.Width;
+                    double width = DrawingCanvas.Width - _firstSelectionStart.X;
+                    _selectionRect.Width = width;
                 }
                 if (y <= 0)
                 {
                     yLoc = 0;
                     check = true;
-                    _selectionRect.Height = shapeSize.Height;
-                    Canvas.SetTop(_selectionRect, 0);
+                    _selectionRect.Height = _firstSelectionStart.Y;// shapeSize.Height;
+                    Canvas.SetTop(_selectionRect, yLoc);
                 }
                 else if (y > DrawingCanvas.Height)
                 {
                     yLoc = DrawingCanvas.Height;
                     check = true;
-                    _selectionRect.Height = shapeSize.Height;
+                    double height = DrawingCanvas.Height - _firstSelectionStart.Y;
+                    _selectionRect.Height = height;
                 }
                 if (check)
                 {
@@ -1025,8 +1078,27 @@ namespace PaintWPF
             }
             return true;
         }
+        private bool CheckForSpace()
+        {
+            if (Keyboard.IsKeyDown(Key.Space) || Keyboard.IsKeyDown(Key.Escape))
+            {
+                ClearFigure();
+                ClearAfterFastToolButPressed();
+                return true;
+            }
+            return false;
+        }
+        private void ClearFigure()
+        {
+            DrawingCanvas.Children.Remove(_main._figToPaint);
+            DrawingCanvas.Children.Remove(_main._polyline);
+            _main._figToPaint = null;
+            _main._polyline = null;
+            ReloadCurvePainting();
+        }
         private void PaintFigures(MouseEventArgs e)
         {
+            if (CheckForSpace()) return;
             if (_main._figType == FigureTypes.Line)
             {
                 if (_main._figToPaint is null) return;
@@ -1053,7 +1125,6 @@ namespace PaintWPF
                     ((Polyline)_main._figToPaint).Points.RemoveAt(((Polyline)_main._figToPaint).Points.Count - 1);
                     ((Polyline)_main._figToPaint).Points.RemoveAt(((Polyline)_main._figToPaint).Points.Count - 1);
                 }
-
                 if (_main._amountOfPointInPolygon == 0)
                 {
                     ((Polyline)_main._figToPaint).Points = new PointCollection();
@@ -1062,7 +1133,6 @@ namespace PaintWPF
                         e.GetPosition(DrawingCanvas).Y - Canvas.GetTop(_main._figToPaint));
 
                     InitPointInLine(e, startPoint, endPoint, _main._figToPaint as Polyline);
-
                 }
                 else
                 {
@@ -1097,8 +1167,9 @@ namespace PaintWPF
                     Point currentPoint = e.GetPosition(DrawingCanvas);
                     _main._bezierSegment.Point2 = currentPoint;
 
-                    Point first = _main._polyline.Points.First();
-                    Point last = _main._polyline.Points.Last();
+                    //RenderOptions.SetEdgeMode(_main._figToPaint, EdgeMode.Aliased);
+                    //_main._figToPaint.SnapsToDevicePixels = true;
+
 
                     System.Windows.Shapes.Path curveFig =
                         _main._figToPaint as System.Windows.Shapes.Path;
@@ -1297,8 +1368,7 @@ namespace PaintWPF
             shape.Width = width;
             shape.Height = height;
 
-            if(SetSIzeIfShapeIsSelectionRect(shape)) return true;
-
+            if (SetSIzeIfShapeIsSelectionRect(shape)) return true;
             ObjSize.Content = $"{Math.Abs(shape.Width)} x {Math.Abs(shape.Height)} пкс";
             return true;
         }
@@ -1381,44 +1451,84 @@ namespace PaintWPF
             else if (_main._tempBrushType == BrushType.CalligraphyBrush)
             {
                 CalligraphyBrushPaint(CalligraphyBrushAngle);
+                AddCheckRect(e);
             }
             else if (_main._tempBrushType == BrushType.FountainPen)
             {
                 CalligraphyBrushPaint(FountainBrushAngle);
+                AddCheckRect(e);
             }
             else if (_main._tempBrushType == BrushType.Spray)
             {
                 sprayTimer.Start();
                 SprayPaint(currentPoint);
+                AddCheckRect(e);
             }
             else if (_main._tempBrushType == BrushType.OilPaintBrush)
             {
                 PaintByPngBrush(e);
+                AddCheckRect(e);
             }
             else if (_main._tempBrushType == BrushType.ColorPencil)
             {
                 PaintByPngBrush(e);
+                AddCheckRect(e);
             }
             else if (_main._tempBrushType == BrushType.Marker)
             {
                 _main.MarkerBrushPaint(e, DrawingCanvas);
+                CheckForMarkerAmountOfPoints();
+                AddCheckRect(e);
             }
             else if (_main._tempBrushType == BrushType.TexturePencil)
             {
                 PaintByPngBrush(e);
+                AddCheckRect(e);
             }
             else if (_main._tempBrushType == BrushType.WatercolorBrush)
             {
                 PaintByPngBrush(e);
+                AddCheckRect(e);
             }
             _main.previousPoint = currentPoint;
 
             DrawingCanvas.RenderTransform = new TranslateTransform(_horizontalOffset, 0);
         }
+        private void CheckForMarkerAmountOfPoints()
+        {
+            int count = 0;
+            for (int i = 0; i < _main.polylines.Count; i++)
+            {
+                count += _main.polylines[i].Points.Count;
+            }
+
+            const int pointToSetBg = 400;
+
+            if (count >= pointToSetBg)
+            {
+                SetCanvasBg(DrawingCanvas);
+                DrawingCanvas.Children.Clear();
+
+                Polyline line = _main.polylines.Last();
+                Point lastPoint = line.Points.Last();
+                line.Points.Clear();
+                line.Points.Add(lastPoint);
+
+                _main.polylines.Clear();
+
+                DrawingCanvas.Children.Add(line);
+                _main.polylines.Add(line);
+            }
+
+        }
         private void PaintByPngBrush(MouseEventArgs e)
         {
+            DrawingCanvas.Children.Remove(CheckRect);
+
             const int centerDivider = 2;
             Point currentPoint = e.GetPosition(DrawingCanvas);
+
+            if (_main._paintBrush is null) return;
 
             Image res = new Image()
             {
@@ -1435,7 +1545,6 @@ namespace PaintWPF
             {
                 ImageSource = _main.ConvertCanvasInImage(DrawingCanvas).Source
             };
-
             DrawingCanvas.Children.Clear();
         }
 
@@ -1448,6 +1557,7 @@ namespace PaintWPF
             return distance <= radius;
         }
         const int _dividerInMiddle = 2;
+        const int _maxChildren = 100;
         private void CalligraphyBrushPaint(double angle)
         {
             Vector offset = new Vector(Math.Cos(angle) * _main.brushThickness / _dividerInMiddle,
@@ -1472,6 +1582,11 @@ namespace PaintWPF
             };
 
             DrawingCanvas.Children.Add(polygon);
+
+            if (DrawingCanvas.Children.Count > _maxChildren)
+            {
+                SetCanvasBg(DrawingCanvas);
+            }
         }
         private void InitializeSprayTimer()
         {
@@ -1508,8 +1623,7 @@ namespace PaintWPF
 
                 DrawingCanvas.Children.Add(ellipse);
             }
-            SetCanvasBg(DrawingCanvas);
-
+            SetCanvasBg(DrawingCanvas, ifSpray: true);
         }
         Polyline _drawPolyline = null;
         LineDivision? _paintDirection = null;
@@ -1544,9 +1658,11 @@ namespace PaintWPF
             };
             if (_main._type == ActionType.Drawing)
             {
-                if (_drawPolyline is null)
+                const int pointAmountUpdate = 100;
+                if (_drawPolyline is null || _drawPolyline.Points.Count > pointAmountUpdate && _paintDirection is null)
                 {
-                    RectangleGeometry clipGeometry = new RectangleGeometry(new Rect(0, 0, DrawingCanvas.Width, DrawingCanvas.Height));
+                    RectangleGeometry clipGeometry = new RectangleGeometry(new Rect(0, 0,
+                        DrawingCanvas.Width, DrawingCanvas.Height));
 
                     _drawPolyline = new Polyline()
                     {
@@ -1560,7 +1676,12 @@ namespace PaintWPF
                     };
                     RenderOptions.SetEdgeMode(_drawPolyline, EdgeMode.Aliased);
 
+                    if (_paintDirection is null)
+                    {
+                        SetCanvasBg(DrawingCanvas);
+                    }
                     DrawingCanvas.Children.Add(_drawPolyline);
+                    AddCheckRect(e);
                 }
                 if (_drawPolyline.Points.Count > 1 && _paintDirection is null)
                 {
@@ -1573,7 +1694,10 @@ namespace PaintWPF
                 if (!(_paintDirection is null))
                 {
                     //Get point here
-                    currentPoint = GetTransformedPoint(currentPoint, _drawPolyline.Points.Last());
+                    if (_drawPolyline.Points.Count != 0)
+                    {
+                        currentPoint = GetTransformedPoint(currentPoint, _drawPolyline.Points.Last());
+                    }
                 }
                 _drawPolyline.Points.Add(currentPoint);
                 return;
@@ -1655,19 +1779,22 @@ namespace PaintWPF
 
             sprayTimer.Stop();
 
+
+
+            //return;
             if (!IfDrawingCanvasContainsRightClickMenus())
             {
                 SaveInHistory();
             }
             _main.MakeAllActionsNegative();
-            
+
             if (!(CheckRect is null) && !(CheckRect.Parent is null))
             {
                 ((Canvas)CheckRect.Parent).Children.Remove(CheckRect);
                 DrawingCanvas.Children.Add(CheckRect);
             }
         }
-        
+
 
         private void SelLineCheck()
         {
@@ -1744,11 +1871,12 @@ namespace PaintWPF
         public bool IfCurveFigureIsDone()
         {
             if (_main._figType != FigureTypes.Curve) return true;
-            if (_main._ifCurveIsDone) GetPathSize();
+            if (_main._ifCurveIsDone) SetPathSize();
 
             return _main._ifCurveIsDone;
         }
-        public void GetPathSize()
+        private int _amountOfParalelBorders = 2;
+        public void SetPathSize()
         {
             if (_main._figToPaint is System.Windows.Shapes.Path path)
             {
@@ -1757,8 +1885,8 @@ namespace PaintWPF
                 GeneralTransform transform = path.TransformToAncestor((Visual)path.Parent);
                 Rect transformedBounds = transform.TransformBounds(bounds);
 
-                _main._figToPaint.Width = transformedBounds.Width;
-                _main._figToPaint.Height = transformedBounds.Height;
+                _main._figToPaint.Width = transformedBounds.Width + _amountOfParalelBorders;
+                _main._figToPaint.Height = transformedBounds.Height + _amountOfParalelBorders;
             }
         }
         public bool IfPolygonFigureIsDone()
@@ -1801,7 +1929,6 @@ namespace PaintWPF
                     if (point.X < minX) minX = point.X;
                     if (point.Y < minY) minY = point.Y;
                 }
-
                 Point polylineStartPoint = new Point(minX, minY);
                 Point canvasPosition = polyline.TransformToAncestor(DrawingCanvas).Transform(polylineStartPoint);
 
@@ -1811,15 +1938,14 @@ namespace PaintWPF
             else if (_main._figToPaint is System.Windows.Shapes.Path path)
             {
                 Rect bounds = path.Data.Bounds;
-
                 Point pathStartPoint = new Point(bounds.X, bounds.Y);
-
                 Point canvasPosition = path.TransformToAncestor(DrawingCanvas).Transform(pathStartPoint);
 
-                Canvas.SetLeft(_selection, canvasPosition.X);
-                Canvas.SetTop(_selection, canvasPosition.Y);
+                Canvas.SetLeft(_selection, canvasPosition.X - _amountOfParalelBorders);
+                Canvas.SetTop(_selection, canvasPosition.Y - _amountOfParalelBorders);
             }
         }
+
         public void CalculatePolylineSize(Shape shape)
         {
             if (shape is Polyline polyline)
@@ -1873,6 +1999,7 @@ namespace PaintWPF
 
                 DrawingCanvas.Children.RemoveAt(DrawingCanvas.Children.Count - 1);
                 DrawingCanvas.Children.Add(_lineSizing);
+                _lineSizing.ClipOutOfBoundariesGeo();
             }
             else
             {
@@ -1883,17 +2010,16 @@ namespace PaintWPF
 
                 _selection.SelectCan.Children.Add(createdFigure);
 
-                Console.WriteLine(createdFigure.Width);
-                Console.WriteLine(createdFigure.Height);
-
                 createdFigure.Stretch = Stretch.Fill;
 
                 Canvas.SetLeft(createdFigure, 0);
                 Canvas.SetTop(createdFigure, 0);
 
                 DrawingCanvas.Children.Add(_selection);
+                _selection.ClipOutOfBoundariesGeo();
             }
             _main._type = ActionType.ChangingFigureSize;
+            DrawingCanvas.ClipToBounds = false;
         }
         private bool IfShapeHasPoints(Shape shape)
         {
@@ -1996,10 +2122,11 @@ namespace PaintWPF
         }
         private void MakeCustomSelection(bool ifInvertial = false)
         {
+
             ResetRenderTransform();
 
             //Add Last point(to make like a polygon)
-            if (_selectionLine.Points.Count == 0) return;
+            if (_selectionLine is null || _selectionLine.Points.Count == 0) return;
             //Get all point between first and last
             ConnectTwoPoints();
             _selectionLine.Points.Add(_selectionLine.Points.First());
@@ -2028,7 +2155,6 @@ namespace PaintWPF
             {
                 _selection.CheckCan.Children.Remove(_selectionLine);
                 FreeSelection();
-
                 UpdateRenderTransform();
                 return;
             };
@@ -2387,19 +2513,19 @@ namespace PaintWPF
         }
         private Point GetRightIfOutOfBoundaries(Point checkPoint)
         {
-            if(checkPoint.X < 0)
+            if (checkPoint.X < 0)
             {
                 checkPoint.X = 0;
             }
-            else if(checkPoint.X >= DrawingCanvas.Width)
+            else if (checkPoint.X >= DrawingCanvas.Width)
             {
                 checkPoint.X = DrawingCanvas.Width;
             }
-            if(checkPoint.Y < 0)
+            if (checkPoint.Y < 0)
             {
                 checkPoint.Y = 0;
             }
-            else if(checkPoint.Y >= DrawingCanvas.Height)
+            else if (checkPoint.Y >= DrawingCanvas.Height)
             {
                 checkPoint.Y = DrawingCanvas.Height;
             }
@@ -2654,12 +2780,6 @@ namespace PaintWPF
         private void MakeRectSelection(Rectangle rect, ref Selection selection, Canvas selParentCan)
         {
             Point point = new Point(Canvas.GetLeft(_selectionRect), Canvas.GetTop(_selectionRect));
-            Console.WriteLine(_firstSelectionStart);
-            Console.WriteLine(_firstSelectionEnd);
-
-            Console.WriteLine(_selectionRect.Width);
-            Console.WriteLine(_selectionRect.Height);
-
             double checkWidth = Math.Abs(_firstSelectionEnd.X - _firstSelectionStart.X);
             double checkHeight = Math.Abs(_firstSelectionEnd.Y - _firstSelectionStart.Y);
 
@@ -2776,12 +2896,24 @@ namespace PaintWPF
         {
             valueDragElem = null;
             ValueCanvas.ReleaseMouseCapture();
+            Check.IsOpen = false;
+        }
+        private void ValueCanvas_MouseDown(object sender, MouseEventArgs e)
+        {
+            SetStartPositionForBrushSizer(draggableButton);
+            Console.WriteLine(ValueProgressBar.Height + paintInBlueCan.Height);
+            var position = e.GetPosition(ValueCanvas);
+            SetBrushSizeBrushPoint(position);
         }
         private void ValueCanvas_PreViewMouseMove(object sender, MouseEventArgs e)
         {
             if (valueDragElem == null) return;
             var position = e.GetPosition(sender as IInputElement);
-
+            SetBrushSizeBrushPoint(position);
+            Check.IsOpen = true;
+        }
+        private void SetBrushSizeBrushPoint(Point position)
+        {
             if (position.Y < draggableButton.Height / _dividerInMiddle)
             {
                 position.Y = draggableButton.Height / _dividerInMiddle;
@@ -2790,26 +2922,57 @@ namespace PaintWPF
             {
                 position.Y = ValueCanvas.Height - draggableButton.Height / _dividerInMiddle;
             }
+
             Canvas.SetTop(valueDragElem, position.Y - valueOffset.Y);
+            Check.VerticalOffset = position.Y - valueOffset.Y - ValueCanvas.Height;
+
+            CheckValuePopupForXPosition();
 
             ChangeProgressBarValue(position.Y - valueOffset.Y);
+        }
+        private void CheckValuePopupForXPosition()
+        {
+            const int leftOffset = -70;
+            const int rightOfset = 30;
+            Point windowPoint = new Point(this.Left, this.Top);
+
+            if (windowPoint.X < rightOfset)
+            {
+                Check.HorizontalOffset = rightOfset;
+            }
+            else if (Check.HorizontalOffset > 0)
+            {
+                Check.HorizontalOffset = leftOffset;
+            }
         }
         public void ChangeProgressBarValue(double pos)
         {
             const int maxValueInProgressBar = 100;
-            const int brushAdder = 5;
+            const int brushAdder = 0;
 
             double onePointHeight = (ValueProgressBar.Height - draggableButton.Height) /
                 ValueProgressBar.Maximum;
-            double temp = pos / onePointHeight;
+            double temp = (int)pos / onePointHeight;
 
             double height = 250 - onePointHeight * temp;
+
             paintInBlueCan.Height = height;
-            _main.brushThickness = Math.Abs(((int)temp) - maxValueInProgressBar) + brushAdder;
+
+            int brushSize = Math.Abs(((int)temp) - maxValueInProgressBar) + brushAdder;
+
+            brushSize = brushSize == 0 ? 1 : brushSize;
+
+            _main.brushThickness = brushSize;
+            BrushSizeLB.Content = $"{brushSize} px";
+
         }
         private double prevYPos;
         private bool IfMadeThickBigger = false;
         private void ValueDrag_PreViewMouseDown(object sender, MouseEventArgs e)
+        {
+            SetStartPositionForBrushSizer(sender as Button);
+        }
+        private void SetStartPositionForBrushSizer(Button sender)
         {
             Button button = sender as Button;
             Point buttonPosition = button.TransformToAncestor(ValueCanvas)
@@ -2835,6 +2998,7 @@ namespace PaintWPF
             valueOffset.Y -= Canvas.GetTop(valueDragElem);
             ValueCanvas.CaptureMouse();
         }
+
         public void IfThinBiggerCheck(double butYCord)
         {
             if (prevYPos == 0)
@@ -2910,8 +3074,19 @@ namespace PaintWPF
             }
             return null;
         }
+        private bool RemoveNotPaintedFiure()
+        {
+            if (_main._figToPaint is null && _main._isDrawingLine == false) return false;
+            //DrawingCanvas.Children.Remove(_main._figToPaint);
+            DrawingCanvas.Children.RemoveAt(DrawingCanvas.Children.Count - 1);
+            _main._figToPaint = null;
+
+            ReloadCurvePainting();
+            return true;
+        }
         private void PreviousCanvas_Click(object sender, EventArgs e)
         {
+            if (RemoveNotPaintedFiure()) return;
             if (!RemoveSelectionFromHistory()) return;
             DrawingCanvas.RenderTransform =
             new TranslateTransform(0, 0);
@@ -2938,6 +3113,7 @@ namespace PaintWPF
         }
         private void NextCanvas_Click(object sender, EventArgs e)
         {
+            if (SetNotEndedFigure()) return;
             DrawingCanvas.RenderTransform =
              new TranslateTransform(0, 0);
             if (currentIndex < _canvasHistory.Count - 1)
@@ -2954,6 +3130,25 @@ namespace PaintWPF
             }
             DrawingCanvas.RenderTransform =
             new TranslateTransform(_horizontalOffset, 0);
+        }
+        private bool SetNotEndedFigure()
+        {
+            if (_main._figType != FigureTypes.Curve &&
+                _main._figType != FigureTypes.Polygon || _main._figToPaint is null) return false;
+
+            if (_main._figType == FigureTypes.Polygon)
+            {
+                ((Polyline)_main._figToPaint).Points.Add(((Polyline)_main._figToPaint).Points.First());
+            }
+            if (_main._figType == FigureTypes.Curve ||
+                _main._figType == FigureTypes.Polygon)
+            {
+                SetCanvasBg(DrawingCanvas);
+                DrawingCanvas.Children.Remove(_main._figToPaint);
+                _main._figToPaint = null;
+                ReloadCurvePainting();
+            }
+            return true;
         }
         private bool RemoveSelectionFromHistory()
         {
@@ -3172,20 +3367,36 @@ namespace PaintWPF
             }
             return null;
         }
-        private void SetCanvasBg(Canvas canvas)
+        private void SetCanvasBg(Canvas canvas, bool ifSpray = false)
         {
             canvas.RenderTransform = new TranslateTransform(0, 0);
             Image bg = _main.ConvertCanvasInImage(canvas);
-            RenderOptions.SetEdgeMode(bg, EdgeMode.Aliased);
+            //RenderOptions.SetEdgeMode(bg, EdgeMode.Aliased);
 
             //CheckImageColors(bg);
-
-            canvas.Children.Clear();
+            if (ifSpray) RemoveChildrenExceptCheckRect(canvas);
+            else canvas.Children.Clear();
             canvas.Background = new ImageBrush()
             {
                 ImageSource = bg.Source
             };
-            canvas.RenderTransform = new TranslateTransform(_horizontalOffset, 0);
+            //canvas.RenderTransform = new TranslateTransform(_horizontalOffset, 0);
+        }
+        private void RemoveChildrenExceptCheckRect(Canvas canvas)
+        {
+            List<UIElement> elementsToRemove = new List<UIElement>();
+            foreach (UIElement child in DrawingCanvas.Children)
+            {
+                if (child != CheckRect)
+                {
+                    elementsToRemove.Add(child);
+                }
+            }
+
+            foreach (UIElement element in elementsToRemove)
+            {
+                DrawingCanvas.Children.Remove(element);
+            }
         }
         private bool _ifThereAreUnsavedChangings = false;
         private void CreateNew_Click(object sender, EventArgs e)
@@ -3237,30 +3448,32 @@ namespace PaintWPF
                 if (_chosenToPaintButton is null ||
                     _chosenToPaintButton == FirstColor)
                 {
-                    SetColorAndBut(but, FirstColor);
                     _main.FirstColor = new SolidColorBrush(
                     ColorConvertor.HexToRGB(but.Background.ToString()));
-                    if (!(_text is null)) _text.ChangeTextColor();
+                    SetColorAndBut(but, FirstColor);
+
                     return;
                 }
-                SetColorAndBut(but, SecondColor);
                 _main.SecondColor = new SolidColorBrush(
                 ColorConvertor.HexToRGB(but.Background.ToString()));
+                SetColorAndBut(but, SecondColor);
+
             }
             else if (e.RightButton == MouseButtonState.Pressed)
             {
                 if (_chosenToPaintButton is null ||
                     _chosenToPaintButton == FirstColor)
                 {
-                    SetColorAndBut(but, SecondColor);
                     _main.SecondColor = new SolidColorBrush(
                     ColorConvertor.HexToRGB(but.Background.ToString()));
+                    SetColorAndBut(but, SecondColor);
+
                     return;
                 }
-                SetColorAndBut(but, FirstColor);
                 _main.FirstColor = new SolidColorBrush(
                 ColorConvertor.HexToRGB(but.Background.ToString()));
-                if (!(_text is null)) _text.ChangeTextColor();
+                SetColorAndBut(but, FirstColor);
+
             }
         }
         private void SetColorAndBut(Button but, Button chosenBut)
@@ -3271,6 +3484,8 @@ namespace PaintWPF
             {
                 ChangedChosenColor(chosenBut);
             }
+            if (!(_text is null)) _text.ChangeTextColor();
+            //if (!(_richTexBox is null)) _richTexBox.Foreground = _main.FirstColor;
         }
         private void Color_PreviewMouseRightButtonDown(object sender, MouseEventArgs e)
         {
@@ -3911,8 +4126,10 @@ namespace PaintWPF
 
             return renderTargetBitmap;
         }
+        Point _windowPoint;
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
+            _windowPoint = e.GetPosition(this);
             if (!(_selection is null))
                 Cursor = _selection._tempCursor;
 
@@ -3954,7 +4171,6 @@ namespace PaintWPF
                 if (_clickMenu is null) return;
                 MakeChangeButActive(_clickMenu.Copy);
                 MakeChangeButActive(_clickMenu.Cut);
-
                 if (_copyBuffer is null) MakeChangeButInActive(_clickMenu.Paste);
             }
             else
@@ -4022,8 +4238,37 @@ namespace PaintWPF
             {
                 _changedSizeText.IfSelectiongClicked = false;
             }
-
+            if (IfFIgureClickeOutOfDrawingCanvas(e))
+            {
+                DrawingCanvas.Children.Remove(CheckRect);
+                bool polygonCheck = IfPolygonFigureIsDone();
+                bool curveCheck = IfCurveFigureIsDone();
+                if (polygonCheck && curveCheck)
+                {
+                    InitFigureInSizingBorder();
+                    ReloadCurvePainting();
+                }
+            }
             UpdateRenderTransform();
+        }
+        private bool IfFIgureClickeOutOfDrawingCanvas(MouseEventArgs e)
+        {
+            if (_main._figToPaint is null || _main._figType != FigureTypes.Polygon) return false;
+            Point pos = e.GetPosition(DrawingCanvas);
+            if (_main._figType == FigureTypes.Polygon &&
+               IfPointOutOfBoundaries(pos) &&
+               ((Polyline)_main._figToPaint).Points.Count >= 2)
+            {
+                ((Polyline)_main._figToPaint).Points.Add(((Polyline)_main._figToPaint).Points.First());
+                return true;
+            }
+            return false;
+        }
+        private bool IfPointOutOfBoundaries(Point point)
+        {
+            return point.X < 0 || point.Y < 0 ||
+                point.X > DrawingCanvas.Width ||
+                point.Y > DrawingCanvas.Height;
         }
         private bool IfSelectionContainsAndClearIt()
         {
@@ -4239,6 +4484,7 @@ namespace PaintWPF
         {
             ResetRenderTransform();
 
+
             ClearFigureSizing();
             ClearLineSizing();
             ClearSquaresBorders();
@@ -4281,6 +4527,10 @@ namespace PaintWPF
 
         public Point GetCordsForLineImage(Line line, Point point)
         {
+            if (_lineSizing.Parent != DrawingCanvas)
+            {
+                DrawingCanvas.Children.Add(_lineSizing);
+            }
             GeneralTransform transform = line.TransformToAncestor(DrawingCanvas);
             Point canvasPosition = transform.Transform(point);
 
@@ -4694,7 +4944,11 @@ namespace PaintWPF
             double leftSize = _changedSizeText.DashedBorder.StrokeThickness;
             toSave.BorderThickness = new Thickness(0);
 
-            if (toSave is null) return;
+            if (toSave is null)
+            {
+                this.Focus();
+                return;
+            }
             double width = toSave.ActualWidth + sizeCorel;
             double height = toSave.ActualHeight + sizeCorel;
 
@@ -4711,6 +4965,7 @@ namespace PaintWPF
             Canvas.SetTop(img, Canvas.GetTop(_changedSizeText) + leftSize);
 
             DrawingCanvas.Children.Add(img);
+            this.Focus();
         }
         public void EndWithPolygonFigures()
         {
@@ -5077,6 +5332,7 @@ namespace PaintWPF
 
                     _main._type = ActionType.Selection;
                     _main._selectionType = _savedType;
+                    ValueBorder.Visibility = Visibility.Hidden;
                 }
                 if (_main._tempBrushType == BrushType.Spray)
                 {
@@ -5099,8 +5355,10 @@ namespace PaintWPF
 
             IfSelectionContainsAndClearIt();
             CheckForTextSizeChanging();
+
             EndWithPolygonFigures();
             ClearFigureSizingInClicks();
+
             ClearBGs();
 
             if (brushClicked) ValueBorder.Visibility = Visibility.Visible;
@@ -5204,16 +5462,7 @@ namespace PaintWPF
         }
         private void DeleteSelectionContainment_Click(object sender, EventArgs e)
         {
-            RemoveRightClickMenus();
-            _main.MakeAllActionsNegative();
-            _selection = null;
-            _selection = null;
-            if (_main._type == ActionType.ChangingFigureSize)
-            {
-                _main._ifFiguring = true;
-                _main._type = ActionType.Figuring;
-            }
-            RemoveSelection();
+            RemoveClicked();
         }
         private void Print_Click(object sender, EventArgs e)
         {
@@ -5238,19 +5487,7 @@ namespace PaintWPF
             }
         }
         private int _deepCounter = 0;
-        private readonly List<string> _names = new List<string>()
-        {
-            "one",
-            "two",
-            "three",
-            "four",
-            "five",
-            "six",
-            "seven",
-            "eight",
-            "nine",
-            "ten"
-        };
+
         private void MakeAllSelSBorderVisiable(Selection selection)
         {
             selection.DashedBorder.Visibility = Visibility.Visible;
@@ -5267,8 +5504,8 @@ namespace PaintWPF
         private void InvertSelection_Click(object sender, EventArgs e)
         {
             RemoveRightClickMenus();
-
-            //if (_main._type == ActionType.ChangingFigureSize || _main._selectionType == SelectionType.Custom) return;
+            
+            if (_main._type == ActionType.ChangingFigureSize) return;
             RemoveRightClickMenus();
             if (_selection is null) return;
             _main._selectionType = SelectionType.Invert;
@@ -5659,7 +5896,14 @@ namespace PaintWPF
             }
             return res;
         }
+        private void SetSelectionCanvasesSize()
+        {
+            _selection.SelectCan.Width = _selection.Width;
+            _selection.SelectCan.Height = _selection.Height;
 
+            _selection.CheckCan.Width = _selection.Width;
+            _selection.CheckCan.Height = _selection.Height;
+        }
         private void MakeInvertSelection(Canvas canvas, bool ifMakeInvalidation = true, int check = 0)
         {
             for (int i = 0; i < canvas.Children.Count; i++)
@@ -5667,8 +5911,8 @@ namespace PaintWPF
                 if (canvas.Children[i].GetType() == typeof(Selection))
                 {
                     _selection = (Selection)canvas.Children[i];
-                    //Image bgImg = _main.ConvertCanvasInImage(_selection.SelectCan);
-                    //Console.WriteLine(_selection.Name);
+                    SetSelectionCanvasesSize();
+
                     if (!ifMakeInvalidation)
                     {
                         InvertSelection();
@@ -5861,7 +6105,7 @@ namespace PaintWPF
             globalPoint = CorrelateGotPoint(globalPoint, corelCounterSmth);
 
             // Remove from parent + remove DrawingCanvas children
-             parent.Children.Remove(selection);
+            parent.Children.Remove(selection);
             List<UIElement> drawCanElems = ReAssignChildrenInAuxiliaryCanvas(DrawingCanvas);
             DrawingCanvas.Children.Clear();
 
@@ -5916,10 +6160,10 @@ namespace PaintWPF
 
 
 
-/*                DrawingCanvas.Children.Remove(_selection);
-                DrawingCanvas.Children.Remove(_selectionLine);
-                _selection.SelectCan.Children.Remove(_selectionLine);
-                _selection.CheckCan.Children.Remove(_selectionLine);*/
+                /*                DrawingCanvas.Children.Remove(_selection);
+                                DrawingCanvas.Children.Remove(_selectionLine);
+                                _selection.SelectCan.Children.Remove(_selectionLine);
+                                _selection.CheckCan.Children.Remove(_selectionLine);*/
 
                 _selection = null;
                 _selectionLine.RenderTransform = null;
@@ -6464,7 +6708,8 @@ namespace PaintWPF
 
             SetPolyLineInBuffer();
 
-            RemoveSelection();
+            RemoveClicked();
+            //RemoveSelection();
 
             MakeChangeButActive(PasteChange);
         }
@@ -6554,14 +6799,299 @@ namespace PaintWPF
             _horizontalOffset = -e.HorizontalOffset;
             UpdateRenderTransform();
         }
-        private void PaintWindow_KeyDown(object sender, KeyEventArgs e)
+        private void PaintWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && !(_selection is null))
+            if (e.Key == Key.Space) //Relese mouse capture from selection
             {
-                RemoveSelection();
-                _selection = null;
+                if (!(_selection is null) && !_selection.CheckCan.IsMouseCaptured)
+                {
+                    if (_main._type == ActionType.Selection)FreeSelection();
+                    ClearAfterFastToolButPressed();
+                    SaveInHistory();
+
+                }
+                if (!(_selection is null)) _selection._isDraggingSelection = false;
+                else if (!(_lineSizing is null)) _lineSizing._isDraggingSelection = false;
+                RemoveClicked();
+            }
+            if (e.Key == Key.Escape)
+            {
+                EscapePressedAction();
             }
         }
+        private void EscapePressedAction()
+        {
+            if (!(_selection is null) && _selection._shape is null)
+            {
+                SetEscapeBgSelection();
+            }
+            RemoveClicked();
+        }
+        private void SetEscapeBgSelection()
+        {
+            if (currentIndex == 0)
+            {
+                DrawingCanvas.Background = new SolidColorBrush(_whiteColor);
+                return;
+            }
+            DrawingCanvas.Background = new ImageBrush
+            {
+                ImageSource = _canvasHistory[currentIndex].Source
+            };
+        }
+        private void FigurePanel_KeyDown(object sender, KeyEventArgs e)
+        {
+            DisableTabsHandler(e);
+            SelectionArrowMove(e);
+        }
+        private void PaintWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!(_richTexBox is null) && _richTexBox.IsFocused) return;
+
+            DisableTabsHandler(e);
+            if (e.Key == Key.Delete)
+            {
+                ReleaseAllTouchCaptures();
+                ReleaseMouseCapture();
+                RemoveClicked();
+            }
+
+            HotKeysClickTools(e);
+            SelectionArrowMove(e);
+        }
+        private void DisableTabsHandler(KeyEventArgs e)
+        {
+            if (e.Key == Key.Tab || e.Key == Key.Up || e.Key == Key.Down ||
+                e.Key == Key.Left || e.Key == Key.Right)
+            {
+                e.Handled = true;
+            }
+        }
+        private void SelectionArrowMove(KeyEventArgs e)
+        {
+            UIElement elem = null;
+
+            if (_lineSizing is null)
+            {
+                elem = _selection;
+            }
+            else elem = _lineSizing;
+
+            if (elem is null || !DrawingCanvas.Children.Contains(elem)) return;
+            if (Keyboard.IsKeyDown(Key.Left))
+            {
+                MoveSelectionByArrow(SelectionMoveByKeyDir.Left, elem);
+            }
+            if (Keyboard.IsKeyDown(Key.Up))
+            {
+                MoveSelectionByArrow(SelectionMoveByKeyDir.Up, elem);
+            }
+            if (Keyboard.IsKeyDown(Key.Right))
+            {
+                MoveSelectionByArrow(SelectionMoveByKeyDir.Right, elem);
+            }
+            if (Keyboard.IsKeyDown(Key.Down))
+            {
+                MoveSelectionByArrow(SelectionMoveByKeyDir.Down, elem);
+            }
+        }
+        private void MoveSelectionByArrow(SelectionMoveByKeyDir dir, UIElement elem)
+        {
+
+            const int stepInMove = 6;
+            if (dir == SelectionMoveByKeyDir.Up)
+            {
+                Canvas.SetTop(elem, Canvas.GetTop(elem) - stepInMove);
+            }
+            else if (dir == SelectionMoveByKeyDir.Down)
+            {
+                Canvas.SetTop(elem, Canvas.GetTop(elem) + stepInMove);
+            }
+            else if (dir == SelectionMoveByKeyDir.Left)
+            {
+                Canvas.SetLeft(elem, Canvas.GetLeft(elem) - stepInMove);
+            }
+            else if (dir == SelectionMoveByKeyDir.Right)
+            {
+                Canvas.SetLeft(elem, Canvas.GetLeft(elem) + stepInMove);
+            }
+            UpdateBoundaries();
+        }
+        private void UpdateBoundaries()
+        {
+            if (_lineSizing is null)
+            {
+                _selection.ClipOutOfBoundariesGeo();
+                return;
+            }
+            _lineSizing.ClipOutOfBoundariesGeo();
+        }
+        private void HotKeysClickTools(KeyEventArgs e)
+        {
+            if (e.Key == Key.P) //Pencil
+            {
+                PressedToolButton(ToolTypes.Pencil);
+            }
+            else if (e.Key == Key.E)//Razer
+            {
+                PressedToolButton(ToolTypes.Razer);
+            }
+            else if (e.Key == Key.T)//text
+            {
+                PressedToolButton(ToolTypes.Text);
+            }
+            else if (e.Key == Key.I)//pipette
+            {
+                PressedToolButton(ToolTypes.Pipette);
+            }
+            else if (e.Key == Key.S)//Selection
+            {
+                SetSelectionFastChange();
+            }
+            else if (e.Key == Key.B)//Bucket
+            {
+                PressedToolButton(ToolTypes.Bucket);
+            }
+        }
+        public void PressedToolButton(ToolTypes type)
+        {
+            sprayTimer.Stop();
+            switch (type)
+            {
+                case (ToolTypes.Pencil):
+                    {
+                        SetOptionsForFastToolClick(Pen, _main._pencilCurs);
+                        return;
+                    }
+                case (ToolTypes.Bucket):
+                    {
+                        SetOptionsForFastToolClick(Bucket, _main._bucketCurs);
+                        return;
+                    }
+                case (ToolTypes.Text):
+                    {
+                        SetOptionsForFastToolClick(Text, _main._textingCurs);
+                        return;
+                    }
+                case (ToolTypes.Razer):
+                    {
+                        SetOptionsForFastToolClick(Erazer, _main._crossCurs);
+                        AddErasingMarker(currentPoint);
+                        DrawingCanvas.ClipToBounds = true;
+                        return;
+                    }
+                case (ToolTypes.Pipette):
+                    {
+                        SetOptionsForFastToolClick(ColorDrop, _main._pipetteCurs);
+                        return;
+                    }
+                default:
+                    {
+                        return;
+                    }
+            }
+        }
+        private void SetSelectionFastChange()
+        {
+            //Make removements 
+            RemoveRightClickMenus();
+            if (_main._type == ActionType.Selection) FreeSelection();
+            ClearAfterFastToolButPressed();
+            _main.MakeAllActionsNegative();
+
+            //Change temp selection type
+
+            _main._tempCursor = null;
+            ClearDynamicValues();
+            _main._selectionType = _main._selectionType == SelectionType.Rectangle ?
+                SelectionType.Custom : SelectionType.Rectangle;
+
+            if (_main._selectionType == SelectionType.Rectangle) _savedType = _main._selectionType;
+            if (_main._selectionType == SelectionType.Custom) _savedType = _main._selectionType;
+
+            ChangeSelectionImage();
+
+            _main._type = ActionType.Selection;
+            PaintButBordsInClickedColor(SelectionBut);
+
+            //Change selection pic
+        }
+        public void SetOptionsForFastToolClick(Button but, Cursor newCurs)
+        {
+            if (_chosenTool == but) return;
+            RemoveRightClickMenus();
+
+            if (_main._type == ActionType.Selection) FreeSelection();
+            ClearAfterFastToolButPressed();
+            _main.MakeAllActionsNegative();
+
+            ClearDynamicValues(brushClicked: but == Pen || but == Erazer || but == Text);
+            _chosenTool = but;
+
+            _main.SetActionTypeByButtonPressed(but);
+            _main._tempCursor = newCurs;
+            Cursor = _main._tempCursor;
+
+            //IfCurosrInDrawField();
+        }
+        private bool IfCurosrInDrawField()
+        {
+            GeneralTransform transform = DrawingCanvas.TransformToAncestor(this);
+
+            Point topLeft = transform.Transform(new Point(0, 0));
+            return true;
+        }
+        private void ClearAfterFastToolButPressed()
+        {
+            RemoveObject(_main._figToPaint);
+            RemoveObject(_main._polyline);
+            RemoveObject(_selectionRect);
+            RemoveObject(_selectionLine);
+            RemoveObject(_changedSizeText);
+            RemoveObject(_richTexBox);
+            DrawingCanvas.Children.Remove(RazerMarker);
+        }
+        private void RemoveObject(UIElement elem)
+        {
+            DrawingCanvas.Children.Remove(elem);
+            elem = null;
+        }
+        public void RemoveClicked()
+        {
+            RemoveRightClickMenus();
+            _main.MakeAllActionsNegative();
+            _selection = null;
+
+            DrawingCanvas.Children.Remove(_main._figToPaint);
+            _main._figToPaint = null;
+            if (_main._type == ActionType.ChangingFigureSize)
+            {
+                _main._ifFiguring = true;
+                _main._type = ActionType.Figuring;
+            }
+            else if (_main._type == ActionType.Text)
+            {
+                _main._ifTexting = true;
+            }
+            RemoveSelection();
+            _selection = null;
+
+            DrawingCanvas.Children.Remove(_main._polyline);
+            _main._polyline = null;
+
+            DrawingCanvas.Children.Remove(_lineSizing);
+            _lineSizing = null;
+
+            DrawingCanvas.Children.Remove(_selectionRect);
+            _selectionRect = null;
+
+            DrawingCanvas.Children.Remove(_changedSizeText);
+            _changedSizeText = null;
+            _ifDoubleClicked = false;
+
+            ReloadCurvePainting();
+        }
+
         private void PaintWindow_Loaded(object sender, RoutedEventArgs e)
         {
             if (!(RazerMarker.Parent is null) && RazerMarker.Parent is Canvas)
@@ -6572,16 +7102,12 @@ namespace PaintWPF
         private void PaintWindow_MouseLeave(object sender, MouseEventArgs e)
         {
             ResetRenderTransform();
-            //if (_main._ifSelection && !_main.IfSelectionIsMacken) MakeSelection();
 
+            //if (_main._ifSelection && !_main.IfSelectionIsMacken) MakeSelection();
             if (_main._ifSelection)
             {
                 ChangeSelectionSize(e);
             }
-
-
-
-
             CursorCheck();
             UpdateRenderTransform();
         }
@@ -6596,13 +7122,21 @@ namespace PaintWPF
         private void DrawingCanvas_MouseEnter(object sender, MouseEventArgs e)
         {
             Cursor = _main._tempCursor;
-            if (!_main._ifErasing && _main._type != ActionType.Erazing)
+            _ifCursorInsideDrawingCan = true;
+            if (!_main._ifErasing || _main._type != ActionType.Erazing)
             {
-                RazerMarker.Visibility = Visibility.Hidden;
-                DrawingCanvas.Children.Remove(RazerMarker);
-                return;
+                RemoveRazerMark();
             }
         }
+        private void RemoveRazerMark()
+        {
+            if (_main._type == ActionType.Erazing) DrawingCanvas.ClipToBounds = true;
+            RazerMarker.Visibility = Visibility.Hidden;
+            DrawingCanvas.Children.Remove(RazerMarker);
+            _main._ifErasing = false;
+            //_main._type = ActionType.Nothing;
+        }
+
         private void MainPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (!(_selection is null))
@@ -6620,6 +7154,8 @@ namespace PaintWPF
                 }
             }
         }
+
+
     }
 }
 
