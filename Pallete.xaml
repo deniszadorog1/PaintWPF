@@ -6,11 +6,15 @@
         xmlns:local="clr-namespace:PaintWPF"
         xmlns:tools="clr-namespace:PaintWPF.Models.Tools"
 
+        xmlns:CustomControls="clr-namespace:PaintWPF.CustomControls"
+
         mc:Ignorable="d"
         Title="Pallete" 
         Height="660" MaxHeight="660" MinHeight="660" 
         Width="680" MaxWidth="680" MinWidth="680" ResizeMode="NoResize"
-        Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp" >
+        Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp" 
+       MouseDown="PalletePanel_MouseDown"
+        >
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -205,7 +209,7 @@
             <RowDefinition Height="250"/>
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
-  
+
         <Label FontSize ="32" Margin="25,0,0,0" Grid.ColumnSpan="2" >
             Изменить цвета
         </Label>
@@ -218,7 +222,7 @@
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Grid.Row="1" >
+            <Grid Grid.Column="0" Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Name="firstSpecCol" Width="20"/>
                     <ColumnDefinition/>
@@ -233,7 +237,7 @@
                                Margin="0 0 0 0" Name="coloeSpecter"
                                Fill="{StaticResource SpectrumWithVerticalFade}"
                                Stretch="Fill" Height="250" Width="260"/>
-                    
+
                 </Grid>
 
                 <Canvas  Grid.Column="1" 
@@ -321,50 +325,26 @@
                 </WrapPanel>
 
                 <WrapPanel Name ="FirstParam" Grid.Row="2">
-                    <TextBox x:Name="FirstInfoBox" Width="100" Height="35" 
-                             TextChanged="FirstParam_TextChanged"
-                             LostFocus="TextBoxFirstParam_LostFocus"
-                             PreviewTextInput="FirstInfoBox_PreviewTextInput">
 
-                    </TextBox>
-                    <Button  
-                        Name="FirstParamClear" Opacity="0.5"
-                        Width="20">
-                        X
-                    </Button>
+                    <CustomControls:PalleteTextBox x:Name="FirstBox"/>
+
                     <Label Name ="FirstLB" FontSize="14"
                            VerticalAlignment="Center" Margin="2 0 0 0">
                         First</Label>
                 </WrapPanel>
 
                 <WrapPanel Name ="SecondParam" Grid.Row="3">
-                    <TextBox x:Name="SecondInfoBox" Width="100" Height="35"
-                             TextChanged="SecondParam_TextChanged"
-                             LostFocus="TextBoxSecondParam_LostFocus"
-                             PreviewTextInput="SecondInfoBox_PreviewTextInput">
+                    <CustomControls:PalleteTextBox x:Name="SecondBox"/>
 
-                    </TextBox>
-                    <Button  
-                        Name="SecondParamClear" Opacity="0.5"
-                        Width="20">
-                        X
-                    </Button>
                     <Label Name ="SecondLB" FontSize="14"
                            VerticalAlignment="Center" Margin="2 0 0 0">
                         Second</Label>
                 </WrapPanel>
 
                 <WrapPanel Name ="ThirdParam" Grid.Row="4">
-                    <TextBox x:Name="ThirdInfoBox" Width="100" Height="35"
-                             TextChanged="ThirdParam_TextChanged" 
-                             LostFocus="TextBoxThirdParam_LostFocus"
-                             PreviewTextInput="ThirdInfoBox_PreviewTextInput">
-                    </TextBox>
-                    <Button  
-                        Name="ThirdParamClear" Opacity="0.5"
-                        Width="20">
-                        X
-                    </Button>
+
+                    <CustomControls:PalleteTextBox x:Name="ThirdBox"/>
+
                     <Label Name ="ThirdLB" FontSize="14"
                            VerticalAlignment="Center" Margin="2 0 0 0">
                         Third</Label>

@@ -9,10 +9,9 @@
         Title="DoesntWork" Height="450" Width="800" Background="Gray"
         WindowStartupLocation="CenterScreen">
     <Grid>
-        <Label Content="It Doesnt work btw!" HorizontalAlignment="Center" FontSize="24" Margin="0 10 0 0"/>
-        <Image gif:ImageBehavior.RepeatBehavior="Forever"
-               gif:ImageBehavior.AnimatedSource="/Gif/monkeyGif.gif"
-               Height="350" Width="600" Margin="0 40 0 0" Source="/Gif/monkeyGif.gif"/>
-
+        <Label Name ="ContentLB"  Content="It Doesnt work btw!" HorizontalAlignment="Center" FontSize="24" Margin="0 10 0 0"/>
+        <Image Name ="Gif" gif:ImageBehavior.RepeatBehavior="Forever"
+               gif:ImageBehavior.AnimatedSource="/Gif/Tomato.gif"
+               Height="350" Width="400"  Source="/Gif/Tomato.gif"/>
     </Grid>
 </Window>

@@ -41,6 +41,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -75,6 +76,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\LineSizing.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\PalleteTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -118,6 +123,9 @@
     <Compile Include="CustomControls\LineSizing.xaml.cs">
       <DependentUpon>LineSizing.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\PalleteTextBox.xaml.cs">
+      <DependentUpon>PalleteTextBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\Selection.xaml.cs">
       <DependentUpon>Selection.xaml</DependentUpon>
     </Compile>
@@ -155,19 +163,18 @@
     <Compile Include="Models\Enums\ActionType.cs" />
     <Compile Include="Models\Enums\AdaptationStages.cs" />
     <Compile Include="Models\Enums\BrushType.cs" />
+    <Compile Include="Models\Enums\Direction.cs" />
     <Compile Include="Models\Enums\FigureTypes.cs" />
     <Compile Include="Models\Enums\LineDivision.cs" />
     <Compile Include="Models\Enums\LineSizingRectType.cs" />
     <Compile Include="Models\Enums\ParagraphPosition.cs" />
     <Compile Include="Models\Enums\ResizeSelectionType.cs" />
-    <Compile Include="Models\Enums\SelectionMoveByKeyDir.cs" />
     <Compile Include="Models\Enums\SelectionSide.cs" />
     <Compile Include="Models\Enums\SelectionType.cs" />
     <Compile Include="Models\Enums\SubMenuItems.cs" />
     <Compile Include="Models\Enums\ToolTypes.cs" />
     <Compile Include="Models\MainPaint.cs" />
     <Compile Include="Models\PalleteModel.cs" />
-    <Compile Include="Models\Tools\ColorConvertor.cs" />
     <Compile Include="Models\Tools\TaskColor.cs" />
     <Compile Include="Models\Tools\ProgressBarConverter.cs" />
     <Compile Include="Other\DoesntWork.xaml.cs">
@@ -404,6 +411,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Other\paintIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Selection\ReverseColor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gif\OtherMonkey.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gif\MonkeyMusic.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gif\Tomato.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -34,6 +34,7 @@ namespace PaintWPF
             "MB",
             "GB"
         };
+
         private int _finalWeightValueIndex = 0;
         private DateTime? _lastSaveDate;
         private int _dpi = 96;
@@ -46,6 +47,7 @@ namespace PaintWPF
             InitializeComponent();
             InitBaseParams();
         }
+
         private const string emptyStr = " ";
         private void InitBaseParams()
         {
@@ -60,6 +62,7 @@ namespace PaintWPF
             LastSave.Content = GetLastSaveDate();
             Dpi.Content = _dpi.ToString() + " точек на дюйм";
         }
+
         private string _dotStr = ".";
         private string _doubleDots = ":";
         private string GetLastSaveDate()
@@ -68,6 +71,7 @@ namespace PaintWPF
             _lastSaveDate.Value.Day + _dotStr + _lastSaveDate.Value.Month + _dotStr + _lastSaveDate.Value.Year + emptyStr +
                 _lastSaveDate.Value.Hour + _doubleDots + _lastSaveDate.Value.Minute;
         }
+
         private const int _maxMarksAfterPoint = 3;
         private string GetImageWeightInString()
         {
@@ -76,6 +80,7 @@ namespace PaintWPF
             if (res == -1) _finalWeightValueIndex = -1;
             return res == -1 ? ImageWeight.Content.ToString() : (Math.Round(res, _maxMarksAfterPoint)).ToString();
         }
+
         private double ConvertBytesIntoAnoutherValue(ref double weight)
         {
             if (weight <= _weightDivider) return weight;
@@ -86,6 +91,7 @@ namespace PaintWPF
             } while (weight >= _weightDivider);
             return weight;
         }
+
         private const int _bitInByte = 8;
         private double GetImageWeight()
         {
@@ -97,32 +103,38 @@ namespace PaintWPF
             long size = bitmap.PixelWidth * bitmap.PixelHeight * (bitmap.Format.BitsPerPixel / _bitInByte);
             return size;
         }
+
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
+
         private void ButtonOK_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
+
         private bool IfSizeParamsIsNull()
         {
             return DrawingWidth is null || DrawingHeight is null;
         }
+
         private void SantiRadio_Checked(object sender, RoutedEventArgs e)
         {
             if (IfSizeParamsIsNull()) return;
-            RadioButton but = sender as RadioButton;
+            //RadioButton but = sender as RadioButton;
 
             InitDPI();
             DrawingWidth.Content = Math.Round(ConvertPixelsToCentimetersX(_drawingCanvas.Width), _maxMarksAfterPoint);
             DrawingHeight.Content = Math.Round(ConvertPixelsToCentimetersY(_drawingCanvas.Height), _maxMarksAfterPoint);
         }
+
         double ConvertInchesToCentimeters(double inches)
         {
             const double cmInInches = 2.54;
             return inches * cmInInches;
         }
+
         double ConvertPixelsToCentimetersX(double pixels)
         {
             double inches = ConvertPixelsToInchesX(pixels);
@@ -138,28 +150,32 @@ namespace PaintWPF
         private void PixelsRadio_Checked(object sender, RoutedEventArgs e)
         {
             if (IfSizeParamsIsNull()) return;
-            RadioButton but = sender as RadioButton;
+            //RadioButton but = sender as RadioButton;
 
             DrawingWidth.Content = _drawingCanvas.Width;
             DrawingHeight.Content = _drawingCanvas.Height;
         }
+
         private void InchRadio_Checked(object sender, RoutedEventArgs e)
         {
             if (IfSizeParamsIsNull()) return;
-            RadioButton but = sender as RadioButton;
+            //RadioButton but = sender as RadioButton;
 
             InitDPI();
             DrawingWidth.Content = Math.Round(ConvertPixelsToInchesX(_drawingCanvas.Width), _maxMarksAfterPoint);
             DrawingHeight.Content = Math.Round(ConvertPixelsToInchesY(_drawingCanvas.Height), _maxMarksAfterPoint);
         }
+
         private double ConvertPixelsToInchesX(double pixels)
         {
             return pixels / dpiX;
         }
+
         private double ConvertPixelsToInchesY(double pixels)
         {
             return pixels / dpiY;
         }
+
         private double dpiX, dpiY;
         private void InitDPI()
         {

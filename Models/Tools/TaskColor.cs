@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -18,6 +19,12 @@ namespace PaintWPF.Models.Tools
         public int G { get; set; }
         public int B { get; set; }
 
+        private const int _maxRGB = byte.MaxValue;
+        const double _maxRGBNotRounded = 255.0;
+
+        const double _startLittleStep = 0.0;
+        const double _endLittleStep = 1.0;
+
         public TaskColor(int a, double h, double s, double l)
         {
             Alpha = a;
@@ -30,19 +37,21 @@ namespace PaintWPF.Models.Tools
             L = Luminance;
 
         }
+
         public TaskColor(double h, double s, double l)
         {
-            Alpha = 255;
+            Alpha = _maxRGB;
             Hue = h;
             Saturation = s;
             Luminance = l;
         }
+
         public TaskColor(Color color)
         {
-            Alpha = 255;
-            Hue = 0.0;
-            Saturation = 0.0;
-            Luminance = 0.0;
+            Alpha = _maxRGB;
+            Hue = _startLittleStep;
+            Saturation = _startLittleStep;
+            Luminance = _startLittleStep;
             RGBtoHSL(color);
         }
 
@@ -58,7 +67,7 @@ namespace PaintWPF.Models.Tools
 
         public static TaskColor FromAhsl(int a)
         {
-            return new TaskColor(a, 0.0, 0.0, 0.0);
+            return new TaskColor(a, _startLittleStep, _startLittleStep, _startLittleStep);
         }
 
         public static TaskColor FromAhsl(int a, TaskColor hsl)
@@ -68,7 +77,7 @@ namespace PaintWPF.Models.Tools
 
         public static TaskColor FromAhsl(double h, double s, double l)
         {
-            return new TaskColor(255, h, s, l);
+            return new TaskColor(_maxRGB, h, s, l);
         }
 
         public static TaskColor FromAhsl(int a, double h, double s, double l)
@@ -113,9 +122,11 @@ namespace PaintWPF.Models.Tools
             set
             {
                 Hue = value;
-                Hue = (Hue > 1.0) ? 1.0 : ((Hue < 0.0) ? 0.0 : Hue);
+                Hue = (Hue > _endLittleStep) ? _endLittleStep : 
+                    ((Hue < _startLittleStep) ? _startLittleStep : Hue);
             }
         }
+
         public double S
         {
             get
@@ -125,9 +136,11 @@ namespace PaintWPF.Models.Tools
             set
             {
                 Saturation = value;
-                Saturation = (Saturation > 1.0) ? 1.0 : ((Saturation < 0.0) ? 0.0 : Saturation);
+                Saturation = (Saturation > _endLittleStep) ? _endLittleStep : 
+                    ((Saturation < _startLittleStep) ? _startLittleStep : Saturation);
             }
         }
+
         public double L
         {
             get
@@ -137,9 +150,11 @@ namespace PaintWPF.Models.Tools
             set
             {
                 Luminance = value;
-                Luminance = (Luminance > 1.0) ? 1.0 : ((Luminance < 0.0) ? 0.0 : Luminance);
+                Luminance = (Luminance > _endLittleStep) ? _endLittleStep : 
+                    ((Luminance < _startLittleStep) ? _startLittleStep : Luminance);
             }
         }
+
         public Color RgbValue
         {
             get
@@ -160,7 +175,7 @@ namespace PaintWPF.Models.Tools
             }
             set
             {
-                Alpha = (value > 255) ? 255 : ((value < 0) ? 0 : value);
+                Alpha = (value > _maxRGB) ? _maxRGB : ((value < 0) ? 0 : value);
             }
         }
 
@@ -168,7 +183,7 @@ namespace PaintWPF.Models.Tools
         {
             get
             {
-                return ((((Alpha == 0) && (H == 0.0)) && (S == 0.0)) && (L == 0.0));
+                return ((((Alpha == 0) && (H == _startLittleStep)) && (S == _startLittleStep)) && (L == _startLittleStep));
             }
         }
 
@@ -179,96 +194,118 @@ namespace PaintWPF.Models.Tools
 
         public Color ToRgbColor(int alpha)
         {
+            const int satAdder = 1;
+            const double lengthBorder = 0.5;
+            const int lengthMult = 2;
+            const double firstDVal = 1d;
+            const double secondDVal = 2d;
+            const double threeDVal = 3d;
+            const double fourDVal = 6d;
+            const double valMultiplier = 6;
+            const int hueDevider = 360;
+            const int colorColrel = 1;
+
+            
             double q;
-            if (L < 0.5)
+            if (L < lengthBorder)
             {
-                q = L * (1 + S);
+                q = L * (satAdder + S);
             }
             else
             {
                 q = L + S - (L * S);
             }
-            double p = 2 * L - q;
-            double hk = H / 360;
+            double p = lengthMult * L - q;
+            double hk = H / hueDevider;
 
             // r,g,b colors
             double[] tc = new[]
                     {
-                      hk + (1d / 3d), hk, hk - (1d / 3d)
+                      hk + (firstDVal / threeDVal), hk, hk - (firstDVal / threeDVal)
                     };
             double[] colors = new[]
                         {
-                          0.0, 0.0, 0.0
+                          _startLittleStep, _startLittleStep, _startLittleStep
                         };
 
             for (int color = 0; color < colors.Length; color++)
             {
                 if (tc[color] < 0)
                 {
-                    tc[color] += 1;
+                    tc[color] += colorColrel;
                 }
-                if (tc[color] > 1)
+                if (tc[color] > colorColrel)
                 {
-                    tc[color] -= 1;
+                    tc[color] -= colorColrel;
                 }
 
-                if (tc[color] < (1d / 6d))
+                if (tc[color] < (firstDVal / fourDVal))
                 {
-                    colors[color] = p + ((q - p) * 6 * tc[color]);
+                    colors[color] = p + ((q - p) * valMultiplier * tc[color]);
                 }
-                else if (tc[color] >= (1d / 6d) && tc[color] < (1d / 2d))
+                else if (tc[color] >= (firstDVal / fourDVal) && tc[color] < (firstDVal / secondDVal))
                 {
                     colors[color] = q;
                 }
-                else if (tc[color] >= (1d / 2d) && tc[color] < (2d / 3d))
+                else if (tc[color] >= (firstDVal / secondDVal) && tc[color] < (secondDVal / threeDVal))
                 {
-                    colors[color] = p + ((q - p) * 6 * (2d / 3d - tc[color]));
+                    colors[color] = p + ((q - p) * valMultiplier * (secondDVal / threeDVal - tc[color]));
                 }
                 else
                 {
                     colors[color] = p;
                 }
 
-                colors[color] *= 255;
+                colors[color] *= _maxRGB;
             }
             return Color.FromArgb((byte)alpha, (byte)colors[0], (byte)colors[1], (byte)colors[2]);
         }
+
         public Color HSLtoRGB()
         {
+            const double startHue = 0.0;
+            const double firstStepHue = 0.16666666666666666;
+            const double secondStepHue = 0.33333333333333331;
+            const double thirdSteoHue = 0.5;
+            const double fourthStepHue = 0.66666666666666663;
+            const double fifthStepHue = 0.83333333333333337;
+            const double sixthStepHue = 1.0;
+            const double colorMultiplier = 1530.0;
+
             Color res = new Color();
 
-            R = Round(Luminance * 255.0);
-            B = Round(((1.0 - Saturation) * (Luminance / 1.0)) * 255.0);
-            double num4 = (R - B) / 255.0;
+            R = Round(Luminance * _maxRGBNotRounded);
+            B = Round(((sixthStepHue - Saturation) * (Luminance / sixthStepHue)) * _maxRGBNotRounded);
+            double num4 = (R - B) / _maxRGBNotRounded;
 
-            if ((Hue >= 0.0) && (Hue <= 0.16666666666666666))
+            if ((Hue >= startHue) && (Hue <= firstStepHue))
             {
-                G = Round((((Hue - 0.0) * num4) * 1530.0) + B);
+                G = Round((((Hue - startHue) * num4) * colorMultiplier) + B);
                 res = Color.FromArgb((byte)Alpha, (byte)R, (byte)G, (byte)B);
             }
-            else if (Hue <= 0.33333333333333331)
+            else if (Hue <= secondStepHue)
             {
-                G = Round((-((Hue - 0.16666666666666666) * num4) * 1530.0) + R);
+                G = Round((-((Hue - firstStepHue) * num4) * colorMultiplier) + R);
                 res = Color.FromArgb((byte)Alpha, (byte)G, (byte)R, (byte)B);
             }
-            else if (Hue <= 0.5)
+            else if (Hue <= thirdSteoHue)
             {
-                G = Round((((Hue - 0.33333333333333331) * num4) * 1530.0) + B);
+                G = Round((((Hue - secondStepHue) * num4) * colorMultiplier) + B);
                 res = Color.FromArgb((byte)Alpha, (byte)B, (byte)R, (byte)G);
             }
-            else if (Hue <= 0.66666666666666663)
+            else if (Hue <= fourthStepHue)
             {
-                G = Round((-((Hue - 0.5) * num4) * 1530.0) + R);
+                G = Round((-((Hue - thirdSteoHue) * num4) * colorMultiplier) + R);
                 res = Color.FromArgb((byte)Alpha, (byte)B, (byte)G, (byte)R);
             }
-            else if (Hue <= 0.83333333333333337)
+            else if (Hue <= fifthStepHue)
             {
-                G = Round((((Hue - 0.66666666666666663) * num4) * 1530.0) + B);
+                G = Round((((Hue - fourthStepHue) * num4) * colorMultiplier) + B);
                 res = Color.FromArgb((byte)Alpha, (byte)G, (byte)B, (byte)R);
             }
-            else if (Hue <= 1.0)
+            else if (Hue <= sixthStepHue)
             {
-                G = Round((-((Hue - 0.83333333333333337) * num4) * 1530.0) + R);
+                G = Round((-((Hue - fifthStepHue) * num4) * colorMultiplier) + R);
                 res = Color.FromArgb((byte)Alpha, (byte)R, (byte)B, (byte)G);
             }
             if (res != new Color())
@@ -281,8 +318,14 @@ namespace PaintWPF.Models.Tools
             }
             return Color.FromArgb((byte)Alpha, 0, 0, 0);
         }
+
         public void RGBtoHSL(Color color)
         {
+            const double firstStep = 60.0;
+            const double secondStep = 120.0;
+            const double thirdStep = 240.0;
+            const double fourthStep = 360.0;
+
             Alpha = color.A;
             R = color.R;
             G = color.G;
@@ -307,10 +350,10 @@ namespace PaintWPF.Models.Tools
                 G = color.B;
             }
             int num3 = R - G;
-            Luminance = R / 255.0;
+            Luminance = R / _maxRGBNotRounded;
             if (R == 0)
             {
-                Saturation = 0.0;
+                Saturation = _startLittleStep;
             }
             else
             {
@@ -318,44 +361,50 @@ namespace PaintWPF.Models.Tools
             }
             if (num3 == 0)
             {
-                num4 = 0.0;
+                num4 = _startLittleStep;
             }
             else
             {
-                num4 = 60.0 / num3;
+                num4 = firstStep / num3;
             }
             if (R == color.R)
             {
                 if (color.G < color.B)
                 {
-                    Hue = (360.0 + (num4 * (color.G - color.B))) / 360.0;
+                    Hue = (fourthStep + (num4 * (color.G - color.B))) / fourthStep;
                 }
                 else
                 {
-                    Hue = (num4 * (color.G - color.B)) / 360.0;
+                    Hue = (num4 * (color.G - color.B)) / fourthStep;
                 }
             }
             else if (R == color.G)
             {
-                Hue = (120.0 + (num4 * (color.B - color.R))) / 360.0;
+                Hue = (secondStep + (num4 * (color.B - color.R))) / fourthStep;
             }
             else if (R == color.B)
             {
-                Hue = (240.0 + (num4 * (color.R - color.G))) / 360.0;
+                Hue = (thirdStep + (num4 * (color.R - color.G))) / fourthStep;
             }
             else
             {
-                Hue = 0.0;
+                Hue = _startLittleStep;
             }
         }
+
         public string GetHexFromRGB()
         {
             return $"#{R:X2}{G:X2}{B:X2}";
         }
+
         private const int _hexLength = 6;
         private const string _hexSymbols = "0123456789ABCDEFabcdef";
-        public bool ConvertHexIntoRGB(string hex)
+        public bool IfNeedToConvertHexIntoRGB(string hex)
         {
+            const int startSubPoint = 0;
+            const int firstStepSubPoint = 2;
+            const int seondStepSubPoint = 4;
+
             hex = hex.Replace("#", "");
             if (hex == string.Empty) return false;
 
@@ -363,11 +412,12 @@ namespace PaintWPF.Models.Tools
 
             if (!hex.All(x => _hexSymbols.Contains(x))) return false;
 
-            R = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-            G = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-            B = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            R = byte.Parse(hex.Substring(startSubPoint, firstStepSubPoint), System.Globalization.NumberStyles.HexNumber);
+            G = byte.Parse(hex.Substring(firstStepSubPoint, firstStepSubPoint), System.Globalization.NumberStyles.HexNumber);
+            B = byte.Parse(hex.Substring(seondStepSubPoint, firstStepSubPoint), System.Globalization.NumberStyles.HexNumber);
             return true;
         }
+
         private string HexFilling(string tempHex)
         {
             string res = tempHex;
@@ -380,9 +430,44 @@ namespace PaintWPF.Models.Tools
             }
             return res;
         }
+
         private int Round(double val)
         {
-            return (int)(val + 0.5);
+            const double colorRounder = 0.5;
+            return (int)(val + colorRounder);
+        }
+
+        public static System.Windows.Media.Color HexToRGB(string hex)
+        {
+            const int ARGBHexLength = 8;
+            const int RGBHexLength = 6;
+            const int substLength = 2;
+            const int firstSubsStep = 0;
+            const int twoSubsStep = 2;
+            const int threeSubsStep = 4;
+            const int fourSubsStep = 6;
+
+            hex = hex.Replace("#", "");
+
+            byte a = _maxRGB;
+            byte r = 0;
+            byte g = 0;
+            byte b = 0;
+
+            if (hex.Length == ARGBHexLength) // ARGB
+            {
+                a = byte.Parse(hex.Substring(firstSubsStep, substLength), System.Globalization.NumberStyles.HexNumber);
+                r = byte.Parse(hex.Substring(twoSubsStep, substLength), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(hex.Substring(threeSubsStep, substLength), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(hex.Substring(fourSubsStep, substLength), System.Globalization.NumberStyles.HexNumber);
+            }
+            else if (hex.Length == RGBHexLength) // RGB
+            {
+                r = byte.Parse(hex.Substring(firstSubsStep, substLength), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(hex.Substring(twoSubsStep, substLength), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(hex.Substring(threeSubsStep, substLength), System.Globalization.NumberStyles.HexNumber);
+            }
+            return System.Windows.Media.Color.FromArgb(a, r, g, b);
         }
     }
 }

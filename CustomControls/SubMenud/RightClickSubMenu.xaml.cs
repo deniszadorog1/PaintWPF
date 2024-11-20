@@ -43,6 +43,7 @@ namespace PaintWPF.CustomControls.SubMenu
             InitImagesPaths();
             InitItems();
         }
+
         private const int _menuWidthCor = 5;
         private void InitItems()
         {
@@ -61,6 +62,7 @@ namespace PaintWPF.CustomControls.SubMenu
             }
             InitSize(menuHeight, newElem.Width);
         }
+
         private void InitSize(double height, double width)
         {
             const int heightAdd = 50;
@@ -69,6 +71,7 @@ namespace PaintWPF.CustomControls.SubMenu
             SubMenu.Width = width;
             Width = width;
         }
+
         private void GetImageFromFile(Image img, string path)
         {
             BitmapImage bitmap = new BitmapImage();
@@ -78,12 +81,14 @@ namespace PaintWPF.CustomControls.SubMenu
     
             img.Source = bitmap;
         }
+
         private (string imgPath, string text) GetItemParams(SubMenuItems item)
         {
             return item == SubMenuItems.TurnIn180 ? (_turnIn180Path, _turnIn180) :
                 item == SubMenuItems.FlipInVertical ? (_flipInVerticalPath, _flipInVertical) :
                 (_flipInHorizontalPath, _flipInHorizontal);
         }
+
         private void InitImagesPaths()
         {
             DirectoryInfo info = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);

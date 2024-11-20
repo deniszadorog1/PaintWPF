@@ -22,11 +22,8 @@ namespace PaintWPF.Models
 
         const int mainColorsWidth = 12;
         const int mainColors = 4;
-
-        const int customColorsWidth = 6;
-        const int customColorsHeight = 4;
-
         const int _maxLValue = 100;
+
         public PalleteModel()
         {
             InitUserColorLength();
@@ -34,6 +31,7 @@ namespace PaintWPF.Models
             TempL = _maxLValue;
             ChosenCustomColorIndex = (0, 0);
         }
+
         public void InitUserColorLength()
         {
             UserColors = new TaskColor[userColorHeight, userColorWidth];
@@ -45,6 +43,7 @@ namespace PaintWPF.Models
                 }
             }
         }
+
         public void MoveUserColorIndex()
         {
             const int _oneCorrel = 1;
@@ -62,10 +61,10 @@ namespace PaintWPF.Models
                 ChosenCustomColorIndex = (0, 0);
             }
         }
+
         public void InitMainColors()
         {
             MainColors = new ColorParams[mainColors, mainColorsWidth];
-
             //First Line
             MainColors[0, 0] = new ColorParams(
             Color.FromRgb(240, 135, 132), "#F08784", (2, 45, 94));
@@ -170,8 +169,10 @@ namespace PaintWPF.Models
             MainColors[3, 11] = new ColorParams(
             Color.FromRgb(255, 255, 255), "#FFFFFF", (0, 0, 100));
         }
+
         public (int, int) GetMainColorIndexByColor(System.Windows.Media.Color color)
         {
+            const int failIndex = -1;
             for (int i = 0; i < MainColors.GetLength(0); i++)
             {
                 for (int j = 0; j < MainColors.GetLength(1); j++)
@@ -182,7 +183,7 @@ namespace PaintWPF.Models
                     }
                 }
             }
-            return (-1, -1);
+            return (failIndex, failIndex);
         }
     }
 }

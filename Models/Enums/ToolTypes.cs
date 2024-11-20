@@ -13,6 +13,7 @@ namespace PaintWPF.Models.Enums
         Text, 
         Razer, 
         Pipette, 
-        Glass
+        Glass, 
+        Selection
     }
 }

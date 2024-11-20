@@ -55,11 +55,11 @@ namespace PaintWPF.CustomControls
         {
             Line.MouseLeftButtonDown += Line_MouseDown;
             Line.MouseMove += Line_MouseMove;
-            Line.MouseLeftButtonUp += Line_MouseButtonUp;
+            //Line.MouseLeftButtonUp += Line_MouseButtonUp;
 
             TransLine.MouseLeftButtonDown += Line_MouseDown;
             TransLine.MouseMove += Line_MouseMove;
-            TransLine.PreviewMouseLeftButtonUp += Line_MouseButtonUp;
+            //TransLine.PreviewMouseLeftButtonUp += Line_MouseButtonUp;
 
             Start.MouseLeftButtonDown += Start_MouseDown;
             End.MouseLeftButtonDown += End_MouseDown;
@@ -105,11 +105,6 @@ namespace PaintWPF.CustomControls
                 Canvas.SetLeft(this, _anchorPointSelection.X + offsetX);
                 Canvas.SetTop(this, _anchorPointSelection.Y + offsetY);
             }
-        }
-        private void Line_MouseButtonUp(object sender, MouseEventArgs e)
-        {
-            //_isDraggingSelection = false;
-            //(sender as Line).ReleaseMouseCapture();
         }
         public bool ChangeSizeForSelection(MouseEventArgs e)
         {
@@ -191,17 +186,20 @@ namespace PaintWPF.CustomControls
                 double biggerWidth = this.Width - (point.X + this.Width - parent.Width);
                 rect.Width = biggerWidth < 0 ? 0 : biggerWidth;
             }
-            if (point.Y < 0)
-            {
-                //rect.Y = Math.Abs(point.Y);
-            }
-            else if (point.Y + this.Height > parent.Height)
+            if (point.Y + this.Height > parent.Height)
             {
                 double biggerHeight = this.Height - (point.Y + this.Height - parent.Height);
                 rect.Height = biggerHeight < 0 ? 0 : biggerHeight;
             }
             RectangleGeometry geo = new RectangleGeometry(new Rect(rect.X - point.X, rect.Y - point.Y, rect.Width , rect.Height));
             CheckLine.Clip = geo;
+        }
+
+        public void ClearDragging()
+        {
+            _isDraggingSelection = false;
+            IfSelectionIsClicked = false;
+            _moveRect = LineSizingRectType.Nothing;
         }
     }
 }

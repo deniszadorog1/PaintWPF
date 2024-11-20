@@ -56,6 +56,7 @@ namespace PaintWPF.CustomControls.BrushesMenu
             InitParts();
             InitBrushes();
         }
+
         private void InitParts()
         {
             _menuItemsParts.Add((_usualBrushString, GetImageFromFile(_usualPath), "UsualBrush"));
@@ -69,6 +70,7 @@ namespace PaintWPF.CustomControls.BrushesMenu
             _menuItemsParts.Add((_texturePencilString, GetImageFromFile(_texturePencilPath), "TexturePencil"));
             _menuItemsParts.Add((_watercolorBrushString, GetImageFromFile(_watercolorPath), "WatercolorBrush"));
         }
+
         private Image GetImageFromFile(string path)
         {
             if (path is null) return null;
@@ -83,6 +85,7 @@ namespace PaintWPF.CustomControls.BrushesMenu
             };
             return img;
         }
+
         private void InitImagePathes()
         {
             DirectoryInfo info = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
@@ -100,6 +103,7 @@ namespace PaintWPF.CustomControls.BrushesMenu
             _texturePencilPath = System.IO.Path.Combine(brushPath, "OilBrush.png");
             _watercolorPath = System.IO.Path.Combine(brushPath, "ColoredBrush.png");
         }
+
         private void InitBrushes()
         {
             for (int i = 0; i < _menuItemsParts.Count; i++)
@@ -109,6 +113,7 @@ namespace PaintWPF.CustomControls.BrushesMenu
                 BrushesListBox.Items.Add(item);
             }
         }
+
         private BrushMenuItem GetBrushMenuItem(string itemStr, Image itemImage, string itemName)
         {
             BrushMenuItem res = new BrushMenuItem();

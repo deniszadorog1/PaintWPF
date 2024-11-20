@@ -8,7 +8,7 @@
         
         xmlns:UserControls="clr-namespace:PaintWPF.CustomControls"
         xmlns:BrusheMenu="clr-namespace:PaintWPF.CustomControls.BrushesMenu"
-       
+        
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="700" MinHeight="700"
@@ -23,7 +23,7 @@
         Loaded="PaintWindow_Loaded" 
         MouseLeave="PaintWindow_MouseLeave" 
         Icon="Images/Other/paintIcon.png" 
-        WindowStartupLocation="CenterScreen" PreviewKeyDown="PaintWindow_PreviewKeyDown">
+        WindowStartupLocation="CenterScreen" PreviewKeyDown="PaintWindow_PreviewKeyDown" PreviewKeyUp="PaintWindow_PreviewKeyUp">
 
     <Window.Resources>
         <Style x:Key="RoundButtonStyle" TargetType="Button">
@@ -264,6 +264,7 @@
             <RowDefinition Name="BottomRow" Height="35"/>
         </Grid.RowDefinitions>
 
+       
         <Canvas Name="FigureCanvasToAdapt"
                 Background="Transparent"   
                 Width="{Binding ElementName=FigurePanel, Path=ActualWidth}"
@@ -472,26 +473,27 @@
         </Grid>
 
 
-        <Line Grid.Row="2" Stroke="Black" StrokeThickness="1"
+        <Line Grid.Row="2" Stroke="Black" StrokeThickness="1" Panel.ZIndex="1"
                   X1="0" Y1="0" 
                 X2="{Binding ElementName=PaintWindow, Path=ActualWidth}" Y2="0" Opacity="0.3"/>
 
         <Line Grid.Row="3" Stroke="Black" StrokeThickness="1"
-                  X1="0" Y1="0"
+                  X1="0" Y1="0" Panel.ZIndex="1"
               X2="{Binding ElementName=PaintWindow, Path=ActualWidth}" Y2="0" Opacity="0.3"/>
 
-        <Grid Grid.Row="3">
+
+        <Grid  Name ="LowerThing" Grid.Row="3" Panel.ZIndex="1" Background="#f8f9fc">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="130"/>
                 <ColumnDefinition Width="130"/>
                 <ColumnDefinition Width="130"/>
-                <ColumnDefinition/>
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
             <WrapPanel Grid.Column = "0" Margin="0 5 0 0">
                 <Image Source="Images/Pallete/MainPanelBotomIcons/cursor.png"
                        Height="20" Width="20"/>
-                <Label Name="CursCords" Width="110" FontSize="11"></Label>
+                <Label Name="CursCords" Width="110" FontSize="11" ></Label>
             </WrapPanel>
 
             <Line Grid.Column="1" Stroke="Black" StrokeThickness="0.5"

@@ -1,24 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using PaintWPF.Models.Enums;
-using PaintWPF.CustomControls;
-using System.Globalization;
-using PaintWPF.Models.Tools;
-using System.Configuration;
-
 
 
 namespace PaintWPF.CustomControls
@@ -54,12 +44,14 @@ namespace PaintWPF.CustomControls
                 "Models/Cursors/Move.cur", UriKind.Relative)).Stream);
 
         public Cursor _tempCursor;
-
         private (FigureTypes type, string data)? _figureParams = null;
 
-        public Selection(Label selSize)
+
+        private ScrollViewer _viewer;
+        public Selection(Label selSize, ScrollViewer viewer)
         {
             _selSize = selSize;
+            _viewer = viewer;
 
             InitializeComponent();
             InitEventsForSelection();
@@ -69,14 +61,11 @@ namespace PaintWPF.CustomControls
         {
             _selSize = selSize;
             _shape = shape;
-            _shape.Stretch = Stretch.Fill;
+
             InitializeComponent();
             InitEventsForSelection();
 
             InitSizes();
-
-            // ClipOutOfBoundariesGeo();
-            //InitCursors();
         }
         public void InitCursors()
         {
@@ -96,14 +85,16 @@ namespace PaintWPF.CustomControls
         }
         private void InitSizes()
         {
-            SelectCan.Height = _shape.Height;
-            SelectCan.Width = _shape.Width;
+            Size shapeSize = new Size(_shape.Width, _shape.Height);
 
-            Height = _shape.Height;
-            Width = _shape.Width;
+            SelectCan.Height = shapeSize.Height;
+            SelectCan.Width = shapeSize.Width;
 
-            SelectionBorder.Height = _shape.Height;
-            SelectionBorder.Width = _shape.Width;
+            Height = shapeSize.Height;
+            Width = shapeSize.Width;
+
+            SelectionBorder.Height = shapeSize.Height;
+            SelectionBorder.Width = shapeSize.Width;
         }
         public void SetMoveCursor()
         {
@@ -122,7 +113,6 @@ namespace PaintWPF.CustomControls
             CheckCan.PreviewMouseDown += SelectionBorder_MouseLeftButtonDown;
             CheckCan.MouseMove += SelectionBorder_MouseMove;
             CheckCan.MouseUp += SelectionBorder_MouseLeftButtonUp;
-            MouseLeave += SelectionBorder_MouseLeave;
             CheckCan.MouseDown += SelectCan_MouseLeftButtonDown;
 
 
@@ -155,12 +145,6 @@ namespace PaintWPF.CustomControls
             _isDraggingSelection = false;
             (sender as UIElement).ReleaseMouseCapture();
             SelectCan.ReleaseMouseCapture();
-            //_selectionType = SelectionType.Nothing;
-        }
-        private void SelectionBorder_MouseLeave(object sender, EventArgs e)
-        {
-            //_selectionSizeToChangeSize = SelectionSide.Nothing;
-            //_isDraggingSelection = false;
         }
         private void SelectionLeftTop_MouseDown(object sender, MouseEventArgs e)
         {
@@ -209,9 +193,7 @@ namespace PaintWPF.CustomControls
             {
                 return;
             }
-
             Canvas parent = this.Parent as Canvas;
-
             CheckForRightClickMenu(parent);
             if (_isDraggingSelection &&
                 CheckCan.Children.Contains(SizingGrid))
@@ -224,15 +206,8 @@ namespace PaintWPF.CustomControls
                 }
 
                 Cursor = _moveCurs;
-                /*                RectangleGeometry geo = new RectangleGeometry(new Rect(0, 0, parent.Width, parent.Height));
-                                SelectCan.Clip = geo;*/
-                ClipOutOfBoundariesGeo();
-
+                ClipOutOfBoundariesGeoInDeep(new Point(0, 0), (Canvas)this.Parent, this);
                 Point currentPoint = e.GetPosition(this.Parent as IInputElement);
-
-                /*                Point check = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
-                                SetRectGeometry(check, parent);*/
-
                 if (ChangeSizeForSelection(e)) return;
 
                 double offsetX = currentPoint.X - _startPointSelection.X;
@@ -242,23 +217,36 @@ namespace PaintWPF.CustomControls
                 Canvas.SetTop(this, _anchorPointSelection.Y + offsetY);
             }
         }
+        private void ClipOutOfBoundariesGeoInDeep(Point tempLoc, Canvas drawingCanvas, Selection sel)
+        {
+            if (sel is null) return;
+            Canvas tempSelParent = (Canvas)sel.Parent;
+            if (tempSelParent is null) return;
+            RectangleGeometry geo = new RectangleGeometry(new Rect(0, 0, drawingCanvas.Width, drawingCanvas.Height));
+            sel.BgCanvas.Clip = geo;
+
+            Point check = new Point(Canvas.GetLeft(sel) + tempLoc.X, Canvas.GetTop(sel) + tempLoc.Y);
+            SetRectGeometry(check, drawingCanvas, sel);
+            sel.BgCanvas.Width = sel.Width;
+            sel.BgCanvas.Height = sel.Height;
+
+            ClipOutOfBoundariesGeoInDeep(check, drawingCanvas, sel.SelectCan.Children.OfType<Selection>().FirstOrDefault());
+        }
         public void ClipOutOfBoundariesGeo()
         {
+            this.SelectCan.Background = null;
+
             Canvas parent = this.Parent as Canvas;
             if (parent is null) return;
             RectangleGeometry geo = new RectangleGeometry(new Rect(0, 0, parent.Width, parent.Height));
-            SelectCan.Clip = geo;
+            BgCanvas.Clip = geo;
 
             Point check = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
-            SetRectGeometry(check, parent);
+            SetRectGeometry(check, parent, this);
         }
         private RichTextBox GetRichTextBox()
         {
-            foreach (UIElement el in SelectCan.Children)
-            {
-                if (el is RichTextBox) return (RichTextBox)el;
-            }
-            return null;
+            return SelectCan.Children.OfType<RichTextBox>().FirstOrDefault();
         }
         private void CheckForRightClickMenu(Canvas parent)
         {
@@ -273,72 +261,125 @@ namespace PaintWPF.CustomControls
                 }
             }
         }
-        public void SetRectGeometry(Point point, Canvas parent)
+        public void SetRectGeometry(Point point, Canvas parent, Selection sel)
         {
-            if (SelectCan.Clip is null) return;
-            if (this.Parent is null) return;
-            Rect rect = SelectCan.Clip.Bounds;
+            if (sel.BgCanvas.Clip is null || parent is null) return;
+            Rect rect = sel.BgCanvas.Clip.Bounds;
 
             if (point.X < 0)
             {
-                rect.X = Math.Abs(point.X) - DashedBorder.StrokeThickness;
+                rect.X = Math.Abs(point.X) - sel.DashedBorder.StrokeThickness;
             }
-            else if (point.X + this.Width > parent.Width)
+            else if (point.X + sel.Width > parent.Width)
             {
-                double biggerWidth = this.Width - (point.X + this.Width - parent.Width);
+                double biggerWidth = sel.Width - (point.X + sel.Width - parent.Width);
                 rect.Width = biggerWidth < 0 ? 0 : biggerWidth;
             }
             if (point.Y < 0)
             {
-                rect.Y = Math.Abs(point.Y) - DashedBorder.StrokeThickness;
+                rect.Y = Math.Abs(point.Y) - sel.DashedBorder.StrokeThickness;
             }
-            else if (point.Y + this.Height > parent.Height)
+            else if (point.Y + sel.Height > parent.Height)
             {
-                double biggerHeight = this.Height - (point.Y + this.Height - parent.Height);
+                double biggerHeight = sel.Height - (point.Y + sel.Height - parent.Height);
                 rect.Height = biggerHeight < 0 ? 0 : biggerHeight;
             }
+            if (sel.CheckCan.Children.OfType<Polyline>().Any())
+            {
+                double xOffsetValue = Math.Abs(_viewer.HorizontalOffset);
+                rect.Width += xOffsetValue;
+            }
             RectangleGeometry geo = new RectangleGeometry(new Rect(rect.X, rect.Y, rect.Width, rect.Height));
-            SelectCan.Clip = geo;
+            sel.BgCanvas.Clip = geo;
         }
         public bool ChangeSizeForSelection(MouseEventArgs e)
         {
-            if (_selectionSizeToChangeSize == SelectionSide.Nothing)
+            switch (_selectionSizeToChangeSize)
             {
-                return false;
+                case SelectionSide.LeftTop:
+                    ChangeLeftTop(e);
+                    break;
+                case SelectionSide.CenterTop:
+                    ChangeCenterTop(e);
+                    break;
+                case SelectionSide.RightTop:
+                    ChangeRightTop(e);
+                    break;
+                case SelectionSide.RightCenter:
+                    ChangeRightCenter(e);
+                    break;
+                case SelectionSide.RightBottom:
+                    ChangeRightBottom(e);
+                    break;
+                case SelectionSide.CenterBottom:
+                    ChangeCenterBottom(e);
+                    break;
+                case SelectionSide.LeftBottom:
+                    ChangeLeftBottom(e);
+                    break;
+                case SelectionSide.LeftCenter:
+                    ChangeLeftCenter(e);
+                    break;
+                default: return false;
             }
-            if (_selectionSizeToChangeSize == SelectionSide.CenterTop)
+
+            ChangeSelectionLineSettings();
+
+            this.BgCanvas.Width = this.Width;
+            this.BgCanvas.Height = this.Height;
+
+            if (!(_shape is null))
             {
-                ChangeCenterTop(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.CenterBottom)
-            {
-                ChangeCenterBottom(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.RightCenter)
-            {
-                ChangeRightCenter(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.LeftCenter)
-            {
-                ChangeLeftCenter(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.LeftTop)
-            {
-                ChangeLeftTop(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.RightTop)
-            {
-                ChangeRightTop(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.RightBottom)
-            {
-                ChangeRightBottom(e);
-            }
-            else if (_selectionSizeToChangeSize == SelectionSide.LeftBottom)
-            {
-                ChangeLeftBottom(e);
+                _shape.Stretch = Stretch.Fill;
+                _shape.Width = this.Width;
+                _shape.Height = this.Height;
             }
             return true;
+        }
+
+        public void ChangePointCordesAfterChenageLineSize()
+        {
+            Polyline line = CheckCan.Children.OfType<Polyline>().FirstOrDefault();
+            if (line is null) return;
+
+            double minX = line.Points.Min(p => p.X);
+            double minY = line.Points.Min(p => p.Y);
+            double maxX = line.Points.Max(p => p.X);
+            double maxY = line.Points.Max(p => p.Y);
+
+            const double sizeCorrelParam = 0;
+
+            double originalWidth = maxX - minX + sizeCorrelParam;
+            double originalHeight = maxY - minY + sizeCorrelParam;
+            double newWidth = line.Width;
+            double newHeight = line.Height;
+
+            double scaleX;
+            double scaleY;
+
+            scaleX = newWidth / originalWidth;
+            scaleY = newHeight / originalHeight;
+
+            PointCollection asd = line.Points;
+
+            for (int i = 0; i < line.Points.Count; i++)
+            {
+                Point oldPoint = line.Points[i];
+                double newX = (oldPoint.X - minX) * scaleX + minX;
+                double newY = (oldPoint.Y - minY) * scaleY + minY;
+                line.Points[i] = new Point((int)(newX), (int)(newY));
+            }
+            line.InvalidateVisual();
+        }
+        public void ChangeSelectionLineSettings()
+        {
+            Polyline line = CheckCan.Children.OfType<Polyline>().FirstOrDefault();
+            if (line is null) return;
+            //Polyline line = CheckCan.Children.OfType<Polyline>().First();
+            line.Stretch = Stretch.Fill;
+
+            Canvas.SetLeft(line, 0);
+            Canvas.SetTop(line, 0);
         }
         private const int _minSelSize = 5;
         private bool OutOfBoundariesResize(MouseEventArgs e, ResizeSelectionType resizeType)
@@ -399,7 +440,7 @@ namespace PaintWPF.CustomControls
                 {
                     newWidth = this.Width - offsetX;
                 }
-                if (newWidth > _widthBlock)
+                if (newWidth > _sizeBlock)
                 {
                     Canvas.SetLeft(this, Canvas.GetLeft(this) + offsetX);
                     this.Width = newWidth;
@@ -408,10 +449,9 @@ namespace PaintWPF.CustomControls
             }
             if (!OutOfBoundariesResize(e, ResizeSelectionType.Height))
             {
-                double newHeight = this.Height;
                 double offsetY = point.Y - _startPointSelection.Y;
-                newHeight = this.Height + offsetY;
-                if (newHeight > _widthBlock)
+                double newHeight = this.Height + offsetY;
+                if (newHeight > _sizeBlock)
                 {
                     this.Height = newHeight;
                     this.SelectionBorder.Height = newHeight;
@@ -419,31 +459,54 @@ namespace PaintWPF.CustomControls
             }
             _startPointSelection = point;
             CheckForAddedObjects();
-
         }
-        private void ChangeRightBottom(MouseEventArgs e)
-        {
-            if (!CheckForMousePressing(e)) return;
-            Point point = e.GetPosition(this.Parent as IInputElement);
 
+        private void ResizeIfOutOfBoundariesWidthRightHorizontal(MouseEventArgs e, Point point)
+        {
             if (!OutOfBoundariesResize(e, ResizeSelectionType.Width))
             {
-                double newWidth = this.Width;
                 double offsetX = point.X - _startPointSelection.X;
-                newWidth = this.Width + offsetX;
-                if (newWidth > _widthBlock)
+                double newWidth = this.Width + offsetX;
+                if (newWidth > _sizeBlock)
                 {
                     this.Width = newWidth;
                     this.SelectionBorder.Width = newWidth;
                 }
             }
+        }
+        private void ResizeIfOutOfBoundariesHeightRightHorizontal(double newHeight)
+        {
+            if (newHeight > _sizeBlock)
+            {
+                this.Height = newHeight;
+                this.SelectionBorder.Height = newHeight;
+            }
+        }
 
+
+        private void ChangeRightBottom(MouseEventArgs e)
+        {
+            if (!CheckForMousePressing(e)) return;
+            Point point = e.GetPosition(this.Parent as IInputElement);
+
+            ResizeIfOutOfBoundariesWidthRightHorizontal(e, point);
+            /*             if (!OutOfBoundariesResize(e, ResizeSelectionType.Width))
+                        {
+                            double offsetX = point.X - _startPointSelection.X;
+                            double newWidth = this.Width + offsetX;
+                            if (newWidth > _widthBlock)
+                            {
+                                this.Width = newWidth;
+                                this.SelectionBorder.Width = newWidth;
+                            }
+                        }*/
             if (!OutOfBoundariesResize(e, ResizeSelectionType.Height))
             {
                 double newHeight = this.Height;
                 double offsetY = point.Y - _startPointSelection.Y;
                 newHeight = this.Height + offsetY;
-                if (newHeight > _widthBlock)
+                //ResizeIfOutOfBoundariesHeightRightHorizontal(newHeight);
+                if (newHeight > _sizeBlock)
                 {
                     this.Height = newHeight;
                     this.SelectionBorder.Height = newHeight;
@@ -452,29 +515,33 @@ namespace PaintWPF.CustomControls
             _startPointSelection = point;
             CheckForAddedObjects();
         }
+
+
+
         private void ChangeRightTop(MouseEventArgs e)
         {
             if (!CheckForMousePressing(e)) return;
 
             Point point = e.GetPosition(this.Parent as IInputElement);
 
-            if (!OutOfBoundariesResize(e, ResizeSelectionType.Width))
+            ResizeIfOutOfBoundariesWidthRightHorizontal(e, point);
+            /*  if (!OutOfBoundariesResize(e, ResizeSelectionType.Width))
+        {
+            double newWidth = this.Width;
+            double offsetX = point.X - _startPointSelection.X;
+            newWidth = this.Width + offsetX;
+            if (newWidth > _widthBlock)
             {
-                double newWidth = this.Width;
-                double offsetX = point.X - _startPointSelection.X;
-                newWidth = this.Width + offsetX;
-                if (newWidth > _widthBlock)
-                {
-                    this.Width = newWidth;
-                    this.SelectionBorder.Width = newWidth;
-                }
+                this.Width = newWidth;
+                this.SelectionBorder.Width = newWidth;
             }
+        }*/
             if (!OutOfBoundariesResize(e, ResizeSelectionType.ReverseHeight))
             {
                 double newHeight = this.Height;
                 double offsetY = point.Y - _startPointSelection.Y;
                 newHeight = this.Height - offsetY;
-                if (newHeight > _widthBlock)
+                if (newHeight > _sizeBlock)
                 {
                     Canvas.SetTop(this, Canvas.GetTop(this) + offsetY);
                     this.Height = newHeight;
@@ -491,22 +558,13 @@ namespace PaintWPF.CustomControls
 
             if (!OutOfBoundariesResize(e, ResizeSelectionType.ReverseWidth))
             {
-                double newWidth = this.Width;
-                double offsetX = point.X - _startPointSelection.X;
-                newWidth = this.Width - offsetX;
-                if (newWidth > _widthBlock)
-                {
-                    Canvas.SetLeft(this, Canvas.GetLeft(this) + offsetX);
-                    this.Width = newWidth;
-                    this.SelectionBorder.Width = newWidth;
-                }
+                OutOfBorederRight(point);
             }
             if (!OutOfBoundariesResize(e, ResizeSelectionType.ReverseHeight))
             {
-                double newHeight = this.Height;
                 double offsetY = point.Y - _startPointSelection.Y;
-                newHeight = this.Height - offsetY;
-                if (newHeight > _widthBlock)
+                double newHeight = this.Height - offsetY;
+                if (newHeight > _sizeBlock)
                 {
                     Canvas.SetTop(this, Canvas.GetTop(this) + offsetY);
                     this.Height = newHeight;
@@ -516,51 +574,30 @@ namespace PaintWPF.CustomControls
             _startPointSelection = point;
             CheckForAddedObjects();
         }
+        private void OutOfBorederRight(Point point)
+        {
+            double newWidth = this.Width;
+            double offsetX = point.X - _startPointSelection.X;
+            newWidth = this.Width - offsetX;
 
-        private const int _widthBlock = 5;
+            if (newWidth > _sizeBlock)
+            {
+                Canvas.SetLeft(this, Canvas.GetLeft(this) + offsetX);
+                this.Width = newWidth;
+                this.SelectionBorder.Width = newWidth;
+            }
+        }
+        private const int _sizeBlock = 5;
         public void ChangeLeftCenter(MouseEventArgs e)
         {
             if (!CheckForMousePressing(e)) return;
             if (OutOfBoundariesResize(e, ResizeSelectionType.ReverseWidth)) return;
 
             Point point = e.GetPosition(this.Parent as IInputElement);
-            double newWidth = this.Width;
-            double offsetX = point.X - _startPointSelection.X;
-            newWidth = this.Width - offsetX;
+            OutOfBorederRight(point);
 
-            if (newWidth > _widthBlock)
-            {
-                Canvas.SetLeft(this, Canvas.GetLeft(this) + offsetX);
-                this.Width = newWidth;
-                this.SelectionBorder.Width = newWidth;
-            }
             _startPointSelection = point;
             CheckForAddedObjects();
-        }
-        private (RotateTransform, ScaleTransform) GetTransforms()
-        {
-            UIElement elem = GetElemExceptGrid();
-
-            if (elem is null) return (default, default);
-
-            TransformGroup transforms = elem.RenderTransform as TransformGroup;
-
-            RotateTransform rotateRes = transforms.Children.OfType<RotateTransform>().FirstOrDefault();
-            ScaleTransform scaleRes = transforms.Children.OfType<ScaleTransform>().FirstOrDefault();
-
-            return (rotateRes, scaleRes);
-
-        }
-        private UIElement GetElemExceptGrid()
-        {
-            for (int i = 0; i < SelectCan.Children.Count; i++)
-            {
-                if (SelectCan.Children[i].GetType() != typeof(Grid))
-                {
-                    return SelectCan.Children[i];
-                }
-            }
-            return null;
         }
         public void ChangeRightCenter(MouseEventArgs e)
         {
@@ -574,7 +611,7 @@ namespace PaintWPF.CustomControls
 
             newWidth = this.Width + offsetX;
 
-            if (newWidth > _widthBlock)
+            if (newWidth > _sizeBlock)
             {
                 this.Width = newWidth;
                 this.SelectionBorder.Width = newWidth;
@@ -589,12 +626,9 @@ namespace PaintWPF.CustomControls
 
             Point point = e.GetPosition(this.Parent as IInputElement);
 
-            double heightPoint = Canvas.GetTop(this) + this.Height;
-
-            double newHeight = this.Height;
             double offsetY = point.Y - _startPointSelection.Y;
-            newHeight = this.Height + offsetY;
-            if (newHeight < _widthBlock)
+            double newHeight = this.Height + offsetY;
+            if (newHeight < _sizeBlock)
             {
                 return;
             }
@@ -612,10 +646,9 @@ namespace PaintWPF.CustomControls
             if (OutOfBoundariesResize(e, ResizeSelectionType.ReverseHeight)) return;
 
             Point point = e.GetPosition(this.Parent as IInputElement);
-            double newHeight = this.Height;
             double offsetY = point.Y - _startPointSelection.Y;
-            newHeight = this.Height - offsetY;
-            if (newHeight > _widthBlock)
+            double newHeight = this.Height - offsetY;
+            if (newHeight > _sizeBlock)
             {
                 Canvas.SetTop(this, Canvas.GetTop(this) + offsetY);
                 this.Height = newHeight;
@@ -635,7 +668,7 @@ namespace PaintWPF.CustomControls
         {
             Canvas parent = this.Parent as Canvas;
             Point check = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
-            SetRectGeometry(check, parent);
+            SetRectGeometry(check, parent, this);
         }
         private void UpdateSizeLabel()
         {
@@ -657,7 +690,7 @@ namespace PaintWPF.CustomControls
                 ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Width = SelectionBorder.Width - sizeDifParam;
             }
 
-            if (((RichTextBox)SelectCan.Children[richTextBoxIndex]).Width <= 5)
+            if (((RichTextBox)SelectCan.Children[richTextBoxIndex]).Width <= locParam)
             {
                 ((RichTextBox)SelectCan.Children[richTextBoxIndex]).Visibility = Visibility.Hidden;
             }
@@ -691,17 +724,14 @@ namespace PaintWPF.CustomControls
             }
             return null;
         }
-
         public bool IfSelectiongClicked = true;
         private void SelectCan_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             IfSelectiongClicked = true;
 
             HitTestResult result = VisualTreeHelper.HitTest(CheckCan, e.GetPosition(CheckCan));
-
             if (result != null && result.VisualHit is UIElement clickedElement)
             {
-
                 if (clickedElement == CheckCan)
                 {
                     SelectCan.CaptureMouse();
@@ -713,17 +743,6 @@ namespace PaintWPF.CustomControls
                 }
             }
         }
-        private void InitShapeFigure()
-        {
-            const int sizeDifPram = 15;
-            SelectCan.Background = new ImageBrush()
-            {
-                ImageSource = _figuresImg.Source
-            };
-
-            SelectionBorder.Height = _figuresImg.Height + sizeDifPram;
-            SelectionBorder.Width = _figuresImg.Width + sizeDifPram;
-        }
         private void ReinitShapeSize()
         {
             const int sizeDifParam = 15;
@@ -734,14 +753,16 @@ namespace PaintWPF.CustomControls
         }
         public Image GetShapeImageObject()
         {
-            for (int i = 0; i < SelectCan.Children.Count; i++)
-            {
-                if (SelectCan.Children[i] is Image)
-                {
-                    return (Image)SelectCan.Children[i];
-                }
-            }
-            return null;
+            return SelectCan.Children.OfType<Image>().FirstOrDefault();
+            /*
+                        for (int i = 0; i < SelectCan.Children.Count; i++)
+                        {
+                            if (SelectCan.Children[i] is Image)
+                            {
+                                return (Image)SelectCan.Children[i];
+                            }
+                        }
+                        return null;*/
         }
         private bool CheckForMousePressing(MouseEventArgs e)
         {
@@ -749,6 +770,7 @@ namespace PaintWPF.CustomControls
         }
         public Point GetImageLocation()
         {
+            Point startLoc = new Point(-1, -1);
             for (int i = 0; i < SelectCan.Children.Count; i++)
             {
                 if (SelectCan.Children[i] is Image)
@@ -757,16 +779,21 @@ namespace PaintWPF.CustomControls
                         Canvas.GetTop(SelectCan.Children[i]));
                 }
             }
-            return new Point(-1, -1);
+            return startLoc;
         }
         public void RemoveImagesFromCanvas()
         {
+            List<Image> imgs = new List<Image>();
             for (int i = 0; i < SelectCan.Children.Count; i++)
             {
-                if (SelectCan.Children[i] is Image)
+                if (SelectCan.Children[i] is Image img)
                 {
-                    SelectCan.Children.RemoveAt(i);
+                    imgs.Add(img);
                 }
+            }
+            foreach (Image tempImg in imgs)
+            {
+                SelectCan.Children.Remove(tempImg);
             }
         }
         private void SelectionBorder_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -794,19 +821,17 @@ namespace PaintWPF.CustomControls
                 }
             }
         }
-
         public void RemoveSizingGrid()
         {
             CheckCan.Children.Remove(SizingGrid);
         }
         public void AddSizingGrid()
         {
-            //SelectCan.Children.Add(SizingGrid);
             CheckCan.Children.Add(SizingGrid);
         }
         public void RemoveShape()
         {
-            SelectCan.Children.Remove(_shape);
+            BgCanvas.Children.Remove(_shape);
         }
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -852,7 +877,6 @@ namespace PaintWPF.CustomControls
             if (_figureParams is null) return;
             SelectCan.Background = null;
             SelectCan.Children.Remove(_figToPaint);
-
             const int pathThickness = 3;
             const int transformParam = 1;
             _figToPaint = new Path()
@@ -862,7 +886,7 @@ namespace PaintWPF.CustomControls
                 RenderTransform = new ScaleTransform(transformParam, transformParam),
                 Stretch = Stretch.Fill
             };
-            ((System.Windows.Shapes.Path)_figToPaint).Data =
+            ((Path)_figToPaint).Data =
             Geometry.Parse(_figureParams.Value.data);
 
             _figToPaint.Width = SelectCan.Width;
@@ -872,54 +896,63 @@ namespace PaintWPF.CustomControls
         }
         public UIElement GetShapeElement()
         {
-            for (int i = 0; i < SelectCan.Children.Count; i++)
+            for (int i = 0; i < BgCanvas.Children.Count; i++)
             {
-                if (SelectCan.Children[i].GetType() != typeof(Grid))
+                if (BgCanvas.Children[i].GetType() != typeof(Grid))
                 {
-                    if (SelectCan.Children[i] == _figToPaint)
-                    {
-                        Console.WriteLine();
-                    }
-                    return SelectCan.Children[i];
+                    return BgCanvas.Children[i];
                 }
             }
             return null;
         }
-        public void RemoveObj()
+        public void RemoveShapea()
         {
-            for (int i = 0; i < SelectCan.Children.Count; i++)
+            for (int i = 0; i < BgCanvas.Children.Count; i++)
             {
-                if (SelectCan.Children[i].GetType() != typeof(Grid))
+                if (BgCanvas.Children[i].GetType() != typeof(Grid))
                 {
-                    SelectCan.Children.RemoveAt(i);
+                    BgCanvas.Children.RemoveAt(i);
                 }
             }
         }
+
         private bool _ifMoveCursMouseEnter;
         private void LeftTopCursor_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (!(_tempCursor is null)) return;
-            _ifMoveCursMouseEnter = false;
-            Cursor = _upLeftlCurs;
+            ChangeCursor(_upLeftlCurs);
+            /*            if (!(_tempCursor is null)) return;
+                        _ifMoveCursMouseEnter = false;
+                        Cursor = _upLeftlCurs;*/
         }
         private void RightTopCursor_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (!(_tempCursor is null)) return;
-            Cursor = _upRightlCurs;
-            _ifMoveCursMouseEnter = false;
+            ChangeCursor(_upRightlCurs);
+            /*            if (!(_tempCursor is null)) return;
+                        Cursor = _upRightlCurs;
+                        _ifMoveCursMouseEnter = false;*/
         }
         private void VerticalCursor_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (!(_tempCursor is null)) return;
-            Cursor = _verticalCurs;
-            _ifMoveCursMouseEnter = false;
+            ChangeCursor(_verticalCurs);
+            /*            if (!(_tempCursor is null)) return;
+                        Cursor = _verticalCurs;
+                        _ifMoveCursMouseEnter = false;*/
         }
         private void HorizontalCursor_MouseEnter(object sender, MouseEventArgs e)
         {
+            ChangeCursor(_horizontalCurs);
+            /*            if (!(_tempCursor is null)) return;
+                        Cursor = _horizontalCurs;
+                        _ifMoveCursMouseEnter = false;*/
+        }
+
+        public void ChangeCursor(Cursor cursor)
+        {
             if (!(_tempCursor is null)) return;
-            Cursor = _horizontalCurs;
+            Cursor = cursor;
             _ifMoveCursMouseEnter = false;
         }
+
         private void MoveCursor_MouseEnter(object sender, MouseEventArgs e)
         {
             if (!(_tempCursor is null)) return;
@@ -933,24 +966,35 @@ namespace PaintWPF.CustomControls
         public bool _ifMoveCursFlagouseDown;
         private void LeftTopCurosor_MouseDown(object sender, MouseEventArgs e)
         {
-            ReassignCursor(_upLeftlCurs);
-            _ifMoveCursFlagouseDown = false;
+            CursorMouseDown(_upLeftlCurs);
+            /*            ReassignCursor(_upLeftlCurs);
+                        _ifMoveCursFlagouseDown = false;*/
         }
         private void RightTopCursor_MouseDown(object sender, MouseEventArgs e)
         {
-            ReassignCursor(_upRightlCurs);
-            _ifMoveCursFlagouseDown = false;
+            CursorMouseDown(_upRightlCurs);
+            /*            ReassignCursor(_upRightlCurs);
+                        _ifMoveCursFlagouseDown = false;*/
         }
         private void VerticalCursor_MouseDown(object sender, MouseEventArgs e)
         {
-            ReassignCursor(_verticalCurs);
-            _ifMoveCursFlagouseDown = false;
+            CursorMouseDown(_verticalCurs);
+            /*            ReassignCursor(_verticalCurs);
+                        _ifMoveCursFlagouseDown = false;*/
         }
         private void HorizontalCursor_MouseDown(object sender, MouseEventArgs e)
         {
-            ReassignCursor(_horizontalCurs);
+            CursorMouseDown(_horizontalCurs);
+            /*            ReassignCursor(_horizontalCurs);
+                        _ifMoveCursFlagouseDown = false;*/
+        }
+
+        public void CursorMouseDown(Cursor cursor)
+        {
+            ReassignCursor(cursor);
             _ifMoveCursFlagouseDown = false;
         }
+
         private void MoveCursor_MouseDown(object sender, MouseEventArgs e)
         {
             if (!_ifMoveCursFlagouseDown) return;
@@ -960,6 +1004,20 @@ namespace PaintWPF.CustomControls
         {
             _tempCursor = curs;
             Cursor = curs;
+        }
+        public SolidColorBrush GetShapeColor()
+        {
+            return (SolidColorBrush)_shape.Stroke;
+        }
+        public void SetStrokeForFigure(SolidColorBrush brush)
+        {
+            _shape.Stroke = brush;
+        }
+        public void ClearDragging()
+        {
+            _isDraggingSelection = false;
+            IfSelectionIsClicked = false;
+            _selectionSizeToChangeSize = SelectionSide.Nothing;
         }
     }
 }

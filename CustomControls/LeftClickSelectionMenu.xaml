@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PaintWPF.CustomControls"
-             mc:Ignorable="d" Width="300" Height="300">
+             mc:Ignorable="d" Width="300" Height="330">
     <UserControl.Resources>
         <Storyboard x:Key="Storyboard2">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="listBox" Storyboard.TargetProperty="(FrameworkElement.Height)">
@@ -15,6 +15,7 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="200"/>
                 <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="250"/>
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="300"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="330"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="listBox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="-150"/>
@@ -34,11 +35,11 @@
         </EventTrigger>
     </UserControl.Triggers>
 
-    <Grid Height="300">
+    <Grid Height="330">
         <ListBox x:Name="listBox" 
                  ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                 Width="300" RenderTransformOrigin="0.5,0.5" Height="300" Opacity="0.9" Background="White" >
+                 Width="300"  RenderTransformOrigin="0.5,0.5" Opacity="0.9" Background="White" >
             <ListBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1"/>
@@ -56,14 +57,16 @@
                     <Label Content="Ctrl + x" FontSize="10" Width="202" HorizontalContentAlignment="Right" Height="25"/>
                 </WrapPanel>
             </Button>
-            <Button x:Name="Copy" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+            <Button x:Name="Copy" Background="#FFD0D0D0" BorderBrush="White" 
+                    Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
                 <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
                     <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Change/Copy.png" Margin="0"/>
                     <Label Content="Копировать" VerticalAlignment="Center" FontSize="12" Margin="0"/>
                     <Label Content="Ctrl + c" FontSize="10" Width="189" HorizontalContentAlignment="Right" Height="25"/>
                 </WrapPanel>
             </Button>
-            <Button x:Name="Paste" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+            <Button x:Name="Paste" Background="#FFD0D0D0" BorderBrush="White" 
+                    Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
                 <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
                     <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Change/Paste.png" Margin="0"/>
                     <Label Content="Вставить" VerticalAlignment="Center" FontSize="12" Margin="0"/>
@@ -71,14 +74,16 @@
                 </WrapPanel>
             </Button>
             <Separator/>
-            <Button x:Name="ChooseAll" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+            <Button x:Name="ChooseAll" Background="#FFD0D0D0" BorderBrush="White"
+                    Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
                 <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
                     <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Selection/ChooseAll.png" Margin="0"/>
                     <Label Content="Выбрать все" VerticalAlignment="Center" FontSize="12" Margin="0"/>
                     <Label Content="Ctrl + f" FontSize="10" Width="186" HorizontalContentAlignment="Right" Height="25"/>
                 </WrapPanel>
             </Button>
-            <Button x:Name="InvertSelection" Background="#FFD0D0D0" BorderBrush="White" Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
+            <Button x:Name="InvertSelection" Background="#FFD0D0D0" BorderBrush="White"
+                    Height="30" Width="285" Padding="0" HorizontalContentAlignment="Left">
                 <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
                     <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Selection/RemoveSelection.png" Margin="0"/>
                     <Label Content="Обратить выдиление" VerticalAlignment="Center" FontSize="12" Margin="0"/>
@@ -119,6 +124,17 @@
                            HorizontalAlignment="Right"/>
                 </WrapPanel>
             </Button>
+
+            <Button Name="ReverceColor" Background="#FFD0D0D0" 
+                    BorderBrush="White" Height="30" Width="285" 
+                    Padding="0" HorizontalContentAlignment="Left" >
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Center" Width="285">
+                    <Image Height="20" Width="20" VerticalAlignment="Center" Source="/Images/Selection/ReverseColor.png" Margin="0"/>
+                    <Label Content="Обратить цвет" VerticalAlignment="Center" FontSize="12" Margin="0"/>
+                    <Label Content="Ctrl + Shift + I" FontSize="10" Width="170" HorizontalContentAlignment="Right" Height="25"/>
+                </WrapPanel>
+            </Button>
+
         </ListBox>
     </Grid>
 </UserControl>

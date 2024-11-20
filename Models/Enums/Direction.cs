@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace PaintWPF.Models.Enums
 {
-    public enum SelectionMoveByKeyDir
+    public enum Direction
     {
         Up,
         Down,
-        Left,
-        Right
+        Left, 
+        Right, 
+        Nothing
     }
 }
