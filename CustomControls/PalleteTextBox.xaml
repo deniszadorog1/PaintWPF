@@ -12,7 +12,8 @@
             <TextBox Name ="InfoTextBox"  Width="120" Height="35" 
                      PreviewTextInput="InfoTextBox_PreviewTextInput"
                      GotFocus="InfoTextBox_GotFocus"
-                     LostFocus="InfoTextBox_LostFocus"/>
+                     LostFocus="InfoTextBox_LostFocus" 
+                     PreviewMouseDown="InfoTextBox_PreviewMouseDown"/>
 
             <Button Name ="ClearBut" Width="25" Height="35" 
                     Margin="95 0 0 0" Panel.ZIndex="100" 

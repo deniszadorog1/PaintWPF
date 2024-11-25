@@ -13,7 +13,8 @@
         Height="660" MaxHeight="660" MinHeight="660" 
         Width="680" MaxWidth="680" MinWidth="680" ResizeMode="NoResize"
         Loaded="PalletePanel_Loaded" MouseLeftButtonUp="PalletePanel_MouseLeftButtonUp" 
-       MouseDown="PalletePanel_MouseDown"
+        MouseDown="PalletePanel_MouseDown"
+        MouseLeftButtonDown="PalletePanel_MouseDown"  
         >
 
     <Window.Resources>
@@ -310,18 +311,12 @@
                 </Grid.RowDefinitions>
 
                 <WrapPanel Name ="RGBChoose"  Grid.Row="0">
-                    <TextBox x:Name="HexTable"  
-                         Width="100" Height="35"
-                         FontSize="16" HorizontalAlignment="Left" 
-                         TextChanged="RGBTextBox_TextChanged" 
-                         LostFocus="HexTable_LostFocus"  >
-                        #
-                    </TextBox>
-                    <Button  
-                        Name="RGBClear" Opacity="0.5"
-                        Width="20">
-                        X
-                    </Button>
+                    <CustomControls:PalleteTextBox x:Name="HexTable" 
+                                                   Width="100" Height="35" 
+                                                   BorderThickness="1"
+                                                   FontSize="16" HorizontalAlignment="Left">
+                    </CustomControls:PalleteTextBox>
+                       
                 </WrapPanel>
 
                 <WrapPanel Name ="FirstParam" Grid.Row="2">
@@ -353,7 +348,7 @@
                 <WrapPanel Name ="ChooseType"  Grid.Row="1">
                     <ComboBox Name ="ChooseParamTypeBox"  
                               Height="35" Width="120" SelectedIndex ="0" 
-                               SelectionChanged ="ColorParamType_SelectionChanged">
+                               SelectionChanged ="ColorParamType_SelectionChanged" GotFocus="ChooseParamTypeBox_GotFocus">
                         <ComboBoxItem Name="RGB">RGB</ComboBoxItem>
                         <ComboBoxItem Name="HSL">HSC</ComboBoxItem>
                     </ComboBox>
@@ -379,7 +374,8 @@
                 Основные цвета
             </Label>
 
-            <WrapPanel Grid.Column="0" Grid.Row="2" Width="400">
+            <WrapPanel 
+                Grid.Column="0" Grid.Row="2" Width="400">
                 <Button Style="{StaticResource RoundButtonStyle}" 
                         Margin="20 5 0 0" MouseEnter="MyButton_MouseEnter" 
                         MouseLeave="MyButton_MouseLeave"  Background="#f08784" 

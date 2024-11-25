@@ -67,7 +67,13 @@ namespace PaintWPF
             ThirdBox.ClearBut.Click += ThirdParamClear_Click;
             ThirdBox.GotFocus += ThirdInfoBox_GotFocus;
 
+            HexTable.InfoTextBox.TextChanged += RGBTextBox_TextChanged;
+            HexTable.InfoTextBox.LostFocus += HexTable_LostFocus;
+            HexTable.InfoTextBox.GotFocus += HexTable_GotFocus;
+
+
         }
+
 
 
         private void InitParamsForGivenColor()
@@ -85,7 +91,7 @@ namespace PaintWPF
             //int B
             ThirdBox.InfoTextBox.Text = _tempColor.B.ToString();
             //Init Hex
-            HexTable.Text = _tempColor.GetHexFromRGB();
+            HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             //int showColor 
             ChosenColorShow.Background = _colorToPaint;
 
@@ -155,6 +161,15 @@ namespace PaintWPF
         {
             const int maxAmountOfSymbols = 8;
             const string hashMark = "#";
+
+           
+
+            if(sender is PalleteTextBox textBox)
+            {
+                sender = textBox.InfoTextBox;
+            }
+            
+
             if (sender is TextBox box)
             {
                 if (box.Text.Length == 0)
@@ -177,7 +192,7 @@ namespace PaintWPF
                     box.CaretIndex = box.Text.Length;
                     return;
                 }
-                if (HexTable.IsFocused)
+                if (HexTable.InfoTextBox.IsFocused)
                 {
                     InitColorsFromHex(_tempColor.IfNeedToConvertHexIntoRGB(box.Text));
                 }
@@ -209,8 +224,8 @@ namespace PaintWPF
         private void HexTable_LostFocus(object sender, RoutedEventArgs e)
         {
             const string ifHexFaildStr = "#000000";
-            if (_tempColor.IfNeedToConvertHexIntoRGB(HexTable.Text)) return;
-            HexTable.Text = ifHexFaildStr;
+            if (_tempColor.IfNeedToConvertHexIntoRGB(HexTable.InfoTextBox.Text)) return;
+            HexTable.InfoTextBox.Text = ifHexFaildStr;
         }
         private void MyButton_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -230,6 +245,8 @@ namespace PaintWPF
         }
         private void MainColor_Click(object sender, EventArgs e)
         {
+            UpdateTextBoxes();
+            ClearCrosses();
             Button but = sender as Button;
 
             //Get color in media_Color
@@ -316,7 +333,7 @@ namespace PaintWPF
             int closetX = -1;
             int closetY = -1;
 
-            double minDistance = double.MaxValue; 
+            double minDistance = double.MaxValue;
 
             for (int y = 0; y < height; y++)
             {
@@ -481,7 +498,8 @@ namespace PaintWPF
         private const int _middleDevider = 2;
         private void ValueDrag_PreViewMouseDown(object sender, MouseEventArgs e)
         {
-
+            UpdateTextBoxes();
+            ClearCrosses();
             Button button = sender as Button;
 
             Point buttonPosition = button.TransformToAncestor(ValueCanvas)
@@ -535,6 +553,8 @@ namespace PaintWPF
 
         private void DraggableButton_PreViewMouseDown(object sender, MouseEventArgs e)
         {
+            UpdateTextBoxes();
+            ClearCrosses();
             _ifCircleCanBeMoved = true;
             Button button = sender as Button;
 
@@ -576,7 +596,7 @@ namespace PaintWPF
             _tempColor.Luminance = lum;
             System.Windows.Media.Color newColor = _tempColor.HSLtoRGB();
 
-            HexTable.Text = _tempColor.GetHexFromRGB();
+            HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             ChosenColorShow.Background = new SolidColorBrush(newColor);
 
             InitStartLuminanceGradientValue(color);
@@ -666,6 +686,8 @@ namespace PaintWPF
         }
         private void AddCustomColor_Click(object sender, EventArgs e)
         {
+            UpdateTextBoxes();
+            ClearCrosses();
             if (_pallete.ChosenCustomColorIndex != (-1, -1) &&
                 UserColors[_pallete.ChosenCustomColorIndex.Item1,
                 _pallete.ChosenCustomColorIndex.Item2] is Button but)
@@ -698,6 +720,8 @@ namespace PaintWPF
         }
         private void CustomColor_Click(object sender, EventArgs e)
         {
+            UpdateTextBoxes();
+            ClearCrosses();
             if (sender is Button but &&
                 but.Background is SolidColorBrush brush)
             {
@@ -736,7 +760,7 @@ namespace PaintWPF
                     InitNewHueFromBox();
                     InitColorPosition();
                 }
-                HexTable.Text = _tempColor.GetHexFromRGB();
+                HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             }
         }
         private void GetColorFromParamBox(PalleteTextBox box)
@@ -817,7 +841,7 @@ namespace PaintWPF
                     InitNewSaturationFromBox();
                     InitColorPosition();
                 }
-                HexTable.Text = _tempColor.GetHexFromRGB();
+                HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             }
         }
         private void InitColorPosition()
@@ -826,11 +850,11 @@ namespace PaintWPF
 
             InitColorPosWithGivenColor(color);
 
-          /*  (int x, int y)? cord = GetColorCord(color.R, color.G, color.B);
+            /*  (int x, int y)? cord = GetColorCord(color.R, color.G, color.B);
 
-            if (cord is null) return;
-            //Init cursor in this cords
-            InitCordInSpec(cord.Value.x, cord.Value.y);*/
+              if (cord is null) return;
+              //Init cursor in this cords
+              InitCordInSpec(cord.Value.x, cord.Value.y);*/
         }
         private void InitColorPosWithGivenColor(System.Windows.Media.Color color)
         {
@@ -856,7 +880,7 @@ namespace PaintWPF
             (LinearGradientBrush)ValueBorder.Background;
             gradientBrush.GradientStops[0].Color = color;
 
-            _colorToPaint = new  SolidColorBrush(color);
+            _colorToPaint = new SolidColorBrush(color);
         }
         private void ThirdParam_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -875,7 +899,7 @@ namespace PaintWPF
                     ChangeLuminocityInTempColor();
                     InitLumCircleHeight(_pallete.TempL);
                 }
-                HexTable.Text = _tempColor.GetHexFromRGB();
+                HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             }
         }
         private void InitLuminanceByBoxCorrecting()
@@ -908,16 +932,16 @@ namespace PaintWPF
         }
         private void TextBoxFirstParam_LostFocus(object sender, EventArgs e)
         {
-            if(FirstBox.ClearBut.Visibility == Visibility.Hidden) UpdateTextBoxes();         
+            if (FirstBox.ClearBut.Visibility == Visibility.Hidden) UpdateTextBoxes();
             CheckForAccaptableValues(sender as TextBox, _maxHValue, _maxRGBValue);
 
             //FirstBox.ClearBut.Visibility = Visibility.Hidden;
         }
         private void TextBoxSecondParam_LostFocus(object sender, EventArgs e)
-        {        
+        {
             if (SecondBox.ClearBut.Visibility == Visibility.Hidden) UpdateTextBoxes();
             CheckForAccaptableValues(sender as TextBox, _maxSValue, _maxRGBValue);
-            
+
             //SecondBox.ClearBut.Visibility = Visibility.Hidden;
 
         }
@@ -941,6 +965,11 @@ namespace PaintWPF
             if (ThirdBox.InfoTextBox.Text == string.Empty)
             {
                 ThirdBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.B.ToString() : _tempColor.L.ToString();
+            }
+            if (HexTable.InfoTextBox.Text == "#" || 
+                HexTable.InfoTextBox.Text == string.Empty)
+            {
+                HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             }
         }
 
@@ -970,7 +999,7 @@ namespace PaintWPF
             }
             else if (num < 0)
             {
-                //UpdateTextBoxes(); 
+                UpdateTextBoxes(); 
                 box.Text = baseBoxParam;
             }
         }
@@ -991,8 +1020,13 @@ namespace PaintWPF
                     return;
                 }
             }
+            if(!box.Text.Any(i => i != '#' || i != '0'))
+            {
+                HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
+            }
+
             UpdateTextBoxes();
-           // box.Text = zeroParam.ToString();
+            // box.Text = zeroParam.ToString();
         }
         private void ChangeLuminocityInTempColor()
         {
@@ -1072,6 +1106,8 @@ namespace PaintWPF
         }
         private void SpecCanvas_LeftMouseDown(object sender, MouseEventArgs e)
         {
+            UpdateTextBoxes();
+            ClearCrosses();
             const int hslDevider = 100;
             //get clicked point
             Point point = e.GetPosition(SpecCanvas);
@@ -1097,7 +1133,7 @@ namespace PaintWPF
             InitColors();
 
             //init hex 
-            HexTable.Text = _tempColor.GetHexFromRGB();
+            HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
 
             //correct luminance column
             InitLumCircleHeight((int)(_tempColor.L * hslDevider));
@@ -1117,7 +1153,7 @@ namespace PaintWPF
             const double locCorrel = 7.5;
             if (!_ifCircleCanBeMoved || specDragEl == null) return;
             _colorPoint = e.GetPosition(sender as IInputElement);
-          
+
 
             if (_colorPoint.X < 0)
             {
@@ -1140,7 +1176,7 @@ namespace PaintWPF
             UpdateShowColor();
         }
 
-       
+
         private void ThirdParamClear_Click(object sender, RoutedEventArgs e)
         {
             ThirdBox.InfoTextBox.Text = string.Empty;
@@ -1156,18 +1192,26 @@ namespace PaintWPF
         private void FirstParamClear_Click(object sender, RoutedEventArgs e)
         {
             FirstBox.InfoTextBox.Text = string.Empty;
+
             FirstBox.ClearBut.Visibility = Visibility.Hidden;
+
         }
 
         private void PalletePanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             UpdateTextBoxes();
 
+            ClearCrosses();
+        }
+
+        private void ClearCrosses()
+        {
             FirstBox.ClearBut.Visibility = Visibility.Hidden;
             SecondBox.ClearBut.Visibility = Visibility.Hidden;
             ThirdBox.ClearBut.Visibility = Visibility.Hidden;
-
+            HexTable.ClearBut.Visibility = Visibility.Hidden;
         }
+      
 
 
         /*
@@ -1178,56 +1222,95 @@ namespace PaintWPF
 
         private void FirstInfoBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            FirstBox.ClearBut.Visibility = Visibility.Visible;
+            if(FirstBox.InfoTextBox.Text != string.Empty)FirstBox.ClearBut.Visibility = Visibility.Visible;
 
             if (SecondBox.InfoTextBox.Text == string.Empty)
             {
-                SecondBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.G.ToString() : 
+                SecondBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.G.ToString() :
                     ((int)(_tempColor.S * _hslMultiplier)).ToString();
             }
             if (ThirdBox.InfoTextBox.Text == string.Empty)
             {
-                ThirdBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.B.ToString() : 
+                ThirdBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.B.ToString() :
                     ((int)(_tempColor.L * _hslMultiplier)).ToString();
             }
+            HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             SecondBox.ClearBut.Visibility = Visibility.Hidden;
             ThirdBox.ClearBut.Visibility = Visibility.Hidden;
+            HexTable.ClearBut.Visibility = Visibility.Hidden;
         }
         private void SecondInfoBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            SecondBox.ClearBut.Visibility = Visibility.Visible;
+            if(SecondBox.InfoTextBox.Text != string.Empty) SecondBox.ClearBut.Visibility = Visibility.Visible;
 
             if (FirstBox.InfoTextBox.Text == string.Empty)
             {
-                FirstBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.R.ToString() : 
+                FirstBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.R.ToString() :
                     ((int)(_tempColor.H * _hslMultiplier * _hMultiplier)).ToString();
             }
             if (ThirdBox.InfoTextBox.Text == string.Empty)
             {
-                ThirdBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.B.ToString() : 
+                ThirdBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.B.ToString() :
                     ((int)(_tempColor.L * _hslMultiplier)).ToString();
             }
+            HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             FirstBox.ClearBut.Visibility = Visibility.Hidden;
             ThirdBox.ClearBut.Visibility = Visibility.Hidden;
+            HexTable.ClearBut.Visibility = Visibility.Hidden;
         }
         private void ThirdInfoBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            ThirdBox.ClearBut.Visibility = Visibility.Visible;
+            if(ThirdBox.InfoTextBox.Text != string.Empty)ThirdBox.ClearBut.Visibility = Visibility.Visible;
 
             if (FirstBox.InfoTextBox.Text == string.Empty)
             {
-                FirstBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.R.ToString() : 
+                FirstBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.R.ToString() :
                     ((int)(_tempColor.H * _hslMultiplier * _hMultiplier)).ToString();
             }
             if (SecondBox.InfoTextBox.Text == string.Empty)
             {
-                SecondBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.G.ToString() : 
+                SecondBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.G.ToString() :
                     ((int)(_tempColor.S * _hslMultiplier)).ToString();
             }
+            HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
             FirstBox.ClearBut.Visibility = Visibility.Hidden;
             SecondBox.ClearBut.Visibility = Visibility.Hidden;
+            HexTable.ClearBut.Visibility = Visibility.Hidden;
         }
 
+        private void ChooseParamTypeBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+
+            UpdateTextBoxes();
+            FirstBox.ClearBut.Visibility = Visibility.Hidden;
+            SecondBox.ClearBut.Visibility = Visibility.Hidden;
+            ThirdBox.ClearBut.Visibility = Visibility.Hidden;
+            HexTable.ClearBut.Visibility = Visibility.Hidden;
+        }
+        private void HexTable_GotFocus(object sender, RoutedEventArgs e)
+        {
+            //if (ThirdBox.InfoTextBox.Text != string.Empty) ThirdBox.ClearBut.Visibility = Visibility.Visible;
+
+            if (FirstBox.InfoTextBox.Text == string.Empty)
+            {
+                FirstBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.R.ToString() :
+                    ((int)(_tempColor.H * _hslMultiplier * _hMultiplier)).ToString();
+            }
+            if (SecondBox.InfoTextBox.Text == string.Empty)
+            {
+                SecondBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.G.ToString() :
+                    ((int)(_tempColor.S * _hslMultiplier)).ToString();
+            }
+            if (ThirdBox.InfoTextBox.Text == string.Empty)
+            {
+                ThirdBox.InfoTextBox.Text = ChooseParamTypeBox.Text == "RGB" ? _tempColor.B.ToString() :
+                    ((int)(_tempColor.L * _hslMultiplier)).ToString();
+            }
+            //HexTable.InfoTextBox.Text = _tempColor.GetHexFromRGB();
+            FirstBox.ClearBut.Visibility = Visibility.Hidden;
+            SecondBox.ClearBut.Visibility = Visibility.Hidden;
+            ThirdBox.ClearBut.Visibility = Visibility.Hidden;
+        }
 
     }
 }

@@ -32,6 +32,10 @@ namespace PaintWPF.CustomControls
 
         private void InfoTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
+            if(this.Name == "HexTable")
+            {
+                return;
+            }
             CheckForZeroPreviewTextInput((TextBox)sender, e);
         }
         private void CheckForZeroPreviewTextInput(TextBox box, TextCompositionEventArgs e)
@@ -61,7 +65,11 @@ namespace PaintWPF.CustomControls
 
         private void InfoTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            ClearBut.Visibility = Visibility.Visible;
+            if (InfoTextBox.Text != string.Empty &&
+                InfoTextBox.Text != "#")
+            {
+                ClearBut.Visibility = Visibility.Visible;
+            }
         }
 
         private void InfoTextBox_LostFocus(object sender, RoutedEventArgs e)
@@ -73,6 +81,15 @@ namespace PaintWPF.CustomControls
         {
             InfoTextBox.Text = string.Empty;
             ClearBut.Visibility = Visibility.Hidden;
+        }
+
+        private void InfoTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (InfoTextBox.Text != string.Empty && 
+                InfoTextBox.Text != "#")
+            {
+                ClearBut.Visibility = Visibility.Visible;
+            }
         }
     }
 }
