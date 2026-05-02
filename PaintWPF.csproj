@@ -424,5 +424,8 @@
   <ItemGroup>
     <Resource Include="Gif\Tomato.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\main.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
