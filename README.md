@@ -31,7 +31,8 @@ A Windows Paint clone built with C# and WPF. The goal was to recreate the look a
 **Other**
 - Undo / Redo
 - Canvas size display in status bar
-
+- etc...
+  
 ## Stack
 
 - **C# / WPF** — UI and logic
