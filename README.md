@@ -1,6 +1,8 @@
 # PaintWPF
 
-A Windows Paint clone built with C# and WPF as a learning project.
+A Windows Paint clone built with C# and WPF. The goal was to recreate the look and feel of classic Windows Paint as closely as possible.
+
+![Main Window](Images/main.png)
 
 ## Features
 
